@@ -21,6 +21,11 @@ jobs:
         with:
           dotnet-version: '8.x'
 
+      - name: Add appsettings.json
+        run: |
+          echo "${{ secrets.APPSETTINGS_JSON }}" > EduTrailblaze/EduTrailblaze.API/appsettings.json
+          env:
+            APPSETTINGS_JSON: ${{ secrets.APPSETTINGS_JSON }}
       
       - name: Debug working directory 1
         run: |
