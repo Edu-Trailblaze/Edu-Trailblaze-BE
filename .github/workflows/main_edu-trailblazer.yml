@@ -21,6 +21,20 @@ jobs:
         with:
           dotnet-version: '8.x'
 
+      - name: Add appsettings.json
+        run: |
+          $jsonContent = @'
+          ${{ secrets.APPSETTINGS_JSON }}
+          '@
+          Set-Content -Path "EduTrailblaze/EduTrailblaze.API/appsettings.json" -Value $jsonContent
+        shell: pwsh
+        
+      - name: Debug working directory 1
+        run: |
+          echo "Current directory: $(pwd)"
+          ls EduTrailblaze/EduTrailblaze.API
+  
+
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
