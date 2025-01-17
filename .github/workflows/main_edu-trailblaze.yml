@@ -23,9 +23,11 @@ jobs:
 
       - name: Add appsettings.json
         run: |
-          echo "${{ secrets.APPSETTINGS_JSON }}" > EduTrailblaze/EduTrailblaze.API/appsettings.json
-          env:
-            APPSETTINGS_JSON: ${{ secrets.APPSETTINGS_JSON }}
+          $jsonContent = @'
+          ${{ secrets.APPSETTINGS_JSON }}
+          '@
+          Set-Content -Path "EduTrailblaze/EduTrailblaze.API/appsettings.json" -Value $jsonContent
+        shell: pwsh
       
       - name: Debug working directory 1
         run: |
