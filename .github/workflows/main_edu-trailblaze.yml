@@ -21,21 +21,17 @@ jobs:
         with:
           dotnet-version: '8.x'
 
-      - name: Debug working directory
+      - name: Debug full directory
         run: |
           echo "Current directory: $(pwd)"
-          ls Edu-Trailblaze-BE/
-
+          ls 
+  
       - name: Debug working directory 1
         run: |
           echo "Current directory: $(pwd)"
           ls EduTrailblaze/
 
-      - name: Debug full directory
-        run: |
-          echo "Current directory: $(pwd)"
-          ls 
-
+      
       - name: Build with dotnet
         run: dotnet build --configuration Release
         working-directory: Edu-Trailblaze-BE/EduTrailblaze/EduTrailblaze.API
