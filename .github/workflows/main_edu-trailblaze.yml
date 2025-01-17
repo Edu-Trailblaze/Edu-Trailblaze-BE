@@ -21,6 +21,11 @@ jobs:
         with:
           dotnet-version: '8.x'
 
+      - name: Debug Is Exist appsettings.json or not
+        run: |
+          echo "Current directory: $(pwd)"
+          ls EduTrailblaze/EduTrailblaze.API
+
       - name: Add appsettings.json
         run: |
           $jsonContent = @'
