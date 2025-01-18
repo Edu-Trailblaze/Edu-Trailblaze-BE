@@ -43,19 +43,9 @@ jobs:
         run: dotnet build --configuration Release
         working-directory: EduTrailblaze/
 
-      - name: Debug environment
-        run: |
-          echo "ASPNETCORE_ENVIRONMENT: $env:ASPNETCORE_ENVIRONMENT"
-        shell: pwsh
-
       - name: dotnet publish
         run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
         working-directory: EduTrailblaze/
-
-      - name: Debug environment after publish
-        run: |
-          echo "ASPNETCORE_ENVIRONMENT: $env:ASPNETCORE_ENVIRONMENT"
-        shell: pwsh
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -88,9 +78,9 @@ jobs:
       - name: Clean Azure Web App Deployment
         run: |
           echo "Cleaning up old deployment files..."
-          az webapp deployment source delete --name 'edu-trailblazer' --resource-group 'your-resource-group'
+          az webapp deployment source delete --name 'edu-trailblazer' --resource-group 'Edu-Trailblaze'
           echo "Cleaning cache..."
-          az webapp deployment container restart --name 'edu-trailblazer' --resource-group 'your-resource-group'
+          az webapp deployment container restart --name 'edu-trailblazer' --resource-group 'Edu-Trailblaze'
   
 
       - name: Deploy to Azure Web App
