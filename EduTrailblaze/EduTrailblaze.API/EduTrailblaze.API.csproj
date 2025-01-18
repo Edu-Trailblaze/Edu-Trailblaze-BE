@@ -19,6 +19,9 @@
 
     <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
 
+
+    <PackageReference Include="Serilog.Sinks.ApplicationInsights" Version="4.0.0" />
+
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
