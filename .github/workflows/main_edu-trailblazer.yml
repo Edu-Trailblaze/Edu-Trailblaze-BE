@@ -23,10 +23,14 @@ jobs:
 
       - name: Add appsettings.json
         run: |
-          $jsonContent = @'
-          ${{ secrets.APPSETTINGS_JSON }}
-          '@
-          Set-Content -Path "EduTrailblaze/EduTrailblaze.API/appsettings.json" -Value $jsonContent
+          $jsonContent = '${{ secrets.APPSETTINGS_JSON }}'
+          try {
+            ConvertFrom-Json -InputObject $jsonContent | Out-Null
+            Write-Host "JSON is valid."
+          } catch {
+            Write-Error "Invalid JSON format in appsettings.json"
+            exit 1
+          }
         shell: pwsh
         
       - name: Debug working directory 1
@@ -39,9 +43,19 @@ jobs:
         run: dotnet build --configuration Release
         working-directory: EduTrailblaze/
 
+      - name: Debug environment
+        run: |
+          echo "ASPNETCORE_ENVIRONMENT: $env:ASPNETCORE_ENVIRONMENT"
+        shell: pwsh
+
       - name: dotnet publish
         run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
         working-directory: EduTrailblaze/
+
+      - name: Debug environment after publish
+        run: |
+          echo "ASPNETCORE_ENVIRONMENT: $env:ASPNETCORE_ENVIRONMENT"
+        shell: pwsh
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -70,6 +84,14 @@ jobs:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_4F1BD06331804570B541626E61E00E44 }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_79784BC67DDF477181539D9926C40B6C }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_5FEE5CDD63244E93ADE93763F3999AAD }}
+
+      - name: Clean Azure Web App Deployment
+        run: |
+          echo "Cleaning up old deployment files..."
+          az webapp deployment source delete --name 'edu-trailblazer' --resource-group 'your-resource-group'
+          echo "Cleaning cache..."
+          az webapp deployment container restart --name 'edu-trailblazer' --resource-group 'your-resource-group'
+  
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
