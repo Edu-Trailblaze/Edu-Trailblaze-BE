@@ -12,6 +12,7 @@ using FluentValidation.AspNetCore;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -108,6 +109,13 @@ namespace EduTrailblaze.API.Extensions
                             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtToken:Key"]))
                         };
                     });
+
+            //Author
+            services.AddAuthorization(options =>
+            {
+                options.FallbackPolicy = null;
+            });
+
 
             // Add Caching for response Middleware 
             services.AddResponseCaching();
