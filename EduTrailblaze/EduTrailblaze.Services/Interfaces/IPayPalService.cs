@@ -1,14 +1,14 @@
 ﻿using EduTrailblaze.Services.DTOs;
-using PayPal.Api;
+//using PayPal.Api;
 
 namespace EduTrailblaze.Services.Interfaces
 {
     public interface IPayPalService
     {
-        Payment CreatePayment(decimal amount, int orderId, int paymentId);
+        //Payment CreatePayment(decimal amount, int orderId, int paymentId);
 
-        string CreatePaymentUrl(decimal amount, int orderId, int paymentId);
+        //string CreatePaymentUrl(decimal amount, int orderId, int paymentId);
 
-        Task<PaymentResponse> ExecutePayment(string payPalPaymentId, string payerId);
+        //Task<PaymentResponse> ExecutePayment(string payPalPaymentId, string payerId);
     }
 }

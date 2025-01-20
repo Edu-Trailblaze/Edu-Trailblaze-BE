@@ -196,7 +196,7 @@ namespace EduTrailblaze.Services
                 }
                 else if (paymentMethod == "PayPal")
                 {
-                    paymentUrl = _payPalService.CreatePaymentUrl(order.OrderAmount, orderId, payment.Id);
+                   // paymentUrl = _payPalService.CreatePaymentUrl(order.OrderAmount, orderId, payment.Id);
                 }
                 return paymentUrl;
             }
