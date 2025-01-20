@@ -37,6 +37,9 @@ jobs:
           }
         shell: pwsh
       
+      - name: Install Android Workload
+        run: dotnet workload install android
+      
       - name: Build with dotnet
         run: dotnet build --configuration Release
         working-directory: EduTrailblaze/
