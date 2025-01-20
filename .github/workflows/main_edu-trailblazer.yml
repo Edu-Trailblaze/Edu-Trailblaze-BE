@@ -54,10 +54,10 @@ jobs:
         run: printenv
       
 
-      - name: Check .NET version
-        run: |
-          dotnet --info
-          dotnet workload list
+      # - name: Check .NET version
+      #   run: |
+      #     dotnet --info
+      #     dotnet workload list
 
       - name: Upload artifact for deployment
         uses: actions/upload-artifact@v4
