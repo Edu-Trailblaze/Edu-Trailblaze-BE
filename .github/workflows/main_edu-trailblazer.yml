@@ -69,13 +69,13 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_79784BC67DDF477181539D9926C40B6C }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_5FEE5CDD63244E93ADE93763F3999AAD }}
 
-      - name: Clean Azure Web App Deployment
-        run: |
-            echo "Cleaning up old deployment files..."
-            az webapp deployment source delete --name 'edu-trailblazer' --resource-group 'Edu-Trailblaze'
-            echo "Cleaning cache..."
-            az webapp restart --name 'edu-trailblazer' --resource-group 'Edu-Trailblaze'
-        shell: pwsh
+      # - name: Clean Azure Web App Deployment
+      #   run: |
+      #       echo "Cleaning up old deployment files..."
+      #       az webapp deployment source delete --name 'edu-trailblazer' --resource-group 'Edu-Trailblaze'
+      #       echo "Cleaning cache..."
+      #       az webapp restart --name 'edu-trailblazer' --resource-group 'Edu-Trailblaze'
+      #   shell: pwsh
   
   
 
