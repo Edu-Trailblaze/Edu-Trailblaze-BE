@@ -12,6 +12,8 @@ namespace EduTrailblaze.API.Logging
             configuration
                 .WriteTo.Debug()
                 .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}")
+                .WriteTo.ApplicationInsights(context.Configuration["ApplicationInsights:InstrumentationKey"],
+            TelemetryConverter.Traces)
                 .Enrich.FromLogContext()
                 .Enrich.WithMachineName()
                 .Enrich.WithProperty("ApplicationName", applicationName)
