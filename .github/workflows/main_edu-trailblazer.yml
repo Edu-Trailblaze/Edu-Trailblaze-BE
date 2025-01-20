@@ -19,7 +19,7 @@ jobs:
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.x'
+          dotnet-version: '8.0.x'
       
       - name: Set ASPNETCORE_ENVIRONMENT
         run: echo "ASPNETCORE_ENVIRONMENT=Production" >> $GITHUB_ENV
@@ -37,9 +37,6 @@ jobs:
           }
         shell: pwsh
       
-      - name: Install Android Workload
-        run: dotnet workload install android
-      
       - name: Build with dotnet
         run: dotnet build --configuration Release
         working-directory: EduTrailblaze/
@@ -51,19 +48,23 @@ jobs:
       - name: Publish API project
         run: dotnet publish EduTrailblaze/EduTrailblaze.API/EduTrailblaze.API.csproj -c Release -o output
       
-      - name: Upload artifact for deployment
-        uses: actions/upload-artifact@v4
-        with:
-          name: api-artifact
-          path: output
-
+      
 
       - name: Debug Environment
         run: printenv
       
 
       - name: Check .NET version
-        run: dotnet --info
+        run: |
+          dotnet --info
+          dotnet workload list
+
+      - name: Upload artifact for deployment
+        uses: actions/upload-artifact@v4
+        with:
+            name: api-artifact
+            path: output
+  
       
       # - name: Upload artifact for deployment job
       #   uses: actions/upload-artifact@v4
@@ -96,7 +97,7 @@ jobs:
       - name: Clean Azure Web App Deployment
         run: |
             echo "Cleaning up old deployment files..."
-            az webapp deployment source delete --name 'edu-trailblazer' --resource-group 'Edu-Trailblaze'
+            az webapp deployment source config-zip --resource-group 'Edu-Trailblaze' --name 'edu-trailblazer' --src ./output.zip
             echo "Cleaning cache..."
             az webapp restart --name 'edu-trailblazer' --resource-group 'Edu-Trailblaze'
         shell: pwsh
@@ -109,5 +110,5 @@ jobs:
         with:
           app-name: 'edu-trailblazer'
           slot-name: 'Production'
-          package: .
+          package: ./output
           
