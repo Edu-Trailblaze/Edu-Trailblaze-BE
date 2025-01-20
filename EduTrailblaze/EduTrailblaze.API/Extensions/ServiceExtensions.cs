@@ -58,6 +58,8 @@ namespace EduTrailblaze.API.Extensions
             }
             ).AddEntityFrameworkStores<EduTrailblazeDbContext>().AddDefaultTokenProviders();
 
+            //Application Insight
+            services.AddApplicationInsightsTelemetry();
             // Add Swagger
             services.AddSwaggerGen(c =>
             {
