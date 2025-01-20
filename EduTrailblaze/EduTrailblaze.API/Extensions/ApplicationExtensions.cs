@@ -25,7 +25,7 @@ namespace EduTrailblaze.API.Extensions
             });
 
             app.UseStaticFiles();
-            //app.UseAuthentication();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             //app.UseMiddleware<RequestResponseMiddleware>();
