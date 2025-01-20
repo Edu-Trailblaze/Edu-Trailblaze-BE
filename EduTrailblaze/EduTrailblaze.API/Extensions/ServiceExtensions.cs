@@ -111,10 +111,10 @@ namespace EduTrailblaze.API.Extensions
                     });
 
             //Author
-            services.AddAuthorization(options =>
-            {
-                options.FallbackPolicy = null;
-            });
+            //services.AddAuthorization(options =>
+            //{
+            //    options.FallbackPolicy = null;
+            //});
 
 
             // Add Caching for response Middleware 
