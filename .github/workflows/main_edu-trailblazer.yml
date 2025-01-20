@@ -110,5 +110,5 @@ jobs:
         with:
           app-name: 'edu-trailblazer'
           slot-name: 'Production'
-          package: ./output
+          package: ./
           
