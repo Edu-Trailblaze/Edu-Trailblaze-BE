@@ -23,9 +23,9 @@ jobs:
 
       - name: Add appsettings.json
         run: |
-          $jsonContent = '${{ secrets.APPSETTINGS_JSON }}'
+          echo '${{ secrets.APPSETTINGS_JSON }}' > EduTrailblaze/EduTrailblaze.API/appsettings.json
           try {
-            ConvertFrom-Json -InputObject $jsonContent | Out-Null
+            ConvertFrom-Json -InputObject '${{ secrets.APPSETTINGS_JSON }}' | Out-Null
             Write-Host "JSON is valid."
           } catch {
             Write-Error "Invalid JSON format in appsettings.json"
