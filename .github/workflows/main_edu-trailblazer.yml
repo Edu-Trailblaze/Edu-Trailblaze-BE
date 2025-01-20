@@ -64,6 +64,13 @@ jobs:
         with:
             name: api-artifact
             path: output
+      
+      - name: Clean deployment directory
+        run: |
+            echo "Cleaning output directory..."
+            rm -rf ./output/*
+        shell: bash
+          
   
       
       # - name: Upload artifact for deployment job
