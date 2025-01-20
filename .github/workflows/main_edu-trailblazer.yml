@@ -32,13 +32,7 @@ jobs:
             exit 1
           }
         shell: pwsh
-        
-      - name: Debug working directory 1
-        run: |
-          echo "Current directory: $(pwd)"
-          ls EduTrailblaze/EduTrailblaze.API
-  
-
+      
       - name: Build with dotnet
         run: dotnet build --configuration Release
         working-directory: EduTrailblaze/
@@ -77,10 +71,12 @@ jobs:
 
       - name: Clean Azure Web App Deployment
         run: |
-          echo "Cleaning up old deployment files..."
-          az webapp deployment source delete --name 'edu-trailblazer' --resource-group 'Edu-Trailblaze'
-          echo "Cleaning cache..."
-          az webapp deployment container restart --name 'edu-trailblazer' --resource-group 'Edu-Trailblaze'
+            echo "Cleaning up old deployment files..."
+            az webapp deployment source delete --name 'edu-trailblazer' --resource-group 'Edu-Trailblaze'
+            echo "Cleaning cache..."
+            az webapp restart --name 'edu-trailblazer' --resource-group 'Edu-Trailblaze'
+        shell: pwsh
+  
   
 
       - name: Deploy to Azure Web App
