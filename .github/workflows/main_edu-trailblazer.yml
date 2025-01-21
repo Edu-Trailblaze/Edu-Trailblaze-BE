@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy ASP.Net Core app to Azure Web App - edu-trailblazer
+name: Build and deploy ASP.Net Core app to Azure Web App - edu-trailblaze
 
 on:
   push:
@@ -104,9 +104,9 @@ jobs:
       - name: Clean Azure Web App Deployment
         run: |
             echo "Cleaning up old deployment files..."
-            az webapp deployment source config-zip --resource-group 'Edu-Trailblaze' --name 'edu-trailblazer' --src ./output.zip
+            az webapp deployment source config-zip --resource-group 'Edu-Trailblaze' --name 'edu-trailblaze' --src ./output.zip
             echo "Cleaning cache..."
-            az webapp restart --name 'edu-trailblazer' --resource-group 'Edu-Trailblaze'
+            az webapp restart --name 'edu-trailblaze' --resource-group 'Edu-Trailblaze'
         shell: pwsh
   
   
@@ -115,7 +115,7 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'edu-trailblazer'
+          app-name: 'edu-trailblaze'
           slot-name: 'Production'
           package: ./
           
