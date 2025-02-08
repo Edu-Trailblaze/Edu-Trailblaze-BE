@@ -1,4 +1,5 @@
 ﻿using EduTrailblaze.Entities;
+using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Helper;
 using EduTrailblaze.Services.Interfaces;
 using EduTrailblaze.Services.Models;
@@ -24,8 +25,9 @@ namespace EduTrailblaze.Services
         private readonly AsyncRetryPolicy _dbRetryPolicy;
         private readonly AsyncTimeoutPolicy _dbTimeoutPolicy;
         private readonly ISendMail _sendMail;
+        private readonly IUserProfileService _userProfileService;
 
-        public AuthService(ITokenGenerator authService, UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<IdentityRole> roleManager, IRedisService redisService, ISendMail sendMail)
+        public AuthService(ITokenGenerator authService, UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<IdentityRole> roleManager, IRedisService redisService, ISendMail sendMail, IUserProfileService userProfileService)
         {
             _jwtToken = authService;
             _userManager = userManager;
@@ -45,6 +47,7 @@ namespace EduTrailblaze.Services
             _dbPolicyWrap = Policy.WrapAsync(_dbRetryPolicy, _dbTimeoutPolicy);
             _redisService = redisService;
             _sendMail = sendMail;
+            _userProfileService = userProfileService;
         }
 
 
@@ -265,6 +268,14 @@ namespace EduTrailblaze.Services
 
                 var token = await _jwtToken.GenerateJwtToken(userLogin, "Student");
                 var refreshToken = await _jwtToken.GenerateRefreshToken();
+
+
+                CreateUserProfileRequest userProfile =
+                    new CreateUserProfileRequest
+                    {
+                        UserId = userLogin.Id
+                    };
+                await _userProfileService.AddUserProfile(userProfile);
 
                 return new ApiResponse
                 {
