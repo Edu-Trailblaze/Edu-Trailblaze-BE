@@ -1,5 +1,4 @@
 ﻿using EduTrailblaze.Services.DTOs;
-//using PayPal.Api;
 
 namespace EduTrailblaze.Services.Interfaces
 {
@@ -9,6 +8,8 @@ namespace EduTrailblaze.Services.Interfaces
 
         //string CreatePaymentUrl(decimal amount, int orderId, int paymentId);
 
-        //Task<PaymentResponse> ExecutePayment(string payPalPaymentId, string payerId);
+        Task<string> CreatePaymentUrl(decimal amount, int orderId, int paymentId);
+
+        Task<PaymentResponse> ExecutePayment(string payPalPaymentId, string token, string payerId);
     }
 }

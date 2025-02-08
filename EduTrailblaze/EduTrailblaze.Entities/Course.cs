@@ -5,12 +5,13 @@ namespace EduTrailblaze.Entities
 {
     public class Course : EntityAuditBase<int>
     {
-
         [Required, StringLength(255)]
         public string Title { get; set; }
 
         [Required, StringLength(int.MaxValue)]
         public string ImageURL { get; set; }
+
+        public string? IntroURL { get; set; }
 
         [Required, StringLength(int.MaxValue)]
         public string Description { get; set; }
@@ -26,6 +27,9 @@ namespace EduTrailblaze.Entities
 
         [Required, StringLength(int.MaxValue)]
         public string Prerequisites { get; set; }
+
+        [Required]
+        public List<string> LearningOutcomes { get; set; }
 
         [Required]
         public decimal EstimatedCompletionTime { get; set; }
@@ -47,13 +51,13 @@ namespace EduTrailblaze.Entities
         public virtual ICollection<CourseDiscount> CourseDiscounts { get; set; }
         public virtual ICollection<CourseLanguage> CourseLanguages { get; set; }
         public virtual ICollection<CourseCoupon> CourseCoupons { get; set; }
-        public virtual ICollection<CourseTag> CourseTags { get; set; }
-        public virtual ICollection<Enrollment> Enrollments { get; set; }
         public virtual ICollection<Section> Sections { get; set; }
         public virtual ICollection<Review> Reviews { get; set; }
         public virtual ICollection<Certificate> Certificates { get; set; }
         public virtual ICollection<CartItem> CartItems { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
-        public virtual ICollection<UserProgress> UserProgresses { get; set; }
+        public virtual ICollection<CourseTag> CourseTags { get; set; }
+        public virtual CourseClass CourseClass { get; set; }
+
     }
 }

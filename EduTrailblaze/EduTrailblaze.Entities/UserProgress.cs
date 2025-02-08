@@ -9,8 +9,8 @@ namespace EduTrailblaze.Entities
         [Required, ForeignKey("User")]
         public string UserId { get; set; }
 
-        [Required, ForeignKey("Course")]
-        public int CourseId { get; set; }
+        [Required, ForeignKey("CourseClass")]
+        public int CourseClassId { get; set; }
 
         [ForeignKey("Section")]
         public int? SectionId { get; set; }
@@ -36,7 +36,7 @@ namespace EduTrailblaze.Entities
 
         // Navigation properties
         public virtual User User { get; set; }
-        public virtual Course Course { get; set; }
+        public virtual CourseClass CourseClass { get; set; }
         public virtual Section Section { get; set; }
         public virtual Lecture Lecture { get; set; }
         public virtual Quiz Quiz { get; set; }

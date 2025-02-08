@@ -8,8 +8,8 @@ namespace EduTrailblaze.Entities
     {
 
 
-        [Required, ForeignKey("Course")]
-        public int CourseId { get; set; }
+        [Required, ForeignKey("CourseClass")]
+        public int CourseClassId { get; set; }
 
         [Required, ForeignKey("User")]
         public string StudentId { get; set; }
@@ -22,7 +22,7 @@ namespace EduTrailblaze.Entities
 
 
         // Navigation properties
-        public virtual Course Course { get; set; }
+        public virtual CourseClass CourseClass { get; set; }
         public virtual User Student { get; set; }
     }
 }

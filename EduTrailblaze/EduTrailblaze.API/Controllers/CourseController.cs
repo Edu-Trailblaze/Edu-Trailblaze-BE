@@ -140,5 +140,47 @@ namespace EduTrailblaze.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        [HttpGet("get-course-detail/{courseId}")]
+        public async Task<IActionResult> GetCourseDetailsById(int courseId)
+        {
+            try
+            {
+                var res = await _courseService.GetCourseDetailsById(courseId);
+                return Ok(res);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet("get-course-page-information/{courseId}")]
+        public async Task<IActionResult> GetCoursePageInformation(int courseId)
+        {
+            try
+            {
+                var res = await _courseService.GetCoursePageInformation(courseId);
+                return Ok(res);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet("get-personal-item-recommendation")]
+        public async Task<IActionResult> GetPersonalItemRecommendation(string? userId)
+        {
+            try
+            {
+                var res = await _courseService.GetPersonalItemRecommendation(userId);
+                return Ok(res);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }

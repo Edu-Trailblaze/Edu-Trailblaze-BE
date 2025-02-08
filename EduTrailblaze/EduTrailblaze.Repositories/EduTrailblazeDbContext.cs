@@ -33,6 +33,7 @@ namespace EduTrailblaze.Repositories
         public virtual DbSet<Certificate> Certificates { get; set; }
         public virtual DbSet<Coupon> Coupons { get; set; }
         public virtual DbSet<Course> Courses { get; set; }
+        public virtual DbSet<CourseClass> CourseClasses { get; set; }
         public virtual DbSet<CourseCoupon> CourseCoupons { get; set; }
         public virtual DbSet<CourseDiscount> CourseDiscounts { get; set; }
         public virtual DbSet<CourseInstructor> CourseInstructors { get; set; }
@@ -76,7 +77,6 @@ namespace EduTrailblaze.Repositories
                         if (entry.Entity is IDateTracking addedEntity)
                         {
                             entry.State = EntityState.Added;
-                            addedEntity.CreatedAt = DateTime.UtcNow;
                         }
                         break;
                     case EntityState.Modified:
@@ -84,7 +84,6 @@ namespace EduTrailblaze.Repositories
                         if (entry.Entity is IDateTracking modifiedEntities)
                         {
                             entry.State = EntityState.Modified;
-                            modifiedEntities.UpdatedAt = DateTime.UtcNow;
                         }
                         break;
                 }

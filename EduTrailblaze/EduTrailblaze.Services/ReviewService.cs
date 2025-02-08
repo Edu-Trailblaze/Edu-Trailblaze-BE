@@ -145,7 +145,7 @@ namespace EduTrailblaze.Services
             }
         }
 
-        public async Task<CourseReviewInformation> GetAverageRatingAndNumberOfRatings(int courseId)
+        public async Task<ReviewInformation> GetAverageRatingAndNumberOfRatings(int courseId)
         {
             try
             {
@@ -154,7 +154,7 @@ namespace EduTrailblaze.Services
 
                 if (courseReviews.Count() == 0)
                 {
-                    return new CourseReviewInformation
+                    return new ReviewInformation
                     {
                         AverageRating = 0,
                         TotalRatings = 0
@@ -163,7 +163,7 @@ namespace EduTrailblaze.Services
 
                 var averageRating = courseReviews.Average(r => r.Rating);
                 var numberOfRatings = courseReviews.Count();
-                return new CourseReviewInformation
+                return new ReviewInformation
                 {
                     AverageRating = averageRating,
                     TotalRatings = numberOfRatings

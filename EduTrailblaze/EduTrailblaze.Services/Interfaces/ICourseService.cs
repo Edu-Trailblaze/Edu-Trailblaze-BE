@@ -44,5 +44,13 @@ namespace EduTrailblaze.Services.Interfaces
         Task<int> TotalInstructors(int courseId);
 
         Task<CartCourseInformation> GetCartCourseInformationAsync(int courseId);
+
+        Task<CoursePage> GetCoursePageInformation(int courseId);
+
+        Task<CourseSectionInformation> GetCourseDetailsById(int courseId);
+
+        Task<List<CourseCardResponse>> GetItemDetailsThatStudentsAlsoBought(int courseId);
+
+        Task<List<CourseCardResponse>> GetPersonalItemRecommendation(string? userId);
     }
 }

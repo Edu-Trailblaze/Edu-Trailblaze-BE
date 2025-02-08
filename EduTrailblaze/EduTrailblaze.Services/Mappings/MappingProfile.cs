@@ -9,6 +9,7 @@ namespace EduTrailblaze.Services.Mappings
         public MappingProfile()
         {
             CreateMap<Course, CoursesResponse>();
+            CreateMap<Course, CourseDetails>();
             CreateMap<Course, CourseDTO>();
             CreateMap<CreateCourseRequest, Course>();
             CreateMap<CourseDTO, CoursesResponse>();
@@ -22,6 +23,10 @@ namespace EduTrailblaze.Services.Mappings
             CreateMap<Coupon, CouponInformation>();
 
             CreateMap<Order, OrderDTO>();
+
+            CreateMap<Language, SupportedLanguage>();
+
+            CreateMap<Section, SectionDetails>();
         }
     }
 }

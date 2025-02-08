@@ -6,6 +6,7 @@ using EduTrailblaze.Services.Helper;
 using EduTrailblaze.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.ML;
 
 namespace EduTrailblaze.Services
@@ -20,13 +21,14 @@ namespace EduTrailblaze.Services
         private readonly IRepository<CourseTag, int> _courseTagRepository;
         private readonly IRepository<Order, int> _orderRepository;
         private readonly IRepository<OrderDetail, int> _orderDetailRepository;
+        private readonly ICourseClassService _courseClassService;
         private readonly IReviewService _reviewService;
         private readonly UserManager<User> _userManager;
         private readonly IElasticsearchService _elasticsearchService;
         private readonly IDiscountService _discountService;
         private readonly IMapper _mapper;
 
-        public CourseService(IRepository<Course, int> courseRepository, IReviewService reviewService, IElasticsearchService elasticsearchService, IMapper mapper, IDiscountService discountService, IRepository<CourseInstructor, int> courseInstructorRepository, IRepository<Enrollment, int> enrollment, UserManager<User> userManager, IRepository<CourseLanguage, int> courseLanguageRepository, IRepository<CourseTag, int> courseTagRepository)
+        public CourseService(IRepository<Course, int> courseRepository, IReviewService reviewService, IElasticsearchService elasticsearchService, IMapper mapper, IDiscountService discountService, IRepository<CourseInstructor, int> courseInstructorRepository, IRepository<Enrollment, int> enrollment, UserManager<User> userManager, IRepository<CourseLanguage, int> courseLanguageRepository, IRepository<CourseTag, int> courseTagRepository, ICourseClassService courseClassService)
         {
             _courseRepository = courseRepository;
             _reviewService = reviewService;
@@ -38,6 +40,7 @@ namespace EduTrailblaze.Services
             _userManager = userManager;
             _courseLanguageRepository = courseLanguageRepository;
             _courseTagRepository = courseTagRepository;
+            _courseClassService = courseClassService;
         }
 
         public async Task<Course?> GetCourse(int courseId)
@@ -92,11 +95,13 @@ namespace EduTrailblaze.Services
                 {
                     Title = req.Title,
                     ImageURL = req.ImageURL,
+                    IntroURL = req.IntroURL,
                     Description = req.Description,
                     Price = req.Price,
                     CreatedBy = req.CreatedBy,
                     DifficultyLevel = req.DifficultyLevel,
                     Prerequisites = req.Prerequisites,
+                    LearningOutcomes = req.LearningOutcomes,
                     UpdatedBy = req.CreatedBy,
 
                     CourseInstructors = new List<CourseInstructor>
@@ -110,6 +115,24 @@ namespace EduTrailblaze.Services
                 };
 
                 await _courseRepository.AddAsync(newCourse);
+
+                CreateCourseClassRequest createCourseClassRequest = new CreateCourseClassRequest()
+                {
+                    CourseId = newCourse.Id,
+                    Title = req.Title,
+                    ImageURL = req.ImageURL,
+                    IntroURL = req.IntroURL,
+                    Description = req.Description,
+                    Price = req.Price,
+                    Duration = newCourse.Duration,
+                    DifficultyLevel = req.DifficultyLevel,
+                    Prerequisites = req.Prerequisites,
+                    LearningOutcomes = newCourse.LearningOutcomes,
+                    EstimatedCompletionTime = newCourse.EstimatedCompletionTime,
+                    StartDate = DateTimeHelper.GetVietnamTime(),
+                };
+
+                await _courseClassService.AddCourseClass(createCourseClassRequest);
             }
             catch (Exception ex)
             {
@@ -143,6 +166,7 @@ namespace EduTrailblaze.Services
                     Id = req.CourseId,
                     Title = req.Title,
                     ImageURL = req.ImageURL,
+                    IntroURL = req.IntroURL,
                     Description = req.Description,
                     Price = req.Price,
                     Duration = course.Duration,
@@ -158,6 +182,33 @@ namespace EduTrailblaze.Services
                 };
 
                 await _courseRepository.UpdateAsync(newCourse);
+
+
+                var courseClass = await _courseClassService.GetNewestCourseClass(newCourse.Id);
+                if (courseClass == null)
+                {
+                    throw new Exception("Course class not found.");
+                }
+                courseClass.EndDate = DateTimeHelper.GetVietnamTime();
+                courseClass.IsDeleted = true;
+
+                await _courseClassService.UpdateCourseClass(courseClass);
+
+                CreateCourseClassRequest createCourseClassRequest = new CreateCourseClassRequest()
+                {
+                    CourseId = newCourse.Id,
+                    Title = req.Title,
+                    ImageURL = req.ImageURL,
+                    IntroURL = req.IntroURL,
+                    Description = req.Description,
+                    Price = req.Price,
+                    Duration = newCourse.Duration,
+                    DifficultyLevel = req.DifficultyLevel,
+                    Prerequisites = req.Prerequisites,
+                    LearningOutcomes = newCourse.LearningOutcomes,
+                    EstimatedCompletionTime = newCourse.EstimatedCompletionTime,
+                    StartDate = DateTimeHelper.GetVietnamTime(),
+                };
             }
             catch (Exception ex)
             {
@@ -212,60 +263,74 @@ namespace EduTrailblaze.Services
 
         public async Task<decimal> CalculateEffectivePrice(int courseId)
         {
-            var dbSet = await _courseRepository.GetDbSet();
-
-            var course = await dbSet
-                .Include(c => c.CourseDiscounts)
-                .ThenInclude(cd => cd.Discount)
-                .FirstOrDefaultAsync(c => c.Id == courseId);
-
-            if (course == null)
+            try
             {
-                throw new ArgumentException("Invalid course ID");
-            }
+                var dbSet = await _courseRepository.GetDbSet();
 
-            var effectivePrice = course.Price;
-            if (course.CourseDiscounts.Any())
+                var course = await dbSet
+                    .Include(c => c.CourseDiscounts)
+                    .ThenInclude(cd => cd.Discount)
+                    .FirstOrDefaultAsync(c => c.Id == courseId);
+
+                if (course == null)
+                {
+                    throw new ArgumentException("Invalid course ID");
+                }
+
+                var effectivePrice = course.Price;
+                if (course.CourseDiscounts.Any())
+                {
+                    var maxDiscount = course.CourseDiscounts
+                        .Where(d => d.Discount.IsActive &&
+                                    d.Discount.StartDate <= DateTimeHelper.GetVietnamTime() &&
+                                    d.Discount.EndDate >= DateTimeHelper.GetVietnamTime())
+                        .Max(d => d.Discount.DiscountType == "Percentage"
+                            ? course.Price * d.Discount.DiscountValue / 100
+                            : d.Discount.DiscountValue);
+
+                    effectivePrice -= maxDiscount;
+                }
+
+                return effectivePrice;
+            }
+            catch (Exception ex)
             {
-                var maxDiscount = course.CourseDiscounts
-                    .Where(d => d.Discount.IsActive &&
-                                d.Discount.StartDate <= DateTimeHelper.GetVietnamTime() &&
-                                d.Discount.EndDate >= DateTimeHelper.GetVietnamTime())
-                    .Max(d => d.Discount.DiscountType == "Percentage"
-                        ? course.Price * d.Discount.DiscountValue / 100
-                        : d.Discount.DiscountValue);
-
-                effectivePrice -= maxDiscount;
+                throw new Exception("An error occurred while calculating the effective price: " + ex.Message);
             }
-
-            return effectivePrice;
         }
 
         public async Task<int?> GetMaxDiscountId(int courseId)
         {
-            var dbSet = await _courseRepository.GetDbSet();
-
-            var course = await dbSet
-                .Include(c => c.CourseDiscounts)
-                .ThenInclude(cd => cd.Discount)
-                .FirstOrDefaultAsync(c => c.Id == courseId);
-
-            if (course == null)
+            try
             {
-                throw new ArgumentException("Invalid course ID");
+                var dbSet = await _courseRepository.GetDbSet();
+
+                var course = await dbSet
+                    .Include(c => c.CourseDiscounts)
+                    .ThenInclude(cd => cd.Discount)
+                    .FirstOrDefaultAsync(c => c.Id == courseId);
+
+                if (course == null)
+                {
+                    throw new ArgumentException("Invalid course ID");
+                }
+
+                var maxDiscount = course.CourseDiscounts
+                    .Where(d => d.Discount.IsActive &&
+                                (d.Discount.StartDate == null || d.Discount.StartDate <= DateTimeHelper.GetVietnamTime()) &&
+                                (d.Discount.EndDate == null || d.Discount.EndDate >= DateTimeHelper.GetVietnamTime()) &&
+                                (d.Discount.MaxUsage == null || d.Discount.UsageCount == null || d.Discount.MaxUsage > d.Discount.UsageCount))
+                    .OrderByDescending(d => d.Discount.DiscountType == "Percentage"
+                        ? course.Price * d.Discount.DiscountValue / 100
+                        : d.Discount.DiscountValue)
+                    .FirstOrDefault();
+
+                return maxDiscount?.DiscountId;
             }
-
-            var maxDiscount = course.CourseDiscounts
-                .Where(d => d.Discount.IsActive &&
-                            (d.Discount.StartDate == null || d.Discount.StartDate <= DateTimeHelper.GetVietnamTime()) &&
-                            (d.Discount.EndDate == null || d.Discount.EndDate >= DateTimeHelper.GetVietnamTime()) &&
-                            (d.Discount.MaxUsage == null || d.Discount.UsageCount == null || d.Discount.MaxUsage > d.Discount.UsageCount))
-                .OrderByDescending(d => d.Discount.DiscountType == "Percentage"
-                    ? course.Price * d.Discount.DiscountValue / 100
-                    : d.Discount.DiscountValue)
-                .FirstOrDefault();
-
-            return maxDiscount?.DiscountId;
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the max discount ID: " + ex.Message);
+            }
         }
 
 
@@ -639,267 +704,609 @@ namespace EduTrailblaze.Services
             }
         }
 
-        public async Task<List<CourseRecommendation>> PredictHybridRecommendationsByRating(string userId)
+        public async Task<CourseSectionInformation> GetCourseDetailsById(int courseId)
         {
-            double alpha = 0.5; // Weight for collaborative filtering score
-            var mlContext = new MLContext();
-
-            // Load collaborative filtering data
-            var ratings = (await _reviewService.GetDbSetReview())
-                .Select(r => new UserCourseRating
-                {
-                    UserId = r.UserId,
-                    CourseId = r.Id,
-                    Rating = r.Rating
-                })
-                .ToList();
-
-            // Load data into IDataView
-            IDataView dataView = mlContext.Data.LoadFromEnumerable(ratings);
-
-            var pipeline = mlContext.Transforms.Conversion
-                .MapValueToKey(
-                    inputColumnName: nameof(UserCourseRating.UserId),
-                    outputColumnName: "UserIdKey")
-                .Append(mlContext.Transforms.Conversion.MapValueToKey(
-                    inputColumnName: nameof(UserCourseRating.CourseId),
-                    outputColumnName: "CourseIdKey"))
-                .Append(mlContext.Recommendation().Trainers.MatrixFactorization(
-                    labelColumnName: nameof(UserCourseRating.Rating),
-                    matrixColumnIndexColumnName: "UserIdKey",
-                    matrixRowIndexColumnName: "CourseIdKey"));
-
-            // Train the model
-            var model = pipeline.Fit(dataView);
-
-            // Create prediction engine
-            var predictionEngine = mlContext.Model.CreatePredictionEngine<UserCourseRating, RatingPrediction>(model);
-
-            // Prepare hybrid recommendations
-            var recommendations = new List<CourseRecommendation>();
-            var courseDbSet = await _courseRepository.GetDbSet();
-            var courses = await courseDbSet.Where(p => p.IsPublished).ToListAsync();
-            var courseVectors = await GetCourseFeatureVectors(courses);
-
-            foreach (var course in courses)
+            try
             {
-                // Collaborative Filtering Score
-                var collaborativePrediction = predictionEngine.Predict(new UserCourseRating
-                {
-                    UserId = userId,
-                    CourseId = course.Id
-                });
-                var collaborativeScore = float.IsNaN(collaborativePrediction.Score) ? 0 : collaborativePrediction.Score;
+                var course = await (await _courseRepository.GetDbSet())
+                                .Include(c => c.CourseLanguages)
+                                    .ThenInclude(cl => cl.Language)
+                                .Include(c => c.CourseTags)
+                                    .ThenInclude(ct => ct.Tag)
+                                .Include(c => c.Sections)
+                                .FirstOrDefaultAsync(c => c.Id == courseId);
 
-                // Content-Based Filtering Score
-                double contentScore = 0;
-                if (courseVectors.ContainsKey(course.Id))
+                if (course == null)
                 {
-                    foreach (var otherCourse in courses)
-                    {
-                        if (otherCourse.Id != course.Id)
-                        {
-                            var similarity = CalculateCosineSimilarity(
-                                courseVectors[course.Id],
-                                courseVectors[otherCourse.Id]);
-                            contentScore += similarity;
-                        }
-                    }
-                    contentScore /= courses.Count - 1; // Average similarity
+                    throw new ArgumentException("Invalid course ID");
                 }
 
-                // Hybrid Score
-                var hybridScore = alpha * collaborativeScore + (1 - alpha) * contentScore;
+                var supportedlanguages = course.CourseLanguages.Select(cl => cl.Language);
+                var tags = course.CourseTags.Select(cl => cl.Tag.Name).ToList();
+                var sections = course.Sections.ToList();
 
-                // Add to recommendations
-                recommendations.Add(new CourseRecommendation
+                if (course == null)
                 {
-                    CourseId = course.Id,
-                    Score = (decimal)hybridScore
-                });
-            }
+                    throw new ArgumentException("Invalid course ID");
+                }
 
-            // Sort by score descending
-            return recommendations.OrderByDescending(r => r.Score).ToList();
+                var courseDetails = _mapper.Map<CourseDetails>(course);
+
+                courseDetails.Skills = tags;
+                courseDetails.Languages = _mapper.Map<IEnumerable<SupportedLanguage>>(supportedlanguages);
+                courseDetails.Instructors = await InstructorInformation(courseId);
+                courseDetails.Review = await _reviewService.GetAverageRatingAndNumberOfRatings(courseId);
+                courseDetails.Enrollment = new EnrollmentInformation
+                {
+                    TotalEnrollments = await NumberOfEnrollments(courseId)
+                };
+
+                CourseSectionInformation coursePage = new CourseSectionInformation()
+                {
+                    CourseDetails = courseDetails,
+                    SectionDetails = _mapper.Map<List<SectionDetails>>(sections)
+                };
+
+                return coursePage;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the course details: " + ex.Message);
+            }
+        }
+
+        public async Task<List<CourseCardResponse>> GetPersonalItemRecommendation(string? userId)
+        {
+            try
+            {
+                var item = await PredictHybridRecommendationsV2(userId, 7, 10);
+
+                if (item == null)
+                {
+                    throw new Exception("No courses found.");
+                }
+
+                var courseIds = item.OrderByDescending(c => c.Score).Select(c => c.CourseId).ToList();
+
+                var courseCard = new List<CourseCardResponse>();
+
+                foreach (var courseId in courseIds)
+                {
+                    var course = await GetCourse(courseId);
+                    if (course == null)
+                    {
+                        throw new ArgumentException("Invalid course ID");
+                    }
+                    var discount = await DiscountInformationResponse(courseId);
+
+                    if (discount != null)
+                    {
+                        discount.CalculateDiscountAndPrice(course.Price);
+                    }
+
+                    var courseCardResponse = new CourseCardResponse
+                    {
+                        Course = _mapper.Map<CoursesResponse>(course),
+                        Review = await _reviewService.GetAverageRatingAndNumberOfRatings(courseId),
+                        Discount = discount,
+                        Instructors = await InstructorInformation(courseId),
+                        Enrollment = new EnrollmentInformation
+                        {
+                            TotalEnrollments = await NumberOfEnrollments(courseId)
+                        }
+                    };
+                    courseCard.Add(courseCardResponse);
+                }
+
+                return courseCard;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the course information: " + ex.Message);
+            }
+        }
+
+        public async Task<CoursePage> GetCoursePageInformation(int courseId)
+        {
+            try
+            {
+                var courseSectionInformation = await GetCourseDetailsById(courseId);
+                var recommendedCourses = await GetItemDetailsThatStudentsAlsoBought(courseId);
+                CoursePage coursePage = new CoursePage()
+                {
+                    CourseSectionInformation = courseSectionInformation,
+                    RecommendedCourses = recommendedCourses
+                };
+                return coursePage;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the course page information: " + ex.Message);
+            }
+        }
+
+        public async Task<List<CourseCardResponse>> GetItemDetailsThatStudentsAlsoBought(int courseId)
+        {
+            try
+            {
+                var courseCard = new List<CourseCardResponse>();
+                var courseRecommendationV2 = await GetItemsThatStudentsAlsoBought(courseId);
+
+                if (courseRecommendationV2 == null || courseRecommendationV2.Count == 0)
+                {
+                    throw new Exception("No courses found.");
+                }
+                var courseIds = courseRecommendationV2.OrderByDescending(c => c.Frequency).Take(10).Select(c => c.CourseId).ToList();
+
+                var courses = await (await _courseRepository.GetDbSet())
+                    .Where(c => courseIds.Contains(c.Id))
+                    .ToListAsync();
+
+                foreach (var course in courses)
+                {
+                    var discount = await DiscountInformationResponse(course.Id);
+
+                    if (discount != null)
+                    {
+                        discount.CalculateDiscountAndPrice(course.Price);
+                    }
+
+                    var courseCardResponse = new CourseCardResponse
+                    {
+                        Course = _mapper.Map<CoursesResponse>(course),
+                        Review = await _reviewService.GetAverageRatingAndNumberOfRatings(course.Id),
+                        Discount = discount,
+                        Instructors = await InstructorInformation(course.Id),
+                        Enrollment = new EnrollmentInformation
+                        {
+                            TotalEnrollments = await NumberOfEnrollments(course.Id)
+                        }
+                    };
+                    courseCard.Add(courseCardResponse);
+                }
+
+                return courseCard;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the course information: " + ex.Message);
+            }
+        }
+
+        public async Task<List<CourseRecommendationV2>> GetItemsThatStudentsAlsoBought(int courseId)
+        {
+            try
+            {
+                var orderDbSet = await _orderRepository.GetDbSet();
+
+                var orders = await orderDbSet
+                    .Include(o => o.OrderDetails)
+                    .Where(o => o.OrderDetails.Any(od => od.CourseId == courseId))
+                    .ToListAsync();
+
+                Dictionary<int, int> courseFrequency = new Dictionary<int, int>();
+
+                foreach (var order in orders)
+                {
+                    foreach (var orderDetail in order.OrderDetails)
+                    {
+                        if (orderDetail.CourseId != courseId)
+                        {
+                            if (courseFrequency.ContainsKey(orderDetail.CourseId))
+                            {
+                                courseFrequency[orderDetail.CourseId]++;
+                            }
+                            else
+                            {
+                                courseFrequency[orderDetail.CourseId] = 1;
+                            }
+                        }
+                    }
+                }
+
+                var courseRecommendations = new List<CourseRecommendationV2>();
+                foreach (var course in courseFrequency)
+                {
+                    courseRecommendations.Add(new CourseRecommendationV2
+                    {
+                        CourseId = course.Key,
+                        Frequency = course.Value
+                    });
+                }
+                return courseRecommendations;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the course information: " + ex.Message);
+            }
+        }
+
+        public async Task<List<CourseRecommendation>> PredictHybridRecommendationsByRating(string userId)
+        {
+            try
+            {
+                double alpha = 0.5; // Weight for collaborative filtering score
+                var mlContext = new MLContext();
+
+                // Load collaborative filtering data
+                var ratings = (await _reviewService.GetDbSetReview())
+                    .Select(r => new UserCourseRating
+                    {
+                        UserId = r.UserId,
+                        CourseId = r.Id,
+                        Rating = r.Rating
+                    })
+                    .ToList();
+
+                // Load data into IDataView
+                IDataView dataView = mlContext.Data.LoadFromEnumerable(ratings);
+
+                var pipeline = mlContext.Transforms.Conversion
+                    .MapValueToKey(
+                        inputColumnName: nameof(UserCourseRating.UserId),
+                        outputColumnName: "UserIdKey")
+                    .Append(mlContext.Transforms.Conversion.MapValueToKey(
+                        inputColumnName: nameof(UserCourseRating.CourseId),
+                        outputColumnName: "CourseIdKey"))
+                    .Append(mlContext.Recommendation().Trainers.MatrixFactorization(
+                        labelColumnName: nameof(UserCourseRating.Rating),
+                        matrixColumnIndexColumnName: "UserIdKey",
+                        matrixRowIndexColumnName: "CourseIdKey"));
+
+                // Train the model
+                var model = pipeline.Fit(dataView);
+
+                // Create prediction engine
+                var predictionEngine = mlContext.Model.CreatePredictionEngine<UserCourseRating, RatingPrediction>(model);
+
+                // Prepare hybrid recommendations
+                var recommendations = new List<CourseRecommendation>();
+                var courseDbSet = await _courseRepository.GetDbSet();
+                var courses = await courseDbSet.Where(p => p.IsPublished).ToListAsync();
+                var courseVectors = await GetCourseFeatureVectors(courses);
+
+                foreach (var course in courses)
+                {
+                    // Collaborative Filtering Score
+                    var collaborativePrediction = predictionEngine.Predict(new UserCourseRating
+                    {
+                        UserId = userId,
+                        CourseId = course.Id
+                    });
+                    var collaborativeScore = float.IsNaN(collaborativePrediction.Score) ? 0 : collaborativePrediction.Score;
+
+                    // Content-Based Filtering Score
+                    double contentScore = 0;
+                    if (courseVectors.ContainsKey(course.Id))
+                    {
+                        foreach (var otherCourse in courses)
+                        {
+                            if (otherCourse.Id != course.Id)
+                            {
+                                var similarity = CalculateCosineSimilarity(
+                                    courseVectors[course.Id],
+                                    courseVectors[otherCourse.Id]);
+                                contentScore += similarity;
+                            }
+                        }
+                        contentScore /= courses.Count - 1; // Average similarity
+                    }
+
+                    // Hybrid Score
+                    var hybridScore = alpha * collaborativeScore + (1 - alpha) * contentScore;
+
+                    // Add to recommendations
+                    recommendations.Add(new CourseRecommendation
+                    {
+                        CourseId = course.Id,
+                        Score = (decimal)hybridScore
+                    });
+                }
+
+                // Sort by score descending
+                return recommendations.OrderByDescending(r => r.Score).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while predicting hybrid recommendations: " + ex.Message);
+            }
         }
 
         public async Task<List<CourseRecommendation>> PredictRecommendationsByPersonalLatestOrder(string userId)
         {
-            var orders = await _orderRepository.GetDbSet();
-            var latestOrder = await orders
-                .Where(o => o.UserId == userId)
-                .OrderByDescending(o => o.OrderDate)
-                .FirstOrDefaultAsync();
-
-            if (latestOrder == null)
+            try
             {
-                return new List<CourseRecommendation>();
-            }
+                var orders = await _orderRepository.GetDbSet();
+                var latestOrder = await orders
+                    .Where(o => o.UserId == userId)
+                    .OrderByDescending(o => o.OrderDate)
+                    .FirstOrDefaultAsync();
 
-            var orderDetails = await _orderDetailRepository.GetDbSet();
-            var orderDetailsInLatestOrder = await orderDetails
-                .Where(od => od.OrderId == latestOrder.Id)
-                .ToListAsync();
-            var courseIdsInLatestOrder = orderDetailsInLatestOrder
-                .Select(od => od.CourseId)
-                .ToList();
-
-            // Prepare hybrid recommendations
-            var recommendations = new List<CourseRecommendation>();
-            var courseDbSet = await _courseRepository.GetDbSet();
-            var courses = await courseDbSet.Where(p => p.IsPublished).ToListAsync();
-            var filteredCourses = courses
-                .Where(p => !courseIdsInLatestOrder.Contains(p.Id))
-                .ToList();
-
-            var courseVectors = await GetCourseFeatureVectors(courses);
-
-            foreach (var course in filteredCourses)
-            {
-                double contentScore = 0;
-                if (courseVectors.ContainsKey(course.Id))
+                if (latestOrder == null)
                 {
-                    foreach (var courseId in courseIdsInLatestOrder)
-                    {
-                        var similarity = CalculateCosineSimilarity(
-                            courseVectors[course.Id],
-                            courseVectors[courseId]);
-                        contentScore += similarity;
-
-                    }
-                    contentScore /= courses.Count - 1;
+                    return new List<CourseRecommendation>();
                 }
 
-                // Add to recommendations
-                recommendations.Add(new CourseRecommendation
-                {
-                    CourseId = course.Id,
-                    Score = (decimal)contentScore
-                });
-            }
+                var orderDetails = await _orderDetailRepository.GetDbSet();
+                var orderDetailsInLatestOrder = await orderDetails
+                    .Where(od => od.OrderId == latestOrder.Id)
+                    .ToListAsync();
+                var courseIdsInLatestOrder = orderDetailsInLatestOrder
+                    .Select(od => od.CourseId)
+                    .ToList();
 
-            // Sort by score descending
-            return recommendations.OrderByDescending(r => r.Score).ToList();
+                // Prepare hybrid recommendations
+                var recommendations = new List<CourseRecommendation>();
+                var courseDbSet = await _courseRepository.GetDbSet();
+                var courses = await courseDbSet.Where(p => p.IsPublished).ToListAsync();
+                var filteredCourses = courses
+                    .Where(p => !courseIdsInLatestOrder.Contains(p.Id))
+                    .ToList();
+
+                var courseVectors = await GetCourseFeatureVectors(courses);
+
+                foreach (var course in filteredCourses)
+                {
+                    double contentScore = 0;
+                    if (courseVectors.ContainsKey(course.Id))
+                    {
+                        foreach (var courseId in courseIdsInLatestOrder)
+                        {
+                            var similarity = CalculateCosineSimilarity(
+                                courseVectors[course.Id],
+                                courseVectors[courseId]);
+                            contentScore += similarity;
+
+                        }
+                        contentScore /= courses.Count - 1;
+                    }
+
+                    // Add to recommendations
+                    recommendations.Add(new CourseRecommendation
+                    {
+                        CourseId = course.Id,
+                        Score = (decimal)contentScore
+                    });
+                }
+
+                // Sort by score descending
+                return recommendations.OrderByDescending(r => r.Score).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while predicting recommendations by personal latest order: " + ex.Message);
+            }
         }
 
         public async Task<List<string>> GetTrendingCourseInNumberOfPrviousDays(int days, int numberOfCourses)
         {
-            var orders = await _orderRepository.GetDbSet();
-            var orderDetails = await _orderDetailRepository.GetDbSet();
-            var courses = await _courseRepository.GetDbSet();
-            var startDate = DateTimeHelper.GetVietnamTime().AddDays(-days);
-            var endDate = DateTimeHelper.GetVietnamTime();
-            var trendingCourses = await orders
-                .Where(o => o.OrderDate >= startDate && o.OrderDate <= endDate)
-                .Join(orderDetails, o => o.Id, od => od.OrderId, (o, od) => od)
-                .GroupBy(od => od.CourseId)
-                .OrderByDescending(g => g.Count())
-                .Select(g => g.Key)
-                .Take(numberOfCourses)
-                .ToListAsync();
-            return await courses
-                .Where(c => trendingCourses.Contains(c.Id))
-                .Select(c => c.Title)
-                .ToListAsync();
+            try
+            {
+                var orders = await _orderRepository.GetDbSet();
+                var orderDetails = await _orderDetailRepository.GetDbSet();
+                var courses = await _courseRepository.GetDbSet();
+                var startDate = DateTimeHelper.GetVietnamTime().AddDays(-days);
+                var endDate = DateTimeHelper.GetVietnamTime();
+                var trendingCourses = await orders
+                    .Where(o => o.OrderDate >= startDate && o.OrderDate <= endDate)
+                    .Join(orderDetails, o => o.Id, od => od.OrderId, (o, od) => od)
+                    .GroupBy(od => od.CourseId)
+                    .OrderByDescending(g => g.Count())
+                    .Select(g => g.Key)
+                    .Take(numberOfCourses)
+                    .ToListAsync();
+                return await courses
+                    .Where(c => trendingCourses.Contains(c.Id))
+                    .Select(c => c.Title)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting trending courses: " + ex.Message);
+            }
         }
 
         public async Task<List<CourseRecommendation>> PredictHybridRecommendations(string userId, int days, int numberOfCourses)
         {
-            double weightCF = 0.5; // Collaborative Filtering weight
-            double weightCBF = 0.3; // Content-Based Filtering weight
-            double weightTrending = 0.2; // Trending weight
-
-            // Get CF Recommendations
-            var collaborativeRecommendations = await PredictHybridRecommendationsByRating(userId);
-
-            // Get CBF Recommendations from the latest order
-            var contentBasedRecommendations = await PredictRecommendationsByPersonalLatestOrder(userId);
-
-            // Get Trending Courses
-            var trendingCourseTitles = await GetTrendingCourseInNumberOfPrviousDays(days, numberOfCourses);
-            var trendingRecommendations = (await _courseRepository.GetDbSet())
-                .Where(c => trendingCourseTitles.Contains(c.Title))
-                .Select(c => new CourseRecommendation
-                {
-                    CourseId = c.Id,
-                    Score = 1 // Assign equal score for all trending courses
-                })
-                .ToList();
-
-            // Merge scores
-            var recommendationDictionary = new Dictionary<int, double>();
-
-            void AddOrUpdateScore(int courseId, double score, double weight)
+            try
             {
-                if (!recommendationDictionary.ContainsKey(courseId))
-                    recommendationDictionary[courseId] = 0;
+                double weightCF = 0.3; // Collaborative Filtering weight
+                double weightCBF = 0.5; // Content-Based Filtering weight
+                double weightTrending = 0.2; // Trending weight
 
-                recommendationDictionary[courseId] += score * weight;
-            }
+                // Get CF Recommendations
+                var collaborativeRecommendations = await PredictHybridRecommendationsByRating(userId);
 
-            // Add CF scores
-            foreach (var rec in collaborativeRecommendations)
-                AddOrUpdateScore(rec.CourseId, (double)rec.Score, weightCF);
+                // Get CBF Recommendations from the latest order
+                var contentBasedRecommendations = await PredictRecommendationsByPersonalLatestOrder(userId);
 
-            // Add CBF scores
-            foreach (var rec in contentBasedRecommendations)
-                AddOrUpdateScore(rec.CourseId, (double)rec.Score, weightCBF);
+                // Get Trending Courses
+                var trendingCourseTitles = await GetTrendingCourseInNumberOfPrviousDays(days, numberOfCourses);
+                var trendingRecommendations = (await _courseRepository.GetDbSet())
+                    .Where(c => trendingCourseTitles.Contains(c.Title))
+                    .Select(c => new CourseRecommendation
+                    {
+                        CourseId = c.Id,
+                        Score = 1 // Assign equal score for all trending courses
+                    })
+                    .ToList();
 
-            // Add Trending scores
-            foreach (var rec in trendingRecommendations)
-                AddOrUpdateScore(rec.CourseId, (double)rec.Score, weightTrending);
+                // Merge scores
+                var recommendationDictionary = new Dictionary<int, double>();
 
-            // Prepare final recommendations
-            var finalRecommendations = recommendationDictionary
-                .Select(kvp => new CourseRecommendation
+                void AddOrUpdateScore(int courseId, double score, double weight)
                 {
-                    CourseId = kvp.Key,
-                    Score = (decimal)kvp.Value
-                })
-                .OrderByDescending(r => r.Score)
-                .Take(numberOfCourses) // Limit to requested number of courses
-                .ToList();
+                    if (!recommendationDictionary.ContainsKey(courseId))
+                        recommendationDictionary[courseId] = 0;
 
-            return finalRecommendations;
+                    recommendationDictionary[courseId] += score * weight;
+                }
+
+                // Add CF scores
+                foreach (var rec in collaborativeRecommendations)
+                    AddOrUpdateScore(rec.CourseId, (double)rec.Score, weightCF);
+
+                // Add CBF scores
+                foreach (var rec in contentBasedRecommendations)
+                    AddOrUpdateScore(rec.CourseId, (double)rec.Score, weightCBF);
+
+                // Add Trending scores
+                foreach (var rec in trendingRecommendations)
+                    AddOrUpdateScore(rec.CourseId, (double)rec.Score, weightTrending);
+
+                // Prepare final recommendations
+                var finalRecommendations = recommendationDictionary
+                    .Select(kvp => new CourseRecommendation
+                    {
+                        CourseId = kvp.Key,
+                        Score = (decimal)kvp.Value
+                    })
+                    .OrderByDescending(r => r.Score)
+                    .Take(numberOfCourses) // Limit to requested number of courses
+                    .ToList();
+
+                return finalRecommendations;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while predicting hybrid recommendations: " + ex.Message);
+            }
+        }
+
+        public async Task<List<CourseRecommendation>> PredictHybridRecommendationsV2(string? userId, int days, int numberOfCourses)
+        {
+            try
+            {
+                // Determine user type (cold or active)
+                var isGuestOrColdUser = userId.IsNullOrEmpty() || await IsColdUser(userId);
+
+                // Set weights dynamically
+                double weightCF = isGuestOrColdUser ? 0.0 : 0.3;
+                double weightCBF = isGuestOrColdUser ? 0.2 : 0.5;
+                double weightTrending = isGuestOrColdUser ? 0.8 : 0.2;
+
+                // Get recommendations
+                var collaborativeRecommendations = isGuestOrColdUser
+                    ? new List<CourseRecommendation>()
+                    : await PredictHybridRecommendationsByRating(userId);
+
+                var contentBasedRecommendations = isGuestOrColdUser
+                    ? new List<CourseRecommendation>()
+                    : await PredictRecommendationsByPersonalLatestOrder(userId);
+
+                var trendingCourseTitles = await GetTrendingCourseInNumberOfPrviousDays(days, numberOfCourses);
+                var trendingRecommendations = (await _courseRepository.GetDbSet())
+                    .Where(c => trendingCourseTitles.Contains(c.Title))
+                    .Select(c => new CourseRecommendation
+                    {
+                        CourseId = c.Id,
+                        Score = 1 // Assign equal score for all trending courses
+                    })
+                    .ToList();
+
+                // Merge scores
+                var recommendationDictionary = new Dictionary<int, double>();
+
+                void AddOrUpdateScore(int courseId, double score, double weight)
+                {
+                    if (!recommendationDictionary.ContainsKey(courseId))
+                        recommendationDictionary[courseId] = 0;
+
+                    recommendationDictionary[courseId] += score * weight;
+                }
+
+                foreach (var rec in collaborativeRecommendations)
+                    AddOrUpdateScore(rec.CourseId, (double)rec.Score, weightCF);
+
+                foreach (var rec in contentBasedRecommendations)
+                    AddOrUpdateScore(rec.CourseId, (double)rec.Score, weightCBF);
+
+                foreach (var rec in trendingRecommendations)
+                    AddOrUpdateScore(rec.CourseId, (double)rec.Score, weightTrending);
+
+                // Prepare final recommendations
+                var finalRecommendations = recommendationDictionary
+                    .Select(kvp => new CourseRecommendation
+                    {
+                        CourseId = kvp.Key,
+                        Score = (decimal)kvp.Value
+                    })
+                    .OrderByDescending(r => r.Score)
+                    .Take(numberOfCourses)
+                    .ToList();
+
+                return finalRecommendations;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred while predicting hybrid recommendations: {ex.Message}", ex);
+            }
+        }
+
+        private async Task<bool> IsColdUser(string userId)
+        {
+            try
+            {
+                var orders = await _orderRepository.GetDbSet();
+                var orderDetails = await _orderDetailRepository.GetDbSet();
+                var courses = await _courseRepository.GetDbSet();
+                var userOrders = await orders
+                    .Where(o => o.UserId == userId)
+                    .ToListAsync();
+                var userCourseIds = await orderDetails
+                    .Where(od => userOrders.Any(o => o.Id == od.OrderId))
+                    .Select(od => od.CourseId)
+                    .ToListAsync();
+                var allCourseIds = await courses
+                    .Select(c => c.Id)
+                    .ToListAsync();
+                return userCourseIds.Count < allCourseIds.Count / 2;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while checking if the user is cold: " + ex.Message);
+            }
         }
 
         private async Task<Dictionary<int, float[]>> GetCourseFeatureVectors(IEnumerable<Course> courses)
         {
-            // Step 1: Get a dictionary of course IDs and their associated languages
-            var courseLanguages = (await _courseLanguageRepository.GetDbSet())
-                                          .GroupBy(cl => cl.Id)
-                                          .ToDictionary(
-                                              g => g.Key,
-                                              g => g.Select(cl => cl.LanguageId).ToHashSet()
-                                          );
-
-            // Step 2: Get a dictionary of course IDs and their associated tags (optional if needed)
-            var courseTags = (await _courseTagRepository.GetDbSet())
-                                    .GroupBy(ct => ct.Id)
-                                    .ToDictionary(
-                                        g => g.Key,
-                                        g => g.Select(ct => ct.TagId).ToHashSet()
-                                    );
-
-            // Step 3: Build the feature vectors
-            return courses.ToDictionary(course => course.Id, course =>
+            try
             {
-                // Check if this course shares at least one tag with any other course
-                var hasSharedTags = courses.Any(otherCourse =>
-                    otherCourse.Id != course.Id &&
-                    courseTags.ContainsKey(course.Id) &&
-                    courseTags.ContainsKey(otherCourse.Id) &&
-                    courseTags[course.Id].Overlaps(courseTags[otherCourse.Id]));
+                // Step 1: Get a dictionary of course IDs and their associated languages
+                var courseLanguages = (await _courseLanguageRepository.GetDbSet())
+                                              .GroupBy(cl => cl.Id)
+                                              .ToDictionary(
+                                                  g => g.Key,
+                                                  g => g.Select(cl => cl.LanguageId).ToHashSet()
+                                              );
 
-                // Check if this course shares at least one language with any other course
-                var hasSharedLanguages = courses.Any(otherCourse =>
-                    otherCourse.Id != course.Id &&
-                    courseLanguages.ContainsKey(course.Id) &&
-                    courseLanguages.ContainsKey(otherCourse.Id) &&
-                    courseLanguages[course.Id].Overlaps(courseLanguages[otherCourse.Id]));
+                // Step 2: Get a dictionary of course IDs and their associated tags (optional if needed)
+                var courseTags = (await _courseTagRepository.GetDbSet())
+                                        .GroupBy(ct => ct.Id)
+                                        .ToDictionary(
+                                            g => g.Key,
+                                            g => g.Select(ct => ct.TagId).ToHashSet()
+                                        );
 
-                return new float[]
+                // Step 3: Build the feature vectors
+                return courses.ToDictionary(course => course.Id, course =>
                 {
+                    // Check if this course shares at least one tag with any other course
+                    var hasSharedTags = courses.Any(otherCourse =>
+                        otherCourse.Id != course.Id &&
+                        courseTags.ContainsKey(course.Id) &&
+                        courseTags.ContainsKey(otherCourse.Id) &&
+                        courseTags[course.Id].Overlaps(courseTags[otherCourse.Id]));
+
+                    // Check if this course shares at least one language with any other course
+                    var hasSharedLanguages = courses.Any(otherCourse =>
+                        otherCourse.Id != course.Id &&
+                        courseLanguages.ContainsKey(course.Id) &&
+                        courseLanguages.ContainsKey(otherCourse.Id) &&
+                        courseLanguages[course.Id].Overlaps(courseLanguages[otherCourse.Id]));
+
+                    return new float[]
+                    {
                     (float)course.Price / 1000, // Normalize price to a scale
                     (float)course.Duration / 100, // Normalize duration
                     course.DifficultyLevel == "Beginner" ? 1 : 0, // Binary representation of difficulty levels
@@ -908,16 +1315,28 @@ namespace EduTrailblaze.Services
                     (float)course.EstimatedCompletionTime / 100, // Normalize estimated completion time
                     hasSharedTags ? 1 : 0, // 1 if shares at least one tag, otherwise 0
                     hasSharedLanguages ? 1 : 0 // 1 if shares at least one language, otherwise 0
-                };
-            });
+                    };
+                });
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting course feature vectors: " + ex.Message);
+            }
         }
 
         private static double CalculateCosineSimilarity(float[] vectorA, float[] vectorB)
         {
-            double dotCourse = vectorA.Zip(vectorB, (a, b) => a * b).Sum();
-            double magnitudeA = Math.Sqrt(vectorA.Sum(a => a * a));
-            double magnitudeB = Math.Sqrt(vectorB.Sum(b => b * b));
-            return dotCourse / (magnitudeA * magnitudeB);
+            try
+            {
+                double dotCourse = vectorA.Zip(vectorB, (a, b) => a * b).Sum();
+                double magnitudeA = Math.Sqrt(vectorA.Sum(a => a * a));
+                double magnitudeB = Math.Sqrt(vectorB.Sum(b => b * b));
+                return dotCourse / (magnitudeA * magnitudeB);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while calculating cosine similarity: " + ex.Message);
+            }
         }
     }
 }

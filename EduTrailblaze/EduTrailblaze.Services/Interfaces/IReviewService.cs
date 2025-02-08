@@ -21,7 +21,7 @@ namespace EduTrailblaze.Services.Interfaces
 
         Task DeleteReview(int review);
 
-        Task<CourseReviewInformation> GetAverageRatingAndNumberOfRatings(int courseId);
+        Task<ReviewInformation> GetAverageRatingAndNumberOfRatings(int courseId);
 
         Task<IQueryable<Review>> GetDbSetReview();
     }

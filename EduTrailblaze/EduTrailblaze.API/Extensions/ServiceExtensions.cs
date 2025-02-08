@@ -149,6 +149,7 @@ namespace EduTrailblaze.API.Extensions
             services.AddScoped<ICourseInstructorService, CourseInstructorService>();
             services.AddScoped<ICourseLanguageService, CourseLanguageService>();
             services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped<ICourseClassService, CourseClassService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<ICourseTagService, CourseTagService>();
             services.AddScoped<IDiscountService, DiscountService>();

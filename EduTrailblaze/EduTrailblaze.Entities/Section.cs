@@ -15,6 +15,11 @@ namespace EduTrailblaze.Entities
         [Required, StringLength(int.MaxValue)]
         public string Description { get; set; }
 
+        [Required]
+        public int NumberOfLectures { get; set; }
+
+        public TimeSpan? Duration { get; set; }
+
 
         // Navigation properties
         public virtual Course Course { get; set; }

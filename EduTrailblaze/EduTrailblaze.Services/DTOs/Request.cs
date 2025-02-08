@@ -80,6 +80,8 @@ namespace EduTrailblaze.Services.DTOs
 
         public string ImageURL { get; set; }
 
+        public string IntroURL { get; set; }
+
         public string Description { get; set; }
 
         public decimal Price { get; set; }
@@ -89,6 +91,8 @@ namespace EduTrailblaze.Services.DTOs
         public string CreatedBy { get; set; }
 
         public string? Prerequisites { get; set; }
+
+        public List<string> LearningOutcomes { get; set; }
     }
 
     public class CreateCourseRequestValidator : AbstractValidator<CreateCourseRequest>
@@ -102,6 +106,10 @@ namespace EduTrailblaze.Services.DTOs
             RuleFor(x => x.ImageURL)
                 .NotEmpty().WithMessage("ImageURL is required")
                 .Must(uri => Uri.IsWellFormedUriString(uri, UriKind.Absolute)).WithMessage("ImageURL must be a valid URL");
+
+            RuleFor(x => x.IntroURL)
+                .NotEmpty().WithMessage("IntroURL is required")
+                .Must(uri => Uri.IsWellFormedUriString(uri, UriKind.Absolute)).WithMessage("IntroURL must be a valid URL");
 
             RuleFor(x => x.Description)
                 .NotEmpty().WithMessage("Description is required");
@@ -120,6 +128,9 @@ namespace EduTrailblaze.Services.DTOs
             RuleFor(x => x.Prerequisites)
                 .MaximumLength(1000).WithMessage("Prerequisites cannot be longer than 1000 characters")
                 .When(x => !string.IsNullOrEmpty(x.Prerequisites));
+
+            RuleFor(x => x.LearningOutcomes)
+                .NotEmpty().WithMessage("LearningOutcomes is required");
         }
     }
 
@@ -131,13 +142,17 @@ namespace EduTrailblaze.Services.DTOs
 
         public string ImageURL { get; set; }
 
+        public string IntroURL { get; set; }
+
         public string Description { get; set; }
 
         public decimal Price { get; set; }
 
         public string DifficultyLevel { get; set; } // Beginner, Intermediate, Advanced
 
-        public string Prerequisites { get; set; }
+        public string? Prerequisites { get; set; }
+
+        public List<string> LearningOutcomes { get; set; }
 
         public string UpdatedBy { get; set; }
 
@@ -162,6 +177,10 @@ namespace EduTrailblaze.Services.DTOs
                 .NotEmpty().WithMessage("ImageURL is required")
                 .Must(uri => Uri.IsWellFormedUriString(uri, UriKind.Absolute)).WithMessage("ImageURL must be a valid URL");
 
+            RuleFor(x => x.IntroURL)
+                .NotEmpty().WithMessage("IntroURL is required")
+                .Must(uri => Uri.IsWellFormedUriString(uri, UriKind.Absolute)).WithMessage("IntroURL must be a valid URL");
+
             RuleFor(x => x.Description)
                 .NotEmpty().WithMessage("Description is required");
 
@@ -179,6 +198,171 @@ namespace EduTrailblaze.Services.DTOs
             RuleFor(x => x.Prerequisites)
                 .MaximumLength(1000).WithMessage("Prerequisites cannot be longer than 1000 characters")
                 .When(x => !string.IsNullOrEmpty(x.Prerequisites));
+
+            RuleFor(x => x.LearningOutcomes)
+                .NotEmpty().WithMessage("LearningOutcomes is required");
+        }
+    }
+
+    public class CreateCourseClassRequest
+    {
+        public int CourseId { get; set; }
+
+        public string Title { get; set; }
+
+        public string ImageURL { get; set; }
+
+        public string IntroURL { get; set; }
+
+        public string Description { get; set; }
+
+        public decimal Price { get; set; }
+
+        public int Duration { get; set; } = 0;
+
+        public string DifficultyLevel { get; set; } // Beginner, Intermediate, Advanced
+
+        public List<string> LearningOutcomes { get; set; }
+
+        public decimal EstimatedCompletionTime { get; set; }
+
+        public string? Prerequisites { get; set; }
+
+        public DateTime StartDate { get; set; }
+
+        public DateTime EndDate { get; set; }
+    }
+
+    public class CreateCourseClassRequestValidator : AbstractValidator<CreateCourseClassRequest>
+    {
+        public CreateCourseClassRequestValidator()
+        {
+            RuleFor(x => x.CourseId)
+                .NotEmpty().WithMessage("CourseId is required");
+
+            RuleFor(x => x.Title)
+             .NotEmpty().WithMessage("Title is required")
+             .MaximumLength(255).WithMessage("Title cannot be longer than 255 characters");
+
+            RuleFor(x => x.ImageURL)
+                .NotEmpty().WithMessage("ImageURL is required")
+                .Must(uri => Uri.IsWellFormedUriString(uri, UriKind.Absolute)).WithMessage("ImageURL must be a valid URL");
+
+            RuleFor(x => x.IntroURL)
+                .NotEmpty().WithMessage("IntroURL is required")
+                .Must(uri => Uri.IsWellFormedUriString(uri, UriKind.Absolute)).WithMessage("IntroURL must be a valid URL");
+
+            RuleFor(x => x.Description)
+                .NotEmpty().WithMessage("Description is required");
+
+            RuleFor(x => x.Price)
+                .GreaterThanOrEqualTo(0).WithMessage("Price must be greater than or equal to 0");
+
+            RuleFor(x => x.Duration)
+                .GreaterThanOrEqualTo(0).WithMessage("Duration must be greater than or equal to 0");
+
+            RuleFor(x => x.DifficultyLevel)
+                .NotEmpty().WithMessage("DifficultyLevel is required")
+                .Must(level => new[] { "Beginner", "Intermediate", "Advanced" }.Contains(level))
+                .WithMessage("DifficultyLevel must be Beginner, Intermediate, or Advanced");
+
+            RuleFor(x => x.Prerequisites)
+                .MaximumLength(1000).WithMessage("Prerequisites cannot be longer than 1000 characters")
+                .When(x => !string.IsNullOrEmpty(x.Prerequisites));
+
+            RuleFor(x => x.LearningOutcomes)
+                .NotEmpty().WithMessage("LearningOutcomes is required");
+
+            RuleFor(x => x.EstimatedCompletionTime)
+                .GreaterThanOrEqualTo(0).WithMessage("EstimatedCompletionTime must be greater than or equal to 0");
+
+            RuleFor(x => x.StartDate)
+                .GreaterThan(DateTimeHelper.GetVietnamTime()).WithMessage("StartDate must be greater than the current date");
+
+            RuleFor(x => x.EndDate)
+                .GreaterThan(x => x.StartDate).WithMessage("EndDate must be greater than StartDate");
+        }
+    }
+
+    public class UpdateCourseClassRequest
+    {
+        public int Id { get; set; }
+
+        public int CourseId { get; set; }
+
+        public string Title { get; set; }
+
+        public string ImageURL { get; set; }
+
+        public string IntroURL { get; set; }
+
+        public string Description { get; set; }
+
+        public decimal Price { get; set; }
+
+        public int Duration { get; set; } = 0;
+
+        public string DifficultyLevel { get; set; } // Beginner, Intermediate, Advanced
+
+        public List<string> LearningOutcomes { get; set; }
+
+        public decimal EstimatedCompletionTime { get; set; }
+
+        public string? Prerequisites { get; set; }
+
+        public DateTime StartDate { get; set; }
+
+        public DateTime EndDate { get; set; }
+    }
+
+    public class UpdateCourseClassRequestValidator : AbstractValidator<UpdateCourseClassRequest>
+    {
+        public UpdateCourseClassRequestValidator()
+        {
+            RuleFor(x => x.CourseId)
+                .NotEmpty().WithMessage("CourseId is required");
+
+            RuleFor(x => x.Title)
+             .NotEmpty().WithMessage("Title is required")
+             .MaximumLength(255).WithMessage("Title cannot be longer than 255 characters");
+
+            RuleFor(x => x.ImageURL)
+                .NotEmpty().WithMessage("ImageURL is required")
+                .Must(uri => Uri.IsWellFormedUriString(uri, UriKind.Absolute)).WithMessage("ImageURL must be a valid URL");
+
+            RuleFor(x => x.IntroURL)
+                .NotEmpty().WithMessage("IntroURL is required")
+                .Must(uri => Uri.IsWellFormedUriString(uri, UriKind.Absolute)).WithMessage("IntroURL must be a valid URL");
+
+            RuleFor(x => x.Description)
+                .NotEmpty().WithMessage("Description is required");
+
+            RuleFor(x => x.Price)
+                .GreaterThanOrEqualTo(0).WithMessage("Price must be greater than or equal to 0");
+
+            RuleFor(x => x.Duration)
+                .GreaterThanOrEqualTo(0).WithMessage("Duration must be greater than or equal to 0");
+
+            RuleFor(x => x.DifficultyLevel)
+                .NotEmpty().WithMessage("DifficultyLevel is required")
+                .Must(level => new[] { "Beginner", "Intermediate", "Advanced" }.Contains(level))
+                .WithMessage("DifficultyLevel must be Beginner, Intermediate, or Advanced");
+
+            RuleFor(x => x.Prerequisites)
+                .MaximumLength(1000).WithMessage("Prerequisites cannot be longer than 1000 characters")
+                .When(x => !string.IsNullOrEmpty(x.Prerequisites));
+
+            RuleFor(x => x.LearningOutcomes)
+                .NotEmpty().WithMessage("LearningOutcomes is required");
+
+            RuleFor(x => x.EstimatedCompletionTime)
+                .GreaterThanOrEqualTo(0).WithMessage("EstimatedCompletionTime must be greater than or equal to 0");
+
+            RuleFor(x => x.StartDate)
+                .GreaterThan(DateTimeHelper.GetVietnamTime()).WithMessage("StartDate must be greater than the current date");
+
+            RuleFor(x => x.EndDate)
+                .GreaterThan(x => x.StartDate).WithMessage("EndDate must be greater than StartDate");
         }
     }
 

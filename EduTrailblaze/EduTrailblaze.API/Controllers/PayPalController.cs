@@ -1,5 +1,4 @@
-﻿using EduTrailblaze.Services.DTOs;
-using EduTrailblaze.Services.Interfaces;
+﻿using EduTrailblaze.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EduTrailblaze.API.Controllers
@@ -15,34 +14,32 @@ namespace EduTrailblaze.API.Controllers
             _payPalService = payPalService;
         }
 
-        //[HttpGet("payment-url")]
-        //public IActionResult GetPaymentUrl(decimal amount, int orderId, int paymentId)
-        //{
-        //    try
-        //    {
-        //        string paymentUrl = _payPalService.CreatePaymentUrl(amount, orderId, paymentId);
-        //        return Ok(paymentUrl);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(ex.Message);
-        //    }
-        //}
+        [HttpGet("payment-url")]
+        public async Task<IActionResult> GetPaymentUrl(decimal amount, int orderId, int paymentId)
+        {
+            try
+            {
+                string paymentUrl = await _payPalService.CreatePaymentUrl(amount, orderId, paymentId);
+                return Ok(paymentUrl);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
-        //[HttpPost("validate")]
-        //public IActionResult ValidatePaymentResponse(string paymentId, string payerId)
-        //{
-        //    try
-        //    {
-               
-        //         var payment = _payPalService.ExecutePayment(paymentId, payerId);
-        //         Ok(payment);
-        //        Ok();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(ex.Message);
-        //    }
-        //}
+        [HttpGet("validate")]
+        public async Task<IActionResult> ValidatePaymentResponse(string paymentId, string token, string payerId)
+        {
+            try
+            {
+                var payment = await _payPalService.ExecutePayment(paymentId, token, payerId);
+                return Ok(payment);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

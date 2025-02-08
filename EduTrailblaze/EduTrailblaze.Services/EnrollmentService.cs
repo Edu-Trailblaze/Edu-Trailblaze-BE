@@ -78,7 +78,7 @@ namespace EduTrailblaze.Services
             try
             {
                 var enrollments = await _enrollmentRepository.GetAllAsync();
-                return enrollments.Count(e => e.CourseId == courseId);
+                return enrollments.Count(e => e.Id == courseId);
             }
             catch (Exception ex)
             {
