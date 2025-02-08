@@ -46,5 +46,19 @@ namespace EduTrailblaze.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> AddUserProfile([FromBody] CreateUserProfileRequest userProfile)
+        {
+            try
+            {
+                await _userProfileService.AddUserProfile(userProfile);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }
