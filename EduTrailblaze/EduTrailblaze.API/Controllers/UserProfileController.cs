@@ -15,6 +15,24 @@ namespace EduTrailblaze.API.Controllers
             _userProfileService = userProfileService;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetUserProfiles()
+        {
+            try
+            {
+                var userProfile = await _userProfileService.GetUserProfiles();
+                if (userProfile == null)
+                {
+                    return NotFound();
+                }
+                return Ok(userProfile);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+        
         [HttpGet("{userProfileId}")]
         public async Task<IActionResult> GetUserProfile(string userProfileId)
         {

@@ -1,7 +1,6 @@
 using EduTrailblaze.API.Extensions;
 using EduTrailblaze.API.Logging;
 using EduTrailblaze.Repositories;
-using Microsoft.ApplicationInsights.Extensibility;
 using Serilog;
 
 
@@ -15,15 +14,15 @@ namespace EduTrailblaze.API
             var builder = WebApplication.CreateBuilder(args);
 
             Log.Information("Start API");
-    //        Log.Logger = new LoggerConfiguration()
-    //.WriteTo.ApplicationInsights(TelemetryConfiguration.Active, TelemetryConverter.Traces)
-    //.CreateLogger();
-    //var log = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration);
-    //        builder.Logging.AddSerilog();
-    //        builder.Host.UseSerilog((ctx,conf) =>
-    //        {
-    //            conf.ReadFrom.Configuration(ctx.Configuration);
-    //        });
+            //        Log.Logger = new LoggerConfiguration()
+            //.WriteTo.ApplicationInsights(TelemetryConfiguration.Active, TelemetryConverter.Traces)
+            //.CreateLogger();
+            //var log = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration);
+            //        builder.Logging.AddSerilog();
+            //        builder.Host.UseSerilog((ctx,conf) =>
+            //        {
+            //            conf.ReadFrom.Configuration(ctx.Configuration);
+            //        });
             try
             {
                 builder.Host.UseSerilog(SeriLog.Configure);

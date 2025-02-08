@@ -12,7 +12,6 @@ using FluentValidation.AspNetCore;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -170,6 +169,7 @@ namespace EduTrailblaze.API.Extensions
             services.AddScoped<IReviewService, ReviewService>();
             services.AddScoped<ISectionService, SectionService>();
             services.AddScoped<ITagService, TagService>();
+            services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserCertificateService, UserCertificateService>();
             services.AddScoped<IUserProfileService, UserProfileService>();
             services.AddScoped<IUserProgressService, UserProgressService>();

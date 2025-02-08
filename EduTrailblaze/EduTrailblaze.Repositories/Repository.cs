@@ -1,5 +1,4 @@
 ﻿using EduTrailblaze.API.Domain;
-using EduTrailblaze.Entities;
 using EduTrailblaze.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -62,7 +61,7 @@ namespace EduTrailblaze.Repositories
         {
             try
             {
-                
+
                 await _dbSet.AddAsync(entity);
                 await _context.SaveChangesAsync();
             }
