@@ -280,8 +280,8 @@ namespace EduTrailblaze.API.Extensions
                         policy =>
                         {
                             policy.WithOrigins(
-                                "https://localhost:3000",
-                                "http://localhost:3000"
+                                configuration["FE:Url"],
+                                configuration["FE:Url_Http"]
                             )
                             .AllowAnyHeader()
                             .AllowAnyMethod()
