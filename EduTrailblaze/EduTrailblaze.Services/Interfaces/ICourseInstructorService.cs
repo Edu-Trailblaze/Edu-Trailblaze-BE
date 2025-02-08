@@ -1,4 +1,5 @@
 ﻿using EduTrailblaze.Entities;
+using EduTrailblaze.Services.DTOs;
 
 namespace EduTrailblaze.Services.Interfaces
 {
@@ -13,5 +14,11 @@ namespace EduTrailblaze.Services.Interfaces
         Task UpdateCourseInstructor(CourseInstructor courseInstructor);
 
         Task DeleteCourseInstructor(CourseInstructor courseInstructor);
+
+        Task RemoveAccessCourseInstructor(RemoveCourseInstructorRequest removeCourseInstructorRequest);
+
+        Task AddCourseInstructor(CreateCourseInstructorRequest createCourseInstructorRequest);
+
+        Task InviteCourseInstructor(InviteCourseInstructorRequest inviteCourseInstructorRequest);
     }
 }

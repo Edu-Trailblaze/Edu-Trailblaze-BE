@@ -1475,4 +1475,58 @@ namespace EduTrailblaze.Services.DTOs
                 .When(x => x.OrderDateFrom.HasValue && x.OrderDateTo.HasValue);
         }
     }
+
+    public class CreateCourseInstructorRequest
+    {
+        public int CourseId { get; set; }
+        public string InstructorId { get; set; }
+        public bool IsPrimaryInstructor { get; set; }
+    }
+
+    public class CreateCourseInstructorRequestValidator : AbstractValidator<CreateCourseInstructorRequest>
+    {
+        public CreateCourseInstructorRequestValidator()
+        {
+            RuleFor(x => x.CourseId)
+                .NotEmpty().WithMessage("CourseId is required");
+            RuleFor(x => x.InstructorId)
+                .NotEmpty().WithMessage("InstructorId is required");
+            RuleFor(x => x.IsPrimaryInstructor)
+                .NotEmpty().WithMessage("IsPrimaryInstructor is required");
+        }
+    }
+
+    public class InviteCourseInstructorRequest
+    {
+        public int CourseId { get; set; }
+        public string InstructorId { get; set; }
+    }
+
+    public class InviteCourseInstructorRequestValidator : AbstractValidator<InviteCourseInstructorRequest>
+    {
+        public InviteCourseInstructorRequestValidator()
+        {
+            RuleFor(x => x.CourseId)
+                .NotEmpty().WithMessage("CourseId is required");
+            RuleFor(x => x.InstructorId)
+                .NotEmpty().WithMessage("InstructorId is required");
+        }
+    }
+
+    public class RemoveCourseInstructorRequest
+    {
+        public int CourseId { get; set; }
+        public string InstructorId { get; set; }
+    }
+
+    public class RemoveCourseInstructorRequestValidator : AbstractValidator<RemoveCourseInstructorRequest>
+    {
+        public RemoveCourseInstructorRequestValidator()
+        {
+            RuleFor(x => x.CourseId)
+                .NotEmpty().WithMessage("CourseId is required");
+            RuleFor(x => x.InstructorId)
+                .NotEmpty().WithMessage("InstructorId is required");
+        }
+    }
 }

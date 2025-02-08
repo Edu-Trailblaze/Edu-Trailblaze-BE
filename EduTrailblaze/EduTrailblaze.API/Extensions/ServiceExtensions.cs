@@ -197,6 +197,8 @@ namespace EduTrailblaze.API.Extensions
                 var settings = new ConnectionSettings(new Uri(configuration["Elastic:Uri"]))
                 .DefaultIndex("courses").BasicAuthentication(configuration["Elastic:Username"], configuration["Elastic:Password"]);
 
+                //var settings = new ConnectionSettings(new Uri("http://localhost:9200")).DefaultIndex("courses");
+
                 var retryPolicy = Polly.Policy
                     .Handle<Exception>() // Handle any exception, or you can be more specific
 
