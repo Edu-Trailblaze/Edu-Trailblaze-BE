@@ -493,7 +493,7 @@ namespace EduTrailblaze.Services
             {
                 var instructorDbset = await _courseInstructorRepository.GetDbSet();
                 var instructors = await instructorDbset
-                    .Where(ci => ci.Id == courseId)
+                    .Where(ci => ci.CourseId == courseId)
                     .Select(ci => ci.Instructor)
                     .ToListAsync();
 
