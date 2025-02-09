@@ -74,7 +74,7 @@ namespace EduTrailblaze.Services
                     Title = lecture.Title,
                     Content = lecture.Content,
                     Description = lecture.Description,
-                    Duration = lecture.Duration,
+                    Duration = lecture.Duration ?? 0,
                 };
                 await _lectureRepository.AddAsync(lectureEntity);
             }
