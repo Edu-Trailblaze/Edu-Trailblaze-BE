@@ -21,6 +21,7 @@ namespace EduTrailblaze.API.Controllers
             try
             {
                 var review = await _reviewService.GetReview(reviewId);
+                if (review == null) return NotFound();
                 return Ok(review);
             }
             catch (Exception ex)
