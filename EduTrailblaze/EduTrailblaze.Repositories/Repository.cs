@@ -50,7 +50,12 @@ namespace EduTrailblaze.Repositories
         {
             try
             {
-                var entity = await _dbSet.FindAsync(id);
+                IQueryable<T> query = _dbSet;
+                var isDeleteProperty = typeof(T).GetProperty("IsDeleted");
+                if (isDeleteProperty != null) query = query.Where(e => !EF.Property<bool>(e, "IsDeleted"));
+                var entity = await query.FirstOrDefaultAsync(e => e.Id.Equals(id));
+
+
                 if (entity == null)
                 {
                     throw new Exception("Entity not found");
@@ -110,12 +115,32 @@ namespace EduTrailblaze.Repositories
 
         public IQueryable<T> FindAll(bool trackChanges = false)
         {
-            throw new NotImplementedException();
+            IQueryable<T> query = _dbSet;
+
+            if (!trackChanges)
+            {
+                query = query.AsNoTracking();
+            }
+
+            return query;
         }
 
         public IQueryable<T> FindAll(bool trackChanges = false, params Expression<Func<T, object>>[] includeProperties)
         {
-            throw new NotImplementedException();
+
+            IQueryable<T> query = _dbSet;
+
+            if (!trackChanges)
+            {
+                query = query.AsNoTracking();
+            }
+
+            foreach (var includeProperty in includeProperties)
+            {
+                query = query.Include(includeProperty);
+            }
+
+            return query;
         }
 
         public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges = false)
@@ -125,12 +150,33 @@ namespace EduTrailblaze.Repositories
 
         public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges = false, params Expression<Func<T, object>>[] includeProperties)
         {
-            throw new NotImplementedException();
+            IQueryable<T> query = _dbSet;
+
+            if (!trackChanges)
+            {
+                query = query.AsNoTracking();
+            }
+
+            return query.Where(expression);
         }
 
-        public Task<T?> GetByIdAsync(TKey id, params Expression<Func<T, object>>[] includeProperty)
+        public Task<T?> GetByIdAsync(TKey id, params Expression<Func<T, object>>[] includeProperties)
         {
-            throw new NotImplementedException();
+            IQueryable<T> query = _dbSet;
+
+            foreach (var includeProperty in includeProperties)
+            {
+                query = query.Include(includeProperty);
+            }
+
+            var entity =  query.FirstOrDefaultAsync(e => e.Id.Equals(id));
+
+            if (entity == null)
+            {
+                throw new Exception("Entity not found");
+            }
+
+            return entity;
         }
     }
 }
