@@ -18,7 +18,7 @@ namespace EduTrailblaze.Entities
         [Required]
         public int NumberOfLectures { get; set; }
 
-        public TimeSpan? Duration { get; set; }
+        public TimeSpan Duration { get; set; } = TimeSpan.Zero;
 
 
         // Navigation properties

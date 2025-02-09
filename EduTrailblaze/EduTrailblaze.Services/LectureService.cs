@@ -10,10 +10,12 @@ namespace EduTrailblaze.Services
     public class LectureService : ILectureService
     {
         private readonly IRepository<Lecture, int> _lectureRepository;
+        private readonly ISectionService _sectionService;
 
-        public LectureService(IRepository<Lecture, int> lectureRepository)
+        public LectureService(IRepository<Lecture, int> lectureRepository, ISectionService sectionService)
         {
             _lectureRepository = lectureRepository;
+            _sectionService = sectionService;
         }
 
         public async Task<Lecture?> GetLecture(int lectureId)
@@ -145,16 +147,20 @@ namespace EduTrailblaze.Services
             try
             {
                 var lectureDbSet = await _lectureRepository.GetDbSet();
-                var lecture = await lectureDbSet.FirstOrDefaultAsync(x => x.Id == lectureId);
+
+                var lecture = await lectureDbSet
+                    .Include(x => x.Videos)
+                    .FirstOrDefaultAsync(x => x.Id == lectureId);
                 if (lecture == null)
                 {
                     throw new Exception("Lecture not found.");
                 }
 
-                lecture.Duration = (int)Math.Ceiling(lecture.Videos.Where(v => v.Duration.HasValue && !v.IsDeleted)
-                                                                   .Sum(v => v.Duration.Value.TotalMinutes));
+                lecture.Duration = (int)Math.Ceiling(lecture.Videos.Where(v => !v.IsDeleted)
+                                                                   .Sum(v => v.Duration.TotalMinutes));
 
                 await _lectureRepository.UpdateAsync(lecture);
+                await _sectionService.UpdateSectionDuration(lecture.SectionId);
             }
             catch (Exception ex)
             {

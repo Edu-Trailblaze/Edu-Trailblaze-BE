@@ -1338,5 +1338,26 @@ namespace EduTrailblaze.Services
                 throw new Exception("An error occurred while calculating cosine similarity: " + ex.Message);
             }
         }
+
+        public async Task UpdateCourseDuration(int courseId)
+        {
+            try
+            {
+                var dbSet = await _courseRepository.GetDbSet();
+                var course = await dbSet
+                    .Include(c => c.Sections)
+                    .FirstOrDefaultAsync(c => c.Id == courseId);
+                if (course == null)
+                {
+                    throw new ArgumentException("Invalid course ID");
+                }
+                course.Duration = (int)Math.Ceiling(course.Sections.Sum(s => s.Duration.TotalMinutes));
+                await _courseRepository.UpdateAsync(course);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while updating the course duration: " + ex.Message);
+            }
+        }
     }
 }

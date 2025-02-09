@@ -19,7 +19,7 @@ namespace EduTrailblaze.Entities
         [StringLength(int.MaxValue)]
         public string? Transcript { get; set; }
 
-        public TimeSpan? Duration { get; set; }
+        public TimeSpan Duration { get; set; } = new TimeSpan(0, 0, 0);
 
         [Required]
         public bool IsDeleted { get; set; } = false;
