@@ -3,6 +3,7 @@ using EduTrailblaze.Repositories.Interfaces;
 using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Helper;
 using EduTrailblaze.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace EduTrailblaze.Services
 {
@@ -136,6 +137,28 @@ namespace EduTrailblaze.Services
             catch (Exception ex)
             {
                 throw new Exception("An error occurred while deleting the lecture.", ex);
+            }
+        }
+
+        public async Task UpdateLectureDuration(int lectureId)
+        {
+            try
+            {
+                var lectureDbSet = await _lectureRepository.GetDbSet();
+                var lecture = await lectureDbSet.FirstOrDefaultAsync(x => x.Id == lectureId);
+                if (lecture == null)
+                {
+                    throw new Exception("Lecture not found.");
+                }
+
+                lecture.Duration = (int)Math.Ceiling(lecture.Videos.Where(v => v.Duration.HasValue && !v.IsDeleted)
+                                                                   .Sum(v => v.Duration.Value.TotalMinutes));
+
+                await _lectureRepository.UpdateAsync(lecture);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while updating the lecture duration.", ex);
             }
         }
     }

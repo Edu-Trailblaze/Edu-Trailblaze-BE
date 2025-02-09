@@ -223,7 +223,7 @@ namespace EduTrailblaze.Services
 
                 newVideo.Duration = uploadResponse.Duration;
                 newVideo.VideoUrl = uploadResponse.VideoUri;
-                _videoRepository.UpdateAsync(newVideo);
+                await _videoRepository.UpdateAsync(newVideo);
 
                 // Enqueue the background job for generating the transcript
                 //_backgroundJobClient.Enqueue(() => GenerateAndUpdateTranscript(newVideo.VideoId));
