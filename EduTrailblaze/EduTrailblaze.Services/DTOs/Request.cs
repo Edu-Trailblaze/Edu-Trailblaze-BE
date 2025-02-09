@@ -650,7 +650,7 @@ namespace EduTrailblaze.Services.DTOs
         public string Title { get; set; }
         public string Content { get; set; }
         public string Description { get; set; }
-        public int Duration { get; set; }
+        public int? Duration { get; set; }
     }
 
     public class CreateLectureRequestValidator : AbstractValidator<CreateLectureRequest>
@@ -667,7 +667,6 @@ namespace EduTrailblaze.Services.DTOs
             RuleFor(x => x.Description)
                 .NotEmpty().WithMessage("Description is required");
             RuleFor(x => x.Duration)
-                .NotEmpty().WithMessage("Duration is required")
                 .GreaterThanOrEqualTo(0).WithMessage("Duration must be greater than or equal to 0");
         }
     }

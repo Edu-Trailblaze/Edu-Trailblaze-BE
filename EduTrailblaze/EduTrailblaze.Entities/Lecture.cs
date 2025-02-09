@@ -19,7 +19,7 @@ namespace EduTrailblaze.Entities
         public string Description { get; set; }
 
         [Required]
-        public int Duration { get; set; }
+        public int Duration { get; set; } = 0;
 
         public bool IsDeleted { get; set; } = false;
 
