@@ -1,6 +1,7 @@
 ﻿using EduTrailblaze.API.Domain;
 using EduTrailblaze.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Data.SqlTypes;
 using System.Linq.Expressions;
 
 namespace EduTrailblaze.Repositories
@@ -49,11 +50,20 @@ namespace EduTrailblaze.Repositories
         {
             try
             {
-                return await _dbSet.FindAsync(id);
+                var entity = await _dbSet.FindAsync(id);
+                if (entity == null)
+                {
+                    throw new Exception("Entity not found");
+                }
+                return entity;
+            }
+            catch (SqlNullValueException ex)
+            {
+                throw new Exception("A field in the database contains a NULL value", ex);
             }
             catch (Exception ex)
             {
-                throw new Exception($"Couldn't retrieve entity: {ex.Message}");
+                throw new Exception($"Couldn't retrieve entity: {ex.Message}", ex);
             }
         }
 
