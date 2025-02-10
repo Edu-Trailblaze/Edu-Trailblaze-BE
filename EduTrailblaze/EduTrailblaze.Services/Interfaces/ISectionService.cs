@@ -22,5 +22,7 @@ namespace EduTrailblaze.Services.Interfaces
         Task DeleteSection(int section);
 
         Task UpdateSectionDuration(int sectionId);
+
+        Task UpdateNumberOfLectures(int sectionId);
     }
 }

@@ -79,6 +79,8 @@ namespace EduTrailblaze.Services
                     Duration = lecture.Duration ?? 0,
                 };
                 await _lectureRepository.AddAsync(lectureEntity);
+                await UpdateLectureDuration(lecture.SectionId);
+                await _sectionService.UpdateNumberOfLectures(lecture.SectionId);
             }
             catch (Exception ex)
             {
@@ -103,6 +105,8 @@ namespace EduTrailblaze.Services
                 lectureEntity.UpdatedAt = DateTimeHelper.GetVietnamTime();
 
                 await _lectureRepository.UpdateAsync(lectureEntity);
+
+                await UpdateLectureDuration(lecture.SectionId);
             }
             catch (Exception ex)
             {
@@ -115,6 +119,8 @@ namespace EduTrailblaze.Services
             try
             {
                 await _lectureRepository.DeleteAsync(lecture);
+                await _sectionService.UpdateNumberOfLectures(lecture.SectionId);
+                await UpdateLectureDuration(lecture.SectionId);
             }
             catch (Exception ex)
             {

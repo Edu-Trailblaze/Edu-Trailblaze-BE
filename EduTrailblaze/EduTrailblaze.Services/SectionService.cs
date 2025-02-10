@@ -151,9 +151,9 @@ namespace EduTrailblaze.Services
                     throw new Exception("No lectures found for the section.");
                 }
 
-                var duration = lectures.Sum(l => l.Duration);
+                var duration = lectures.Where(l => !l.IsDeleted).Sum(l => l.Duration);
 
-                section.Duration = new TimeSpan(duration);
+                section.Duration = TimeSpan.FromMinutes(duration);
 
                 await _sectionRepository.UpdateAsync(section);
                 await _courseService.UpdateCourseDuration(section.CourseId);
@@ -161,6 +161,27 @@ namespace EduTrailblaze.Services
             catch (Exception ex)
             {
                 throw new Exception("An error occurred while updating the section duration.", ex);
+            }
+        }
+
+        public async Task UpdateNumberOfLectures(int sectionId)
+        {
+            try
+            {
+                var sectionDbSet = await _sectionRepository.GetDbSet();
+                var section = sectionDbSet
+                    .Include(s => s.Lectures)
+                    .FirstOrDefault(s => s.Id == sectionId);
+                if (section == null)
+                {
+                    throw new Exception("Section not found.");
+                }
+                section.NumberOfLectures = section.Lectures.Where(l => !l.IsDeleted).ToList().Count;
+                await _sectionRepository.UpdateAsync(section);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while updating the number of lectures.", ex);
             }
         }
     }
