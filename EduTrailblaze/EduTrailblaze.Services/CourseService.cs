@@ -24,11 +24,12 @@ namespace EduTrailblaze.Services
         private readonly ICourseClassService _courseClassService;
         private readonly IReviewService _reviewService;
         private readonly UserManager<User> _userManager;
+        private readonly IRepository<UserProfile, string> _userProfileRepository;
         private readonly IElasticsearchService _elasticsearchService;
         private readonly IDiscountService _discountService;
         private readonly IMapper _mapper;
 
-        public CourseService(IRepository<Course, int> courseRepository, IReviewService reviewService, IElasticsearchService elasticsearchService, IMapper mapper, IDiscountService discountService, IRepository<CourseInstructor, int> courseInstructorRepository, IRepository<Enrollment, int> enrollment, UserManager<User> userManager, IRepository<CourseLanguage, int> courseLanguageRepository, IRepository<CourseTag, int> courseTagRepository, ICourseClassService courseClassService)
+        public CourseService(IRepository<Course, int> courseRepository, IReviewService reviewService, IElasticsearchService elasticsearchService, IMapper mapper, IDiscountService discountService, IRepository<CourseInstructor, int> courseInstructorRepository, IRepository<Enrollment, int> enrollment, UserManager<User> userManager, IRepository<CourseLanguage, int> courseLanguageRepository, IRepository<CourseTag, int> courseTagRepository, ICourseClassService courseClassService, IRepository<UserProfile, string> userProfileRepository)
         {
             _courseRepository = courseRepository;
             _reviewService = reviewService;
@@ -41,6 +42,7 @@ namespace EduTrailblaze.Services
             _courseLanguageRepository = courseLanguageRepository;
             _courseTagRepository = courseTagRepository;
             _courseClassService = courseClassService;
+            _userProfileRepository = userProfileRepository;
         }
 
         public async Task<Course?> GetCourse(int courseId)
@@ -487,17 +489,47 @@ namespace EduTrailblaze.Services
             }
         }
 
+        //public async Task<List<InstructorInformation>> InstructorInformation(int courseId)
+        //{
+        //    try
+        //    {
+        //        var instructorDbset = await _courseInstructorRepository.GetDbSet();
+        //        var instructors = await instructorDbset
+        //            .Where(ci => ci.CourseId == courseId)
+        //            .Select(ci => ci.Instructor)
+        //            .ToListAsync();
+
+
+        //        return _mapper.Map<List<InstructorInformation>>(instructors);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception("An error occurred while getting the instructor information: " + ex.Message);
+        //    }
+        //}
+
         public async Task<List<InstructorInformation>> InstructorInformation(int courseId)
         {
             try
             {
                 var instructorDbset = await _courseInstructorRepository.GetDbSet();
+                var userProfileDbset = await _userProfileRepository.GetDbSet();
+
                 var instructors = await instructorDbset
                     .Where(ci => ci.CourseId == courseId)
-                    .Select(ci => ci.Instructor)
+                    .Join(userProfileDbset,
+                          ci => ci.InstructorId,
+                          up => up.Id,
+                          (ci, up) => new InstructorInformation
+                          {
+                              Id = ci.InstructorId,
+                              Fullname = up.Fullname ?? null,
+                              UserName = ci.Instructor.UserName,
+                              Email = ci.Instructor.Email
+                          })
                     .ToListAsync();
 
-                return _mapper.Map<List<InstructorInformation>>(instructors);
+                return instructors;
             }
             catch (Exception ex)
             {
