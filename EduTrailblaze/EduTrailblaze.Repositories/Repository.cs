@@ -49,7 +49,7 @@ namespace EduTrailblaze.Repositories
                 throw new Exception($"Couldn't retrieve entities: {ex.Message}");
             }
         }
-        
+
         public async Task<T?> GetByIdAsync(TKey id)
         {
             try
@@ -172,7 +172,7 @@ namespace EduTrailblaze.Repositories
                 query = query.Include(includeProperty);
             }
 
-            var entity =  query.FirstOrDefaultAsync(e => e.Id.Equals(id));
+            var entity = query.FirstOrDefaultAsync(e => e.Id.Equals(id));
 
             if (entity == null)
             {

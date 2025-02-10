@@ -87,6 +87,13 @@ namespace EduTrailblaze.Services
         {
             try
             {
+                var courseInstructor = new CourseInstructor
+                {
+                    CourseId = inviteCourseInstructorRequest.CourseId,
+                    InstructorId = inviteCourseInstructorRequest.InstructorId,
+                    IsPrimaryInstructor = false
+                };
+                await _courseInstructorRepository.AddAsync(courseInstructor);
             }
             catch (Exception ex)
             {

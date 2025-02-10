@@ -23,7 +23,7 @@ namespace EduTrailblaze.Services.Models
         [Display(Name = "User Id")]
         [Required]
         public string UserId { get; set; }
-       
+
     }
 
 }

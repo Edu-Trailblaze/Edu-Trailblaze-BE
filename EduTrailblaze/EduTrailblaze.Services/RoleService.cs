@@ -43,7 +43,7 @@ namespace EduTrailblaze.Services
             {
                 return new ApiResponse { StatusCode = StatusCodes.Status404NotFound, Message = "User not found." };
             }
-           
+
             var isUserInRole = await _dbPolicyWrap.ExecuteAsync(async () => await _userManager.IsInRoleAsync(user, "Instructor"));
             if (isUserInRole)
             {
@@ -52,7 +52,7 @@ namespace EduTrailblaze.Services
             await _dbPolicyWrap.ExecuteAsync(async () => await _userManager.AddToRoleAsync(user, "Instructor"));
             return new ApiResponse { StatusCode = StatusCodes.Status200OK, Message = "Role assigned successfully." };
         }
-        
+
         public async Task<ApiResponse> AssignRole(AssignRoleModel model)
         {
             var user = await _dbPolicyWrap.ExecuteAsync(async () => await _userManager.FindByIdAsync(model.UserId));
