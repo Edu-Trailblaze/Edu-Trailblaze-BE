@@ -38,14 +38,18 @@ namespace EduTrailblaze.Repositories
         {
             try
             {
-                return await _dbSet.AsQueryable().ToListAsync();
+                IQueryable<T> query = _dbSet;
+                var isDeleteProperty = typeof(T).GetProperty("IsDeleted");
+                if (isDeleteProperty != null) query = query.Where(e => !EF.Property<bool>(e, "IsDeleted"));
+                var entity = await query.AsQueryable().ToListAsync();
+                return entity;
             }
             catch (Exception ex)
             {
                 throw new Exception($"Couldn't retrieve entities: {ex.Message}");
             }
         }
-
+        
         public async Task<T?> GetByIdAsync(TKey id)
         {
             try

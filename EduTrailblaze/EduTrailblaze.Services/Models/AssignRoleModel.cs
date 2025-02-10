@@ -18,6 +18,12 @@ namespace EduTrailblaze.Services.Models
             set => RoleNameFormat = value;
         }
     }
-
+    public class ChangeInstructorRoleModel
+    {
+        [Display(Name = "User Id")]
+        [Required]
+        public string UserId { get; set; }
+       
+    }
 
 }

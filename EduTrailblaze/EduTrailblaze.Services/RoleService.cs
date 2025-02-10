@@ -36,6 +36,23 @@ namespace EduTrailblaze.Services
             _dbPolicyWrap = Policy.WrapAsync(_dbRetryPolicy, _dbTimeoutPolicy);
         }
 
+        public async Task<ApiResponse> ChangeRoleToInstructor(ChangeInstructorRoleModel model)
+        {
+            var user = await _dbPolicyWrap.ExecuteAsync(async () => await _userManager.FindByIdAsync(model.UserId));
+            if (user == null)
+            {
+                return new ApiResponse { StatusCode = StatusCodes.Status404NotFound, Message = "User not found." };
+            }
+           
+            var isUserInRole = await _dbPolicyWrap.ExecuteAsync(async () => await _userManager.IsInRoleAsync(user, "Instructor"));
+            if (isUserInRole)
+            {
+                return new ApiResponse { StatusCode = StatusCodes.Status400BadRequest, Message = "User already in role." };
+            }
+            await _dbPolicyWrap.ExecuteAsync(async () => await _userManager.AddToRoleAsync(user, "Instructor"));
+            return new ApiResponse { StatusCode = StatusCodes.Status200OK, Message = "Role assigned successfully." };
+        }
+        
         public async Task<ApiResponse> AssignRole(AssignRoleModel model)
         {
             var user = await _dbPolicyWrap.ExecuteAsync(async () => await _userManager.FindByIdAsync(model.UserId));

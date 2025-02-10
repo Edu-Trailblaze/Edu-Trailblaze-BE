@@ -165,6 +165,18 @@ namespace EduTrailblaze.API.Controllers
             }
             return StatusCode(result.StatusCode, result);
         }
+        [HttpPost("change-role")]
+        //[Authorize(Roles = "Student")]
+        public async Task<IActionResult> ChangeRoleToInstructor([FromBody] ChangeInstructorRoleModel model)
+        {
+            var result = await _roleService.ChangeRoleToInstructor(model);
+
+            if (result.StatusCode == 200)
+            {
+                return Ok(new { Message = result });
+            }
+            return StatusCode(result.StatusCode, result);
+        }
 
         [HttpPost("admin/assign-role")]
         [Authorize(Roles = "Admin")]
