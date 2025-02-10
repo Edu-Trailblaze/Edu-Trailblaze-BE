@@ -214,6 +214,7 @@ namespace EduTrailblaze.Services
                 {
                     LectureId = video.LectureId,
                     Title = video.Title,
+                    VideoUrl = ""
                 };
                 await _videoRepository.AddAsync(newVideo);
 

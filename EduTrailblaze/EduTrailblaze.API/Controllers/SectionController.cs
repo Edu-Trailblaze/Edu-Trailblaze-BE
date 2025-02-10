@@ -15,6 +15,20 @@ namespace EduTrailblaze.API.Controllers
             _sectionService = sectionService;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetSections()
+        {
+            try
+            {
+                var sections = await _sectionService.GetSections();
+                return Ok(sections);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
         [HttpGet("{sectionId}")]
         public async Task<IActionResult> GetSection(int sectionId)
         {

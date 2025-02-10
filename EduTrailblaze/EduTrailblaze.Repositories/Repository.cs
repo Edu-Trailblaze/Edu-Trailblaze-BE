@@ -55,10 +55,9 @@ namespace EduTrailblaze.Repositories
                 if (isDeleteProperty != null) query = query.Where(e => !EF.Property<bool>(e, "IsDeleted"));
                 var entity = await query.FirstOrDefaultAsync(e => e.Id.Equals(id));
 
-
                 if (entity == null)
                 {
-                    throw new Exception("Entity not found");
+                    return null;
                 }
                 return entity;
             }

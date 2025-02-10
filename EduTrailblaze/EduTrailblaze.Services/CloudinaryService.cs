@@ -3,7 +3,6 @@ using CloudinaryDotNet.Actions;
 using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
-using Xabe.FFmpeg;
 
 namespace EduTrailblaze.Services
 {
@@ -34,12 +33,11 @@ namespace EduTrailblaze.Services
 
                 var uploadResult = await _cloudinary.UploadAsync(uploadParams);
 
-                IMediaInfo mediaInfo = await FFmpeg.GetMediaInfo(filePath);
-                var duration = mediaInfo.Duration;
+                var duration = TimeSpan.FromSeconds(uploadResult.Duration);
 
                 return new UploadVideoResponse
                 {
-                    VideoUri = uploadResult.Uri.ToString(),
+                    VideoUri = uploadResult.Url.ToString(),
                     Duration = duration
                 };
             }

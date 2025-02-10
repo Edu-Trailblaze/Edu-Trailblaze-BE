@@ -15,6 +15,20 @@ namespace EduTrailblaze.API.Controllers
             _videoService = videoService;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetVideos()
+        {
+            try
+            {
+                var videos = await _videoService.GetVideos();
+                return Ok(videos);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
         [HttpGet("{videoId}")]
         public async Task<IActionResult> GetVideo(int videoId)
         {
