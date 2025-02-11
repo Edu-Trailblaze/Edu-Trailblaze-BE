@@ -1,4 +1,5 @@
-﻿using EduTrailblaze.Entities;
+﻿using AutoMapper;
+using EduTrailblaze.Entities;
 using EduTrailblaze.Repositories.Interfaces;
 using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Helper;
@@ -10,10 +11,12 @@ namespace EduTrailblaze.Services
     public class VoucherService : IVoucherService
     {
         private readonly IRepository<Voucher, int> _voucherRepository;
+        private readonly IMapper _mapper;
 
-        public VoucherService(IRepository<Voucher, int> voucherRepository)
+        public VoucherService(IRepository<Voucher, int> voucherRepository, IMapper mapper)
         {
             _voucherRepository = voucherRepository;
+            _mapper = mapper;
         }
 
         public async Task<Voucher?> GetVoucher(int voucherId)
@@ -142,6 +145,119 @@ namespace EduTrailblaze.Services
             catch (Exception ex)
             {
                 throw new Exception("An error occurred while checking the voucher validity.", ex);
+            }
+        }
+
+        public async Task<List<VoucherDTO>?> GetVouchersByConditions(GetVouchersRequest request)
+        {
+            try
+            {
+                var dbSet = await _voucherRepository.GetDbSet();
+
+                if (request.IsUsed != null)
+                {
+                    dbSet = dbSet.Where(c => c.IsUsed == request.IsUsed);
+                }
+
+                if (request.IsValid != null)
+                {
+                    if (request.IsValid == true)
+                    {
+                        dbSet = dbSet.Where(c => c.ExpiryDate.HasValue && c.ExpiryDate >= DateTimeHelper.GetVietnamTime() && c.StartDate.HasValue && c.StartDate <= DateTimeHelper.GetVietnamTime() && !c.IsUsed);
+                    }
+                    else
+                    {
+                        dbSet = dbSet.Where(c => !c.ExpiryDate.HasValue || c.ExpiryDate < DateTimeHelper.GetVietnamTime() || !c.StartDate.HasValue || c.StartDate > DateTimeHelper.GetVietnamTime());
+                    }
+                }
+
+                if (request.DiscountType != null)
+                {
+                    dbSet = dbSet.Where(c => c.DiscountType == request.DiscountType);
+                }
+
+                if (request.MinimumOrderValue != null)
+                {
+                    dbSet = dbSet.Where(c => c.MinimumOrderValue <= request.MinimumOrderValue);
+                }
+
+                if (request.DiscountValueMin != null)
+                {
+                    dbSet = dbSet.Where(c => c.DiscountValue >= request.DiscountValueMin);
+                }
+
+                if (request.DiscountValueMax != null)
+                {
+                    dbSet = dbSet.Where(c => c.DiscountValue <= request.DiscountValueMax);
+                }
+
+                if (request.StartDate != null)
+                {
+                    dbSet = dbSet.Where(c => c.StartDate >= request.StartDate);
+                }
+
+                if (request.ExpiryDate != null)
+                {
+                    dbSet = dbSet.Where(c => c.ExpiryDate <= request.ExpiryDate);
+                }
+
+                var items = await dbSet.ToListAsync();
+
+                var voucherDTO = _mapper.Map<List<VoucherDTO>>(items);
+
+                return voucherDTO;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the courses: " + ex.Message);
+            }
+        }
+
+        public async Task<PaginatedList<VoucherDTO>> GetVoucherInformation(GetVouchersRequest request, Paging paging)
+        {
+            try
+            {
+                var vouchers = await GetVouchersByConditions(request);
+
+                if (vouchers == null)
+                {
+                    return new PaginatedList<VoucherDTO>(new List<VoucherDTO>(), 0, 1, 10);
+                }
+
+                if (!paging.PageSize.HasValue || paging.PageSize <= 0)
+                {
+                    paging.PageSize = 10;
+                }
+
+                if (!paging.PageIndex.HasValue || paging.PageIndex <= 0)
+                {
+                    paging.PageIndex = 1;
+                }
+
+                var totalCount = vouchers.Count;
+                var skip = (paging.PageIndex.Value - 1) * paging.PageSize.Value;
+                var take = paging.PageSize.Value;
+
+                var validSortOptions = new[] { "highest_value", "order_value" };
+                if (string.IsNullOrEmpty(paging.Sort) || !validSortOptions.Contains(paging.Sort))
+                {
+                    paging.Sort = "highest_value";
+                }
+
+                vouchers = paging.Sort switch
+                {
+                    "highest_value" => vouchers.OrderBy(p => p.DiscountType).ThenByDescending(p => p.DiscountValue).ToList(),
+                    "order_value" => vouchers.OrderByDescending(p => p.MinimumOrderValue).ToList(),
+                    _ => vouchers
+                };
+
+                var paginatedCourseCards = vouchers.Skip(skip).Take(take).ToList();
+
+                return new PaginatedList<VoucherDTO>(paginatedCourseCards, totalCount, paging.PageIndex.Value, paging.PageSize.Value);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the courses: " + ex.Message);
             }
         }
     }

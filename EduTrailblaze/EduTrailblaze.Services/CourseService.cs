@@ -335,7 +335,6 @@ namespace EduTrailblaze.Services
             }
         }
 
-
         public async Task<List<CourseDTO>?> GetCoursesByConditions(GetCoursesRequest request)
         {
             try

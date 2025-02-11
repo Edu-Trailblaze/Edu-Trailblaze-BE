@@ -24,6 +24,8 @@ namespace EduTrailblaze.Services.Mappings
 
             CreateMap<Order, OrderDTO>();
 
+            CreateMap<Voucher, VoucherDTO>();
+
             CreateMap<Language, SupportedLanguage>();
 
             CreateMap<Section, SectionDetails>();

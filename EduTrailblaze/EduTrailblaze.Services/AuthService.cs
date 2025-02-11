@@ -112,7 +112,7 @@ namespace EduTrailblaze.Services
                 //if (await _userManager.GetTwoFactorEnabledAsync(user) is true) return new ApiResponse { StatusCode = StatusCodes.Status200OK, Data = new { QrCode = await _userManager.GetAuthenticatorKeyAsync(user) } };
                 var claims = _userManager.GetClaimsAsync(user);
                 var token = _jwtToken.GenerateJwtToken(user, roles[0].ToString());
-                Task.WhenAll(claims, token);
+                await Task.WhenAll(claims, token);
                 var claimsasync = await claims;
                 var tokenasync = await token;
 

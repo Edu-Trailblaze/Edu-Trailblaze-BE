@@ -1528,4 +1528,48 @@ namespace EduTrailblaze.Services.DTOs
                 .NotEmpty().WithMessage("InstructorId is required");
         }
     }
+
+    public class GetVouchersRequest
+    {
+        public string? DiscountType { get; set; }
+
+        public decimal? DiscountValueMin { get; set; }
+
+        public decimal? DiscountValueMax { get; set; }
+
+        public bool? IsUsed { get; set; }
+
+        public DateTime? StartDate { get; set; }
+
+        public DateTime? ExpiryDate { get; set; }
+
+        public decimal? MinimumOrderValue { get; set; }
+
+        public bool? IsValid { get; set; }
+    }
+
+    public class GetVouchersRequestValidator : AbstractValidator<GetVouchersRequest>
+    {
+        public GetVouchersRequestValidator()
+        {
+            RuleFor(x => x.DiscountType)
+                .MaximumLength(50).WithMessage("DiscountType cannot be longer than 50 characters");
+            RuleFor(x => x.DiscountValueMin)
+                .GreaterThanOrEqualTo(0).WithMessage("DiscountValueMin must be greater than or equal to 0");
+            RuleFor(x => x.DiscountValueMax)
+                .GreaterThanOrEqualTo(0).WithMessage("DiscountValueMax must be greater than or equal to 0");
+            RuleFor(x => x)
+                .Must(x => !x.DiscountValueMin.HasValue || !x.DiscountValueMax.HasValue || x.DiscountValueMin <= x.DiscountValueMax)
+                .WithMessage("DiscountValueMin must be less than or equal to DiscountValueMax")
+                .When(x => x.DiscountValueMin.HasValue && x.DiscountValueMax.HasValue);
+            RuleFor(x => x.StartDate)
+                .LessThanOrEqualTo(x => x.ExpiryDate.Value).WithMessage("StartDate must be less than or equal to ExpiryDate")
+                .When(x => x.StartDate.HasValue && x.ExpiryDate.HasValue);
+            RuleFor(x => x.ExpiryDate)
+                .GreaterThanOrEqualTo(x => x.StartDate.Value).WithMessage("ExpiryDate must be greater than or equal to StartDate")
+                .When(x => x.StartDate.HasValue && x.ExpiryDate.HasValue);
+            RuleFor(x => x.MinimumOrderValue)
+                .GreaterThanOrEqualTo(0).WithMessage("MinimumOrderValue must be greater than or equal to 0");
+        }
+    }
 }
