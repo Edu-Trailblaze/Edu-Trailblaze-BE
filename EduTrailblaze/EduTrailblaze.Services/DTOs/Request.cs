@@ -1,6 +1,8 @@
 ﻿using EduTrailblaze.Services.Helper;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace EduTrailblaze.Services.DTOs
 {
@@ -1571,5 +1573,15 @@ namespace EduTrailblaze.Services.DTOs
             RuleFor(x => x.MinimumOrderValue)
                 .GreaterThanOrEqualTo(0).WithMessage("MinimumOrderValue must be greater than or equal to 0");
         }
+    }
+
+    public class GetReviewsRequest
+    {
+        public int? CourseId { get; set; }
+        public string? UserId { get; set; }
+        public string? ReviewText { get; set; }
+        public decimal? MinRating { get; set; }
+        public decimal? MaxRating { get; set; }
+        public bool? IsDeleted { get; set; }
     }
 }

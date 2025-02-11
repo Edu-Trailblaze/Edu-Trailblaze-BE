@@ -174,5 +174,106 @@ namespace EduTrailblaze.Services
                 throw new Exception("An error occurred while getting the average rating: " + ex.Message);
             }
         }
+
+        //public async Task<List<ReviewDTO>?> GetVReviewsByConditions(GetReviewsRequest request)
+        //{
+        //    try
+        //    {
+        //        var dbSet = await _reviewRepository.GetDbSet();
+
+        //        if (request.IsDeleted != null)
+        //        {
+        //            dbSet = dbSet.Where(c => c.IsDeleted == request.IsDeleted);
+        //        }
+
+        //        if (request.UserId != null)
+        //        {
+        //            dbSet = dbSet.Where(c => c.UserId == request.UserId);
+        //        }
+
+        //        if (request.CourseId != null)
+        //        {
+        //            dbSet = dbSet.Where(c => c.CourseId == request.CourseId);
+        //        }
+
+        //        if (request.ReviewText != null)
+        //        {
+        //            dbSet = dbSet.Where(c => c.ReviewText == request.ReviewText);
+        //        }
+
+        //        if (request.DiscountValueMax != null)
+        //        {
+        //            dbSet = dbSet.Where(c => c.DiscountValue <= request.DiscountValueMax);
+        //        }
+
+        //        if (request.StartDate != null)
+        //        {
+        //            dbSet = dbSet.Where(c => c.StartDate >= request.StartDate);
+        //        }
+
+        //        if (request.ExpiryDate != null)
+        //        {
+        //            dbSet = dbSet.Where(c => c.ExpiryDate <= request.ExpiryDate);
+        //        }
+
+        //        var items = await dbSet.ToListAsync();
+
+        //        var voucherDTO = _mapper.Map<List<VoucherDTO>>(items);
+
+        //        return voucherDTO;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception("An error occurred while getting the courses: " + ex.Message);
+        //    }
+        //}
+
+        //public async Task<PaginatedList<VoucherDTO>> GetVoucherInformation(GetVouchersRequest request, Paging paging)
+        //{
+        //    try
+        //    {
+        //        var vouchers = await GetVouchersByConditions(request);
+
+        //        if (vouchers == null)
+        //        {
+        //            return new PaginatedList<VoucherDTO>(new List<VoucherDTO>(), 0, 1, 10);
+        //        }
+
+        //        if (!paging.PageSize.HasValue || paging.PageSize <= 0)
+        //        {
+        //            paging.PageSize = 10;
+        //        }
+
+        //        if (!paging.PageIndex.HasValue || paging.PageIndex <= 0)
+        //        {
+        //            paging.PageIndex = 1;
+        //        }
+
+        //        var totalCount = vouchers.Count;
+        //        var skip = (paging.PageIndex.Value - 1) * paging.PageSize.Value;
+        //        var take = paging.PageSize.Value;
+
+        //        var validSortOptions = new[] { "highest_value", "order_value" };
+        //        if (string.IsNullOrEmpty(paging.Sort) || !validSortOptions.Contains(paging.Sort))
+        //        {
+        //            paging.Sort = "highest_value";
+        //        }
+
+        //        vouchers = paging.Sort switch
+        //        {
+        //            "highest_value" => vouchers.OrderBy(p => p.DiscountType).ThenByDescending(p => p.DiscountValue).ToList(),
+        //            "order_value" => vouchers.OrderByDescending(p => p.MinimumOrderValue).ToList(),
+        //            _ => vouchers
+        //        };
+
+        //        var paginatedCourseCards = vouchers.Skip(skip).Take(take).ToList();
+
+        //        return new PaginatedList<VoucherDTO>(paginatedCourseCards, totalCount, paging.PageIndex.Value, paging.PageSize.Value);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception("An error occurred while getting the courses: " + ex.Message);
+        //    }
+        //}
     }
 }

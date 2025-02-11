@@ -1,5 +1,4 @@
-﻿using EduTrailblaze.API.Domain;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
 namespace EduTrailblaze.Services.DTOs
@@ -61,9 +60,9 @@ namespace EduTrailblaze.Services.DTOs
 
     public class VoucherDTO
     {
-        public int VoucherId { get; set; } 
+        public int VoucherId { get; set; }
 
-        public string DiscountType { get; set; } 
+        public string DiscountType { get; set; }
 
         public decimal DiscountValue { get; set; }
 
@@ -76,5 +75,13 @@ namespace EduTrailblaze.Services.DTOs
         public DateTime? ExpiryDate { get; set; }
 
         public decimal? MinimumOrderValue { get; set; }
+    }
+
+    public class ReviewDTO
+    {
+        public int CourseId { get; set; }
+        public string UserId { get; set; }
+        public decimal Rating { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

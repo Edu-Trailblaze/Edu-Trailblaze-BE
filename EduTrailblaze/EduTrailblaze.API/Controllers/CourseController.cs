@@ -42,7 +42,7 @@ namespace EduTrailblaze.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-        
+
         [HttpGet("get-instructors-of-a-course")]
         public async Task<IActionResult> GetInstructorInformationOfACourse(int courseId)
         {
