@@ -19,10 +19,13 @@ namespace EduTrailblaze.Services.Mappings
             CreateMap<Discount, DiscountInformation>();
 
             CreateMap<User, InstructorInformation>();
+            CreateMap<User, UserDTO>();
 
             CreateMap<Coupon, CouponInformation>();
 
             CreateMap<Order, OrderDTO>();
+
+            CreateMap<Review, ReviewDTO>();
 
             CreateMap<Voucher, VoucherDTO>();
 

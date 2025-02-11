@@ -3,6 +3,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using Nest;
 
 namespace EduTrailblaze.Services.DTOs
 {
@@ -1583,5 +1584,52 @@ namespace EduTrailblaze.Services.DTOs
         public decimal? MinRating { get; set; }
         public decimal? MaxRating { get; set; }
         public bool? IsDeleted { get; set; }
+    }
+
+    public class GetReviewsRequestValidator : AbstractValidator<GetReviewsRequest>
+    {
+        public GetReviewsRequestValidator()
+        {
+            RuleFor(x => x.UserId)
+                .MaximumLength(450).WithMessage("UserId cannot be longer than 450 characters");
+            RuleFor(x => x.ReviewText)
+                .MaximumLength(450).WithMessage("ReviewText cannot be longer than 450 characters");
+            RuleFor(x => x.MinRating)
+                .GreaterThanOrEqualTo(0).WithMessage("MinRating must be greater than or equal to 0");
+            RuleFor(x => x.MaxRating)
+                .GreaterThanOrEqualTo(0).WithMessage("MaxRating must be greater than or equal to 0");
+            RuleFor(x => x)
+                .Must(x => !x.MinRating.HasValue || !x.MaxRating.HasValue || x.MinRating <= x.MaxRating)
+                .WithMessage("MinRating must be less than or equal to MaxRating")
+                .When(x => x.MinRating.HasValue && x.MaxRating.HasValue);
+        }
+    }
+
+    public class GetUsersRequest
+    {
+        public string? UserName { get; set; }
+        public string? Email { get; set; }
+        public string? PhoneNumber { get; set; }
+        public bool? TwoFactorEnabled { get; set; }
+        public bool? LockoutEnabled { get; set; }
+        public string? FullName { get; set; }
+        public string? Role { get; set; }
+    }
+
+    public class GetUsersRequestValidator : AbstractValidator<GetUsersRequest>
+    {
+        public GetUsersRequestValidator()
+        {
+            RuleFor(x => x.UserName)
+                .MaximumLength(450).WithMessage("UserName cannot be longer than 450 characters");
+            RuleFor(x => x.Email)
+                .MaximumLength(256).WithMessage("Email cannot be longer than 256 characters");
+            RuleFor(x => x.PhoneNumber)
+                .MaximumLength(50).WithMessage("PhoneNumber cannot be longer than 50 characters");
+            RuleFor(x => x.FullName)
+                .MaximumLength(255).WithMessage("FullName cannot be longer than 255 characters");
+            RuleFor(x => x.Role)
+                .MaximumLength(50).WithMessage("Role cannot be longer than 50 characters");
+        }
     }
 }

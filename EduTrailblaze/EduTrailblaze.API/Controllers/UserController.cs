@@ -1,4 +1,6 @@
-﻿using EduTrailblaze.Services.Interfaces;
+﻿using EduTrailblaze.Services.DTOs;
+using EduTrailblaze.Services;
+using EduTrailblaze.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EduTrailblaze.API.Controllers
@@ -39,6 +41,34 @@ namespace EduTrailblaze.API.Controllers
             {
                 var users = await _userService.GetUsers();
                 return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet("get-paging-user")]
+        public async Task<IActionResult> GetPagingUser([FromQuery] GetUsersRequest request, [FromQuery] Paging paging)
+        {
+            try
+            {
+                var res = await _userService.GetUserInformation(request, paging);
+                return Ok(res);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet("get-user-by-condition")]
+        public async Task<IActionResult> GetUsersByConditions([FromQuery] GetUsersRequest request)
+        {
+            try
+            {
+                var res = await _userService.GetUsersByConditions(request);
+                return Ok(res);
             }
             catch (Exception ex)
             {

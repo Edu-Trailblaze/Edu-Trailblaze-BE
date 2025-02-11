@@ -24,5 +24,9 @@ namespace EduTrailblaze.Services.Interfaces
         Task<ReviewInformation> GetAverageRatingAndNumberOfRatings(int courseId);
 
         Task<IQueryable<Review>> GetDbSetReview();
+
+        Task<List<ReviewDTO>?> GetVReviewsByConditions(GetReviewsRequest request);
+
+        Task<PaginatedList<ReviewDTO>> GetReviewInformation(GetReviewsRequest request, Paging paging);
     }
 }

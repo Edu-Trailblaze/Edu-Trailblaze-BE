@@ -75,6 +75,10 @@ namespace EduTrailblaze.Services.DTOs
         public DateTime? ExpiryDate { get; set; }
 
         public decimal? MinimumOrderValue { get; set; }
+
+        public DateTimeOffset CreatedAt { get; set; }
+
+        public DateTimeOffset? UpdatedAt { get; set; }
     }
 
     public class ReviewDTO
@@ -83,5 +87,21 @@ namespace EduTrailblaze.Services.DTOs
         public string UserId { get; set; }
         public decimal Rating { get; set; }
         public bool IsDeleted { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
+        public DateTimeOffset? UpdatedAt { get; set; }
+    }
+
+    public class UserDTO
+    {
+        public string Id { get; set; }
+        public string UserName { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+        public bool TwoFactorEnabled { get; set; }
+        public bool LockoutEnabled { get; set; }
+        public string FullName { get; set; }
+        public string Role { get; set; }
+        public decimal Balance { get; set; }
+        public string ProfilePictureUrl { get; set; }
     }
 }

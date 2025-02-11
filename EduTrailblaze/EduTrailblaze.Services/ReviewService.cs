@@ -1,18 +1,22 @@
-﻿using EduTrailblaze.Entities;
+﻿using AutoMapper;
+using EduTrailblaze.Entities;
 using EduTrailblaze.Repositories.Interfaces;
 using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Helper;
 using EduTrailblaze.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace EduTrailblaze.Services
 {
     public class ReviewService : IReviewService
     {
         private readonly IRepository<Review, int> _reviewRepository;
+        private readonly IMapper _mapper;
 
-        public ReviewService(IRepository<Review, int> reviewRepository)
+        public ReviewService(IRepository<Review, int> reviewRepository, IMapper mapper)
         {
             _reviewRepository = reviewRepository;
+            _mapper = mapper;
         }
 
         public async Task<IQueryable<Review>> GetDbSetReview()
@@ -175,105 +179,100 @@ namespace EduTrailblaze.Services
             }
         }
 
-        //public async Task<List<ReviewDTO>?> GetVReviewsByConditions(GetReviewsRequest request)
-        //{
-        //    try
-        //    {
-        //        var dbSet = await _reviewRepository.GetDbSet();
+        public async Task<List<ReviewDTO>?> GetVReviewsByConditions(GetReviewsRequest request)
+        {
+            try
+            {
+                var dbSet = await _reviewRepository.GetDbSet();
 
-        //        if (request.IsDeleted != null)
-        //        {
-        //            dbSet = dbSet.Where(c => c.IsDeleted == request.IsDeleted);
-        //        }
+                if (request.IsDeleted != null)
+                {
+                    dbSet = dbSet.Where(c => c.IsDeleted == request.IsDeleted);
+                }
 
-        //        if (request.UserId != null)
-        //        {
-        //            dbSet = dbSet.Where(c => c.UserId == request.UserId);
-        //        }
+                if (request.UserId != null)
+                {
+                    dbSet = dbSet.Where(c => c.UserId == request.UserId);
+                }
 
-        //        if (request.CourseId != null)
-        //        {
-        //            dbSet = dbSet.Where(c => c.CourseId == request.CourseId);
-        //        }
+                if (request.CourseId != null)
+                {
+                    dbSet = dbSet.Where(c => c.CourseId == request.CourseId);
+                }
 
-        //        if (request.ReviewText != null)
-        //        {
-        //            dbSet = dbSet.Where(c => c.ReviewText == request.ReviewText);
-        //        }
+                if (request.ReviewText != null)
+                {
+                    dbSet = dbSet.Where(c => c.ReviewText.ToLower().Contains(request.ReviewText.ToLower()));
+                }
 
-        //        if (request.DiscountValueMax != null)
-        //        {
-        //            dbSet = dbSet.Where(c => c.DiscountValue <= request.DiscountValueMax);
-        //        }
+                if (request.MinRating != null)
+                {
+                    dbSet = dbSet.Where(c => c.Rating >= request.MinRating);
+                }
 
-        //        if (request.StartDate != null)
-        //        {
-        //            dbSet = dbSet.Where(c => c.StartDate >= request.StartDate);
-        //        }
+                if (request.MaxRating != null)
+                {
+                    dbSet = dbSet.Where(c => c.Rating <= request.MaxRating);
+                }
 
-        //        if (request.ExpiryDate != null)
-        //        {
-        //            dbSet = dbSet.Where(c => c.ExpiryDate <= request.ExpiryDate);
-        //        }
+                var items = await dbSet.ToListAsync();
 
-        //        var items = await dbSet.ToListAsync();
+                var reviewDTO = _mapper.Map<List<ReviewDTO>>(items);
 
-        //        var voucherDTO = _mapper.Map<List<VoucherDTO>>(items);
+                return reviewDTO;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the courses: " + ex.Message);
+            }
+        }
 
-        //        return voucherDTO;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception("An error occurred while getting the courses: " + ex.Message);
-        //    }
-        //}
+        public async Task<PaginatedList<ReviewDTO>> GetReviewInformation(GetReviewsRequest request, Paging paging)
+        {
+            try
+            {
+                var reviews = await GetVReviewsByConditions(request);
 
-        //public async Task<PaginatedList<VoucherDTO>> GetVoucherInformation(GetVouchersRequest request, Paging paging)
-        //{
-        //    try
-        //    {
-        //        var vouchers = await GetVouchersByConditions(request);
+                if (reviews == null)
+                {
+                    return new PaginatedList<ReviewDTO>(new List<ReviewDTO>(), 0, 1, 10);
+                }
 
-        //        if (vouchers == null)
-        //        {
-        //            return new PaginatedList<VoucherDTO>(new List<VoucherDTO>(), 0, 1, 10);
-        //        }
+                if (!paging.PageSize.HasValue || paging.PageSize <= 0)
+                {
+                    paging.PageSize = 10;
+                }
 
-        //        if (!paging.PageSize.HasValue || paging.PageSize <= 0)
-        //        {
-        //            paging.PageSize = 10;
-        //        }
+                if (!paging.PageIndex.HasValue || paging.PageIndex <= 0)
+                {
+                    paging.PageIndex = 1;
+                }
 
-        //        if (!paging.PageIndex.HasValue || paging.PageIndex <= 0)
-        //        {
-        //            paging.PageIndex = 1;
-        //        }
+                var totalCount = reviews.Count;
+                var skip = (paging.PageIndex.Value - 1) * paging.PageSize.Value;
+                var take = paging.PageSize.Value;
 
-        //        var totalCount = vouchers.Count;
-        //        var skip = (paging.PageIndex.Value - 1) * paging.PageSize.Value;
-        //        var take = paging.PageSize.Value;
+                var validSortOptions = new[] { "top_review", "newest_review" };
+                if (string.IsNullOrEmpty(paging.Sort) || !validSortOptions.Contains(paging.Sort))
+                {
+                    paging.Sort = "top_review";
+                }
 
-        //        var validSortOptions = new[] { "highest_value", "order_value" };
-        //        if (string.IsNullOrEmpty(paging.Sort) || !validSortOptions.Contains(paging.Sort))
-        //        {
-        //            paging.Sort = "highest_value";
-        //        }
+                reviews = paging.Sort switch
+                {
+                    "top_review" => reviews.OrderByDescending(p => p.Rating).ToList(),
+                    "newest_review" => reviews.OrderByDescending(p => p.CreatedAt).ToList(),
+                    _ => reviews
+                };
 
-        //        vouchers = paging.Sort switch
-        //        {
-        //            "highest_value" => vouchers.OrderBy(p => p.DiscountType).ThenByDescending(p => p.DiscountValue).ToList(),
-        //            "order_value" => vouchers.OrderByDescending(p => p.MinimumOrderValue).ToList(),
-        //            _ => vouchers
-        //        };
+                var paginatedReviews = reviews.Skip(skip).Take(take).ToList();
 
-        //        var paginatedCourseCards = vouchers.Skip(skip).Take(take).ToList();
-
-        //        return new PaginatedList<VoucherDTO>(paginatedCourseCards, totalCount, paging.PageIndex.Value, paging.PageSize.Value);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception("An error occurred while getting the courses: " + ex.Message);
-        //    }
-        //}
+                return new PaginatedList<ReviewDTO>(paginatedReviews, totalCount, paging.PageIndex.Value, paging.PageSize.Value);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the courses: " + ex.Message);
+            }
+        }
     }
 }
