@@ -841,7 +841,7 @@ namespace EduTrailblaze.Services.DTOs
     {
         public string UserId { get; set; }
         public string PaymentMethod { get; set; }
-        public int VoucherCode { get; set; }
+        public int? VoucherCode { get; set; }
     }
 
     public class PlaceOrderRequestValidator : AbstractValidator<PlaceOrderRequest>
