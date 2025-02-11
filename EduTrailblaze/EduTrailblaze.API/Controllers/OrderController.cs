@@ -33,7 +33,7 @@ namespace EduTrailblaze.API.Controllers
             }
         }
 
-        [HttpGet("place-order")]
+        [HttpPost("place-order")]
         public async Task<IActionResult> PlaceOrder(PlaceOrderRequest placeOrderRequest)
         {
             try
