@@ -150,7 +150,7 @@ namespace EduTrailblaze.Services
                     var orderDetail = new OrderDetailRequest
                     {
                         OrderId = order.Id,
-                        CourseId = cartItem.CartCourseInformation.CourseId,
+                        CourseId = cartItem.CartCourseInformation.Id,
                         Price = cartItem.TotalCoursePrice,
                     };
 

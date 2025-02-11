@@ -29,7 +29,7 @@ namespace EduTrailblaze.Services
         private readonly IDiscountService _discountService;
         private readonly IMapper _mapper;
 
-        public CourseService(IRepository<Course, int> courseRepository, IReviewService reviewService, IElasticsearchService elasticsearchService, IMapper mapper, IDiscountService discountService, IRepository<CourseInstructor, int> courseInstructorRepository, IRepository<Enrollment, int> enrollment, UserManager<User> userManager, IRepository<CourseLanguage, int> courseLanguageRepository, IRepository<CourseTag, int> courseTagRepository, ICourseClassService courseClassService, IRepository<UserProfile, string> userProfileRepository)
+        public CourseService(IRepository<Course, int> courseRepository, IReviewService reviewService, IElasticsearchService elasticsearchService, IMapper mapper, IDiscountService discountService, IRepository<CourseInstructor, int> courseInstructorRepository, IRepository<Enrollment, int> enrollment, UserManager<User> userManager, IRepository<CourseLanguage, int> courseLanguageRepository, IRepository<CourseTag, int> courseTagRepository, ICourseClassService courseClassService, IRepository<UserProfile, string> userProfileRepository, IRepository<Coupon, int> couponRepository)
         {
             _courseRepository = courseRepository;
             _reviewService = reviewService;
@@ -43,6 +43,7 @@ namespace EduTrailblaze.Services
             _courseTagRepository = courseTagRepository;
             _courseClassService = courseClassService;
             _userProfileRepository = userProfileRepository;
+            _couponRepository = couponRepository;
         }
 
         public async Task<Course?> GetCourse(int courseId)

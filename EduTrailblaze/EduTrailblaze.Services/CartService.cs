@@ -340,7 +340,7 @@ namespace EduTrailblaze.Services
             {
                 var cookieCart = GetCookieCart(userId);
 
-                if (cookieCart != null)
+                if (cookieCart != null && cookieCart.Count > 0)
                 {
                     return cookieCart;
                 }
