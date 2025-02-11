@@ -100,7 +100,7 @@ namespace EduTrailblaze.Services.DTOs
         public bool TwoFactorEnabled { get; set; }
         public bool LockoutEnabled { get; set; }
         public string FullName { get; set; }
-        public string Role { get; set; }
+        public string[] Role { get; set; }
         public decimal Balance { get; set; }
         public string ProfilePictureUrl { get; set; }
     }

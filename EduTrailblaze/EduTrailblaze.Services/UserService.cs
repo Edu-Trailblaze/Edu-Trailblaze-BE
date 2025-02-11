@@ -62,7 +62,7 @@ namespace EduTrailblaze.Services
         {
             try
             {
-                var dbSet = _userManager.Users.AsQueryable();
+                var dbSet = _userManager.Users.Include(u => u.UserProfile).AsQueryable();
 
                 if (request.TwoFactorEnabled != null)
                 {
@@ -74,44 +74,56 @@ namespace EduTrailblaze.Services
                     dbSet = dbSet.Where(c => c.LockoutEnabled == request.LockoutEnabled);
                 }
 
-                if (request.UserName != null)
+                if (!string.IsNullOrEmpty(request.UserName))
                 {
                     dbSet = dbSet.Where(c => c.UserName.ToLower().Contains(request.UserName.ToLower()));
                 }
 
-                if (request.Email != null)
+                if (!string.IsNullOrEmpty(request.Email))
                 {
                     dbSet = dbSet.Where(c => c.Email.ToLower().Contains(request.Email.ToLower()));
                 }
 
-                if (request.FullName != null)
+                if (!string.IsNullOrEmpty(request.FullName))
                 {
                     dbSet = dbSet.Where(c => c.UserProfile.Fullname != null && c.UserProfile.Fullname.ToLower().Contains(request.FullName.ToLower()));
                 }
 
-                if (request.Role != null)
-                {
-                    var role = request.Role.ToLower();
-                    dbSet = dbSet.Where(c => _userManager.GetRolesAsync(c).Result.Any(r => r.ToLower().Contains(role)));
-                }
-
-                if (request.PhoneNumber != null)
+                if (!string.IsNullOrEmpty(request.PhoneNumber))
                 {
                     dbSet = dbSet.Where(c => c.PhoneNumber == request.PhoneNumber);
                 }
 
-                var items = await dbSet.ToListAsync();
+                var users = await dbSet.ToListAsync();
 
-                var userDTO = _mapper.Map<List<UserDTO>>(items);
+                var userDTOs = new List<UserDTO>();
 
-                return userDTO;
+                foreach (var user in users)
+                {
+                    var roles = await _userManager.GetRolesAsync(user); // Async call to get user roles
+
+                    userDTOs.Add(new UserDTO
+                    {
+                        Id = user.Id,
+                        UserName = user.UserName,
+                        Email = user.Email,
+                        PhoneNumber = user.PhoneNumber,
+                        TwoFactorEnabled = user.TwoFactorEnabled,
+                        LockoutEnabled = user.LockoutEnabled,
+                        FullName = user.UserProfile?.Fullname,
+                        Balance = user.UserProfile?.Balance ?? 0,  // Ensure no null reference
+                        ProfilePictureUrl = user.UserProfile?.ProfilePictureUrl,
+                        Role = roles.ToArray() // Convert roles to string array
+                    });
+                }
+
+                return userDTOs;
             }
             catch (Exception ex)
             {
                 throw new Exception("An error occurred while getting the users: " + ex.Message);
             }
         }
-
 
         public async Task<PaginatedList<UserDTO>> GetUserInformation(GetUsersRequest request, Paging paging)
         {
