@@ -1,4 +1,5 @@
-﻿using EduTrailblaze.Entities;
+﻿using AutoMapper;
+using EduTrailblaze.Entities;
 using EduTrailblaze.Repositories.Interfaces;
 using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Helper;
@@ -11,11 +12,13 @@ namespace EduTrailblaze.Services
     {
         private readonly IRepository<Lecture, int> _lectureRepository;
         private readonly ISectionService _sectionService;
+        private readonly IMapper _mapper;
 
-        public LectureService(IRepository<Lecture, int> lectureRepository, ISectionService sectionService)
+        public LectureService(IRepository<Lecture, int> lectureRepository, ISectionService sectionService, IMapper mapper)
         {
             _lectureRepository = lectureRepository;
             _sectionService = sectionService;
+            _mapper = mapper;
         }
 
         public async Task<Lecture?> GetLecture(int lectureId)
@@ -171,6 +174,57 @@ namespace EduTrailblaze.Services
             catch (Exception ex)
             {
                 throw new Exception("An error occurred while updating the lecture duration.", ex);
+            }
+        }
+
+        public async Task<List<LectureDTO>?> GetLecturesByConditions(GetLecturesRequest request)
+        {
+            try
+            {
+                var dbSet = await _lectureRepository.GetDbSet();
+
+                if (request.IsDeleted != null)
+                {
+                    dbSet = dbSet.Where(c => c.IsDeleted == request.IsDeleted);
+                }
+
+                if (request.SectionId != null)
+                {
+                    dbSet = dbSet.Where(c => c.SectionId == request.SectionId);
+                }
+
+                if (!string.IsNullOrEmpty(request.Title))
+                {
+                    dbSet = dbSet.Where(c => c.Title.ToLower().Contains(request.Title.ToLower()));
+                }
+
+                if (!string.IsNullOrEmpty(request.Description))
+                {
+                    dbSet = dbSet.Where(c => c.Description.ToLower().Contains(request.Description.ToLower()));
+                }
+
+                if (!string.IsNullOrEmpty(request.Content))
+                {
+                    dbSet = dbSet.Where(c => c.Content.ToLower().Contains(request.Content.ToLower()));
+                }
+
+                if (request.MinDuration != null)
+                {
+                    dbSet = dbSet.Where(c => c.Duration >= request.MinDuration);
+                }
+
+                if (request.MaxDuration != null)
+                {
+                    dbSet = dbSet.Where(c => c.Duration <= request.MaxDuration);
+                }
+
+                var lectures = await dbSet.ToListAsync();
+
+                return _mapper.Map<List<LectureDTO>>(lectures);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the lectures: " + ex.Message);
             }
         }
     }

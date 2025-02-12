@@ -47,6 +47,20 @@ namespace EduTrailblaze.API.Controllers
             }
         }
 
+        [HttpGet("get-lectures-by-conditions")]
+        public async Task<IActionResult> GetLecturesByConditions([FromQuery] GetLecturesRequest request)
+        {
+            try
+            {
+                var lectures = await _lectureService.GetLecturesByConditions(request);
+                return Ok(lectures);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> AddLecture([FromBody] CreateLectureRequest lecture)
         {

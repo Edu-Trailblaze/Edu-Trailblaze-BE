@@ -1,6 +1,5 @@
 ﻿using EduTrailblaze.Entities;
 using EduTrailblaze.Services.DTOs;
-using Microsoft.AspNetCore.Identity;
 
 namespace EduTrailblaze.Services.Interfaces
 {

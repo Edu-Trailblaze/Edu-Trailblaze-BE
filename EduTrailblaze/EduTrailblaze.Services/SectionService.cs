@@ -1,4 +1,5 @@
-﻿using EduTrailblaze.Entities;
+﻿using AutoMapper;
+using EduTrailblaze.Entities;
 using EduTrailblaze.Repositories.Interfaces;
 using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Interfaces;
@@ -10,11 +11,13 @@ namespace EduTrailblaze.Services
     {
         private readonly IRepository<Section, int> _sectionRepository;
         private readonly ICourseService _courseService;
+        private readonly IMapper _mapper;
 
-        public SectionService(IRepository<Section, int> sectionRepository, ICourseService courseService)
+        public SectionService(IRepository<Section, int> sectionRepository, ICourseService courseService, IMapper mapper)
         {
             _sectionRepository = sectionRepository;
             _courseService = courseService;
+            _mapper = mapper;
         }
 
         public async Task<Section?> GetSection(int sectionId)
@@ -182,6 +185,57 @@ namespace EduTrailblaze.Services
             catch (Exception ex)
             {
                 throw new Exception("An error occurred while updating the number of lectures.", ex);
+            }
+        }
+
+        public async Task<List<SectionDTO>?> GetSectionsByConditions(GetSectionsRequest request)
+        {
+            try
+            {
+                var dbSet = await _sectionRepository.GetDbSet();
+
+                if (request.CourseId != null)
+                {
+                    dbSet = dbSet.Where(c => c.CourseId == request.CourseId);
+                }
+
+                if (!string.IsNullOrEmpty(request.Title))
+                {
+                    dbSet = dbSet.Where(c => c.Title.ToLower().Contains(request.Title.ToLower()));
+                }
+
+                if (!string.IsNullOrEmpty(request.Description))
+                {
+                    dbSet = dbSet.Where(c => c.Description.ToLower().Contains(request.Description.ToLower()));
+                }
+
+                if (request.MinNumberOfLectures != null)
+                {
+                    dbSet = dbSet.Where(c => c.NumberOfLectures >= request.MinNumberOfLectures);
+                }
+
+                if (request.MaxNumberOfLectures != null)
+                {
+                    dbSet = dbSet.Where(c => c.NumberOfLectures <= request.MaxNumberOfLectures);
+                }
+
+                if (request.MinDuration != null)
+                {
+                    dbSet = dbSet.Where(c => c.Duration >= TimeSpan.FromMinutes(request.MinDuration.Value));
+                }
+
+                if (request.MaxDuration != null)
+                {
+                    dbSet = dbSet.Where(c => c.Duration <= TimeSpan.FromMinutes(request.MaxDuration.Value));
+                }
+
+                var sections = await dbSet.ToListAsync();
+
+                return _mapper.Map<List<SectionDTO>>(sections);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the sections: " + ex.Message);
             }
         }
     }

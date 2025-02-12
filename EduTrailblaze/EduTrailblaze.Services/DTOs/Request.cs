@@ -1,9 +1,6 @@
 ﻿using EduTrailblaze.Services.Helper;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using Nest;
 
 namespace EduTrailblaze.Services.DTOs
 {
@@ -1631,6 +1628,105 @@ namespace EduTrailblaze.Services.DTOs
                 .MaximumLength(255).WithMessage("FullName cannot be longer than 255 characters");
             RuleFor(x => x.Role)
                 .MaximumLength(50).WithMessage("Role cannot be longer than 50 characters");
+        }
+    }
+
+    public class GetSectionsRequest
+    {
+        public int? CourseId { get; set; }
+        public string? Title { get; set; }
+        public string? Description { get; set; }
+        public int? MinNumberOfLectures { get; set; }
+        public int? MaxNumberOfLectures { get; set; }
+        public int? MinDuration { get; set; }
+        public int? MaxDuration { get; set; }
+    }
+
+    public class GetSectionsRequestValidator : AbstractValidator<GetSectionsRequest>
+    {
+        public GetSectionsRequestValidator()
+        {
+            RuleFor(x => x.Title)
+                .MaximumLength(50).WithMessage("Title cannot be longer than 50 characters");
+            RuleFor(x => x.Description)
+                .MaximumLength(255).WithMessage("Description cannot be longer than 255 characters");
+            RuleFor(x => x)
+                .Must(x => !x.MinNumberOfLectures.HasValue || !x.MaxNumberOfLectures.HasValue || x.MinNumberOfLectures <= x.MaxNumberOfLectures)
+                .WithMessage("MinNumberOfLectures must be less than or equal to MaxNumberOfLectures")
+                .When(x => x.MinNumberOfLectures.HasValue && x.MaxNumberOfLectures.HasValue);
+            RuleFor(x => x)
+                .Must(x => !x.MinDuration.HasValue || !x.MaxDuration.HasValue || x.MinDuration <= x.MaxDuration)
+                .WithMessage("MinDuration must be less than or equal to MaxDuration")
+                .When(x => x.MinDuration.HasValue && x.MaxDuration.HasValue);
+            RuleFor(x => x.MinDuration)
+                .GreaterThanOrEqualTo(0).WithMessage("MinDuration must be greater than or equal to 0");
+            RuleFor(x => x.MaxDuration)
+                .GreaterThanOrEqualTo(0).WithMessage("MaxDuration must be greater than or equal to 0");
+            RuleFor(x => x.MinNumberOfLectures)
+                .GreaterThanOrEqualTo(0).WithMessage("MinNumberOfLectures must be greater than or equal to 0");
+            RuleFor(x => x.MaxNumberOfLectures)
+                .GreaterThanOrEqualTo(0).WithMessage("MaxNumberOfLectures must be greater than or equal to 0");
+        }
+    }
+
+    public class GetLecturesRequest
+    {
+        public int? SectionId { get; set; }
+        public string? Title { get; set; }
+        public string? Content { get; set; }
+        public string? Description { get; set; }
+        public int? MinDuration { get; set; }
+        public int? MaxDuration { get; set; }
+        public bool? IsDeleted { get; set; }
+    }
+
+    public class GetLecturesRequestValidator : AbstractValidator<GetLecturesRequest>
+    {
+        public GetLecturesRequestValidator()
+        {
+            RuleFor(x => x.Title)
+                .MaximumLength(50).WithMessage("Title cannot be longer than 50 characters");
+            RuleFor(x => x.Content)
+                .MaximumLength(255).WithMessage("Content cannot be longer than 255 characters");
+            RuleFor(x => x.Description)
+                .MaximumLength(255).WithMessage("Description cannot be longer than 255 characters");
+            RuleFor(x => x)
+                .Must(x => !x.MinDuration.HasValue || !x.MaxDuration.HasValue || x.MinDuration <= x.MaxDuration)
+                .WithMessage("MinDuration must be less than or equal to MaxDuration")
+                .When(x => x.MinDuration.HasValue && x.MaxDuration.HasValue);
+            RuleFor(x => x.MinDuration)
+                .GreaterThanOrEqualTo(0).WithMessage("MinDuration must be greater than or equal to 0");
+            RuleFor(x => x.MaxDuration)
+                .GreaterThanOrEqualTo(0).WithMessage("MaxDuration must be greater than or equal to 0");
+        }
+    }
+
+    public class GetVideosRequest
+    {
+        public int? LectureId { get; set; }
+        public string? Title { get; set; }
+        public string? Transcript { get; set; }
+        public int? MinDuration { get; set; }
+        public int? MaxDuration { get; set; }
+        public bool? IsDeleted { get; set; }
+    }
+
+    public class GetVideosRequestValidator : AbstractValidator<GetVideosRequest>
+    {
+        public GetVideosRequestValidator()
+        {
+            RuleFor(x => x.Title)
+                .MaximumLength(50).WithMessage("Title cannot be longer than 50 characters");
+            RuleFor(x => x.Transcript)
+                .MaximumLength(255).WithMessage("Transcript cannot be longer than 255 characters");
+            RuleFor(x => x)
+                .Must(x => !x.MinDuration.HasValue || !x.MaxDuration.HasValue || x.MinDuration <= x.MaxDuration)
+                .WithMessage("MinDuration must be less than or equal to MaxDuration")
+                .When(x => x.MinDuration.HasValue && x.MaxDuration.HasValue);
+            RuleFor(x => x.MinDuration)
+                .GreaterThanOrEqualTo(0).WithMessage("MinDuration must be greater than or equal to 0");
+            RuleFor(x => x.MaxDuration)
+                .GreaterThanOrEqualTo(0).WithMessage("MaxDuration must be greater than or equal to 0");
         }
     }
 }

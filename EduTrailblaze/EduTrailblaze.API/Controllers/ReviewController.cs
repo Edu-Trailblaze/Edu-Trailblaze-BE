@@ -1,5 +1,4 @@
-﻿using EduTrailblaze.Services;
-using EduTrailblaze.Services.DTOs;
+﻿using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,7 +29,7 @@ namespace EduTrailblaze.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-        
+
         [HttpGet("get-paging-review")]
         public async Task<IActionResult> GetPagingReview([FromQuery] GetReviewsRequest request, [FromQuery] Paging paging)
         {
@@ -44,7 +43,7 @@ namespace EduTrailblaze.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-        
+
         [HttpGet("get-review-by-condition")]
         public async Task<IActionResult> GetVReviewsByConditions([FromQuery] GetReviewsRequest request)
         {

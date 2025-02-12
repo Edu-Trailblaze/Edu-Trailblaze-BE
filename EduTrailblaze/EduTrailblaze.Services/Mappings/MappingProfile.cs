@@ -32,6 +32,11 @@ namespace EduTrailblaze.Services.Mappings
             CreateMap<Language, SupportedLanguage>();
 
             CreateMap<Section, SectionDetails>();
+            CreateMap<Section, SectionDTO>();
+
+            CreateMap<Lecture, LectureDTO>();
+
+            CreateMap<Video, VideoDTO>();
         }
     }
 }

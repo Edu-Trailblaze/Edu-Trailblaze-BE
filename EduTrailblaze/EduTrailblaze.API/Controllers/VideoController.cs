@@ -29,6 +29,20 @@ namespace EduTrailblaze.API.Controllers
             }
         }
 
+        [HttpGet("get-videos-by-conditions")]
+        public async Task<IActionResult> GetVideosByConditions([FromQuery] GetVideosRequest request)
+        {
+            try
+            {
+                var videos = await _videoService.GetVideosByConditions(request);
+                return Ok(videos);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
         [HttpGet("{videoId}")]
         public async Task<IActionResult> GetVideo(int videoId)
         {

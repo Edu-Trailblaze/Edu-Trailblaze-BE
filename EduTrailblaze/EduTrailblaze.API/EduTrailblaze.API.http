@@ -1,6 +1,6 @@
 @EduTrailblaze.API_HostAddress = http://localhost:5148
 
-GET {{EduTrailblaze.API_HostAddress}}/weatherforecast/
+GET {{EduTrailblaze.API_HostAddress}}/api/Course
 Accept: application/json
 
 ###

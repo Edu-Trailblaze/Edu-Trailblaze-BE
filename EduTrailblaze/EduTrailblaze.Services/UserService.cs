@@ -1,13 +1,9 @@
 ﻿using AutoMapper;
 using EduTrailblaze.Entities;
-using EduTrailblaze.Repositories.Interfaces;
 using EduTrailblaze.Services.DTOs;
-using EduTrailblaze.Services.Helper;
 using EduTrailblaze.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.Linq;
 
 namespace EduTrailblaze.Services
 {

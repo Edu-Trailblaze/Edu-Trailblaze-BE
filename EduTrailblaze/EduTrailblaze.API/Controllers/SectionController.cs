@@ -29,6 +29,20 @@ namespace EduTrailblaze.API.Controllers
             }
         }
 
+        [HttpGet("get-sections-by-conditions")]
+        public async Task<IActionResult> GetSectionsByConditions([FromQuery] GetSectionsRequest request)
+        {
+            try
+            {
+                var sections = await _sectionService.GetSectionsByConditions(request);
+                return Ok(sections);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
         [HttpGet("{sectionId}")]
         public async Task<IActionResult> GetSection(int sectionId)
         {

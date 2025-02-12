@@ -17,7 +17,7 @@ namespace EduTrailblaze.Services.Helper
             _configuration = configuration;
         }
 
-        public async Task<string> GenerateJwtToken(User user,string?  name, string role)
+        public async Task<string> GenerateJwtToken(User user, string? name, string role)
         {
             var date = DateTime.UtcNow;
             TimeZoneInfo asianZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");

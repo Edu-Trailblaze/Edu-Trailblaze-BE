@@ -32,7 +32,7 @@ namespace EduTrailblaze.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-        
+
         [HttpGet("get-paging-voucher")]
         public async Task<IActionResult> GetPagingVoucher([FromQuery] GetVouchersRequest request, [FromQuery] Paging paging)
         {

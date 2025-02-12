@@ -88,12 +88,12 @@ namespace EduTrailblaze.Services
             try
             {
                 var user = await _dbPolicyWrap.ExecuteAsync(async () => await _userManager.FindByEmailAsync(loginModel.Email));
-                
+
                 if (user == null)
                 {
                     return new ApiResponse { StatusCode = StatusCodes.Status400BadRequest, Data = "Does not have that account in the Application" };
                 }
-                
+
                 var result = await _signInManager.PasswordSignInAsync(loginModel.Email, loginModel.Password, loginModel.RememberMe, lockoutOnFailure: true);
 
                 if (!result.Succeeded)
@@ -112,7 +112,7 @@ namespace EduTrailblaze.Services
                 var roles = await _userManager.GetRolesAsync(user);
                 //if (await _userManager.GetTwoFactorEnabledAsync(user) is true) return new ApiResponse { StatusCode = StatusCodes.Status200OK, Data = new { QrCode = await _userManager.GetAuthenticatorKeyAsync(user) } };
                 var claims = _userManager.GetClaimsAsync(user);
-                var token = _jwtToken.GenerateJwtToken(user,userProfile.Fullname ,roles[0].ToString());
+                var token = _jwtToken.GenerateJwtToken(user, userProfile.Fullname, roles[0].ToString());
                 await Task.WhenAll(claims, token);
                 var claimsasync = await claims;
                 var tokenasync = await token;
@@ -194,7 +194,7 @@ namespace EduTrailblaze.Services
                 return new ApiResponse { StatusCode = StatusCodes.Status401Unauthorized, Message = "Invalid refresh token." };
             }
             var userProfile = await _userProfileService.GetUserProfile(userId);
-            var token = _jwtToken.GenerateJwtToken(user, userProfile.Fullname ,"Student");
+            var token = _jwtToken.GenerateJwtToken(user, userProfile.Fullname, "Student");
             var newRefreshToken = _jwtToken.GenerateRefreshToken();
             Task.WhenAll(token, newRefreshToken);
             var tokenAsync = await token;
@@ -273,16 +273,16 @@ namespace EduTrailblaze.Services
                 await _userManager.SetTwoFactorEnabledAsync(newUser, false);
                 //var code = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
 
-                
+
 
                 await _userManager.ResetAuthenticatorKeyAsync(newUser);
 
 
-                var token = await _jwtToken.GenerateJwtToken(userLogin,model.Name, "Student");
+                var token = await _jwtToken.GenerateJwtToken(userLogin, model.Name, "Student");
                 var refreshToken = await _jwtToken.GenerateRefreshToken();
 
 
-                
+
 
                 return new ApiResponse
                 {

@@ -22,5 +22,7 @@ namespace EduTrailblaze.Services.Interfaces
         Task DeleteLecture(int lectureId);
 
         Task UpdateLectureDuration(int lectureId);
+
+        Task<List<LectureDTO>?> GetLecturesByConditions(GetLecturesRequest request);
     }
 }

@@ -1,10 +1,12 @@
-﻿using EduTrailblaze.Entities;
+﻿using AutoMapper;
+using EduTrailblaze.Entities;
 using EduTrailblaze.Repositories.Interfaces;
 using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Helper;
 using EduTrailblaze.Services.Interfaces;
 using Hangfire;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace EduTrailblaze.Services
 {
@@ -18,8 +20,9 @@ namespace EduTrailblaze.Services
         private readonly ICloudinaryService _cloudinaryService;
         private readonly IBackgroundJobClient _backgroundJobClient;
         private readonly IAIService _aIService;
+        private readonly IMapper _mapper;
 
-        public VideoService(IRepository<Video, int> videoRepository, IVimeoService vimeoService, IClamAVService clamAVService, IAIService aIService, IBackgroundJobClient backgroundJobClient, ICloudinaryService cloudinaryService, ILectureService lectureService)
+        public VideoService(IRepository<Video, int> videoRepository, IVimeoService vimeoService, IClamAVService clamAVService, IAIService aIService, IBackgroundJobClient backgroundJobClient, ICloudinaryService cloudinaryService, ILectureService lectureService, IMapper mapper)
         {
             _videoRepository = videoRepository;
             _vimeoService = vimeoService;
@@ -29,6 +32,7 @@ namespace EduTrailblaze.Services
             _aIService = aIService;
             _backgroundJobClient = backgroundJobClient;
             _lectureService = lectureService;
+            _mapper = mapper;
         }
 
         public async Task<Video?> GetVideo(int videoId)
@@ -260,6 +264,52 @@ namespace EduTrailblaze.Services
             video.Transcript = transcript.transcript;
             video.UpdatedAt = DateTimeHelper.GetVietnamTime();
             await _videoRepository.UpdateAsync(video);
+        }
+
+        public async Task<List<VideoDTO>?> GetVideosByConditions(GetVideosRequest request)
+        {
+            try
+            {
+                var dbSet = await _videoRepository.GetDbSet();
+
+                if (request.IsDeleted != null)
+                {
+                    dbSet = dbSet.Where(c => c.IsDeleted == request.IsDeleted);
+                }
+
+                if (request.LectureId != null)
+                {
+                    dbSet = dbSet.Where(c => c.LectureId == request.LectureId);
+                }
+
+                if (!string.IsNullOrEmpty(request.Title))
+                {
+                    dbSet = dbSet.Where(c => c.Title.ToLower().Contains(request.Title.ToLower()));
+                }
+
+                if (!string.IsNullOrEmpty(request.Transcript))
+                {
+                    dbSet = dbSet.Where(c => c.Transcript.ToLower().Contains(request.Transcript.ToLower()));
+                }
+
+                if (request.MinDuration != null)
+                {
+                    dbSet = dbSet.Where(c => c.Duration >= TimeSpan.FromMinutes(request.MinDuration.Value));
+                }
+
+                if (request.MaxDuration != null)
+                {
+                    dbSet = dbSet.Where(c => c.Duration <= TimeSpan.FromMinutes(request.MaxDuration.Value));
+                }
+
+                var videos = await dbSet.ToListAsync();
+
+                return _mapper.Map<List<VideoDTO>>(videos);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the videos: " + ex.Message);
+            }
         }
     }
 }

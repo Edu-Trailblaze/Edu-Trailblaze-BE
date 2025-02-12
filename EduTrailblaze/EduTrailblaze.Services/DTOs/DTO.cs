@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-
-namespace EduTrailblaze.Services.DTOs
+﻿namespace EduTrailblaze.Services.DTOs
 {
     public class CourseDTO
     {
@@ -23,9 +20,9 @@ namespace EduTrailblaze.Services.DTOs
 
         public decimal EstimatedCompletionTime { get; set; }
 
-        public DateTime CreatedAt { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
 
-        public DateTime UpdatedAt { get; set; }
+        public DateTimeOffset? UpdatedAt { get; set; }
 
         public string CreatedBy { get; set; }
 
@@ -104,5 +101,42 @@ namespace EduTrailblaze.Services.DTOs
         public string[] Role { get; set; }
         public decimal Balance { get; set; }
         public string ProfilePictureUrl { get; set; }
+    }
+
+    public class SectionDTO
+    {
+        public int Id { get; set; }
+        public int CourseId { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public int NumberOfLectures { get; set; }
+        public TimeSpan Duration { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
+        public DateTimeOffset? UpdatedAt { get; set; }
+    }
+
+    public class LectureDTO
+    {
+        public int Id { get; set; }
+        public int SectionId { get; set; }
+        public string Title { get; set; }
+        public string Content { get; set; }
+        public string Description { get; set; }
+        public int Duration { get; set; }
+        public bool IsDeleted { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
+        public DateTimeOffset? UpdatedAt { get; set; }
+    }
+
+    public class VideoDTO
+    {
+        public int Id { get; set; }
+        public int LectureId { get; set; }
+        public string Title { get; set; }
+        public string? Transcript { get; set; }
+        public TimeSpan Duration { get; set; }
+        public bool IsDeleted { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
+        public DateTimeOffset? UpdatedAt { get; set; }
     }
 }
