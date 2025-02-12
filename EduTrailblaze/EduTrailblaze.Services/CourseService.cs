@@ -86,7 +86,7 @@ namespace EduTrailblaze.Services
         {
             try
             {
-                // dòng này hơi ngố về return instructor
+                
                 var instructor = await _userManager.FindByIdAsync(req.CreatedBy);
 
                 if (instructor == null)
@@ -163,7 +163,19 @@ namespace EduTrailblaze.Services
                 {
                     throw new Exception("Instructor does not have permission to update the course.");
                 }
-
+                {
+                    course.Title = req.Title;
+                    course.ImageURL = req.ImageURL;
+                    course.IntroURL = req.IntroURL;
+                    course.Description = req.Description;
+                    course.Price = req.Price;
+                    course.DifficultyLevel = req.DifficultyLevel;
+                    course.Prerequisites = req.Prerequisites;
+                    course.UpdatedAt = DateTimeHelper.GetVietnamTime();
+                    course.UpdatedBy = req.UpdatedBy;
+                    course.IsPublished = req.IsPublished;
+                    //course.IsDeleted = req.IsDeleted;
+                }
                 var newCourse = new Course
                 {
                     Id = req.CourseId,
@@ -181,13 +193,13 @@ namespace EduTrailblaze.Services
                     CreatedBy = course.CreatedBy,
                     UpdatedBy = req.UpdatedBy,
                     IsPublished = req.IsPublished,
-                    IsDeleted = req.IsDeleted
+                    //IsDeleted = req.IsDeleted
                 };
 
-                await _courseRepository.UpdateAsync(newCourse);
+                await _courseRepository.UpdateAsync(course);
 
 
-                var courseClass = await _courseClassService.GetNewestCourseClass(newCourse.Id);
+                var courseClass = await _courseClassService.GetNewestCourseClass(course.Id);
                 if (courseClass == null)
                 {
                     throw new Exception("Course class not found.");
@@ -199,17 +211,17 @@ namespace EduTrailblaze.Services
 
                 CreateCourseClassRequest createCourseClassRequest = new CreateCourseClassRequest()
                 {
-                    CourseId = newCourse.Id,
+                    CourseId = course.Id,
                     Title = req.Title,
                     ImageURL = req.ImageURL,
                     IntroURL = req.IntroURL,
                     Description = req.Description,
                     Price = req.Price,
-                    Duration = newCourse.Duration,
+                    Duration = course.Duration,
                     DifficultyLevel = req.DifficultyLevel,
                     Prerequisites = req.Prerequisites,
-                    LearningOutcomes = newCourse.LearningOutcomes,
-                    EstimatedCompletionTime = newCourse.EstimatedCompletionTime,
+                    LearningOutcomes = course.LearningOutcomes,
+                    EstimatedCompletionTime = course.EstimatedCompletionTime,
                     StartDate = DateTimeHelper.GetVietnamTime(),
                 };
             }

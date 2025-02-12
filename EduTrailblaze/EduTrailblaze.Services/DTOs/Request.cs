@@ -158,7 +158,7 @@ namespace EduTrailblaze.Services.DTOs
 
         public bool IsPublished { get; set; }
 
-        public bool IsDeleted { get; set; }
+        //public bool IsDeleted { get; set; }
     }
 
     public class UpdateCourseRequestValidator : AbstractValidator<UpdateCourseRequest>
