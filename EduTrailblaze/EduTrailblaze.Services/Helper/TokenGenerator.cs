@@ -26,8 +26,9 @@ namespace EduTrailblaze.Services.Helper
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub,user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName.ToString()),
-                new Claim(ClaimTypes.Role, role)
+                new Claim(JwtRegisteredClaimNames.Email, user.UserName.ToString()),
+                new Claim("role", role),
+                new Claim("userName", user.UserName)
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtToken:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
