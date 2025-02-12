@@ -88,12 +88,12 @@ namespace EduTrailblaze.Services
             try
             {
                 var user = await _dbPolicyWrap.ExecuteAsync(async () => await _userManager.FindByEmailAsync(loginModel.Email));
-
+                
                 if (user == null)
                 {
                     return new ApiResponse { StatusCode = StatusCodes.Status400BadRequest, Data = "Does not have that account in the Application" };
                 }
-
+                
                 var result = await _signInManager.PasswordSignInAsync(loginModel.Email, loginModel.Password, loginModel.RememberMe, lockoutOnFailure: true);
 
                 if (!result.Succeeded)
@@ -108,10 +108,11 @@ namespace EduTrailblaze.Services
                         };
                     return new ApiResponse { StatusCode = StatusCodes.Status401Unauthorized, Data = "Invalid login attempt." };
                 }
+                var userProfile = await _userProfileService.GetUserProfile(user.Id);
                 var roles = await _userManager.GetRolesAsync(user);
                 //if (await _userManager.GetTwoFactorEnabledAsync(user) is true) return new ApiResponse { StatusCode = StatusCodes.Status200OK, Data = new { QrCode = await _userManager.GetAuthenticatorKeyAsync(user) } };
                 var claims = _userManager.GetClaimsAsync(user);
-                var token = _jwtToken.GenerateJwtToken(user, roles[0].ToString());
+                var token = _jwtToken.GenerateJwtToken(user,userProfile.Fullname ,roles[0].ToString());
                 await Task.WhenAll(claims, token);
                 var claimsasync = await claims;
                 var tokenasync = await token;
@@ -192,8 +193,8 @@ namespace EduTrailblaze.Services
             {
                 return new ApiResponse { StatusCode = StatusCodes.Status401Unauthorized, Message = "Invalid refresh token." };
             }
-
-            var token = _jwtToken.GenerateJwtToken(user, "Student");
+            var userProfile = await _userProfileService.GetUserProfile(userId);
+            var token = _jwtToken.GenerateJwtToken(user, userProfile.Fullname ,"Student");
             var newRefreshToken = _jwtToken.GenerateRefreshToken();
             Task.WhenAll(token, newRefreshToken);
             var tokenAsync = await token;
@@ -233,12 +234,13 @@ namespace EduTrailblaze.Services
                 }
 
                 var user = await _userManager.FindByEmailAsync(model.Email);
-                if (user != null && user.EmailConfirmed)
+                // Email confirm is not set
+                if (user != null && user.EmailConfirmed is false)
                 {
                     return new ApiResponse
                     {
                         StatusCode = StatusCodes.Status400BadRequest,
-                        Message = "User already exists and is confirmed"
+                        Message = "User already exists"
                     };
                 }
 
@@ -249,6 +251,14 @@ namespace EduTrailblaze.Services
                 };
 
                 var result = await _userManager.CreateAsync(newUser, model.Password);
+                var userLogin = await _userManager.FindByEmailAsync(model.Email);
+                CreateUserProfileRequest userProfile =
+                    new CreateUserProfileRequest
+                    {
+                        UserId = userLogin.Id,
+                        FullName = model.Name,
+                    };
+                await _userProfileService.AddUserProfile(userProfile);
 
                 if (!result.Succeeded)
                 {
@@ -263,21 +273,16 @@ namespace EduTrailblaze.Services
                 await _userManager.SetTwoFactorEnabledAsync(newUser, false);
                 //var code = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
 
-                var userLogin = await _userManager.FindByEmailAsync(model.Email);
+                
 
                 await _userManager.ResetAuthenticatorKeyAsync(newUser);
 
 
-                var token = await _jwtToken.GenerateJwtToken(userLogin, "Student");
+                var token = await _jwtToken.GenerateJwtToken(userLogin,model.Name, "Student");
                 var refreshToken = await _jwtToken.GenerateRefreshToken();
 
 
-                CreateUserProfileRequest userProfile =
-                    new CreateUserProfileRequest
-                    {
-                        UserId = userLogin.Id
-                    };
-                await _userProfileService.AddUserProfile(userProfile);
+                
 
                 return new ApiResponse
                 {
@@ -342,8 +347,8 @@ namespace EduTrailblaze.Services
             {
                 return new ApiResponse { StatusCode = StatusCodes.Status401Unauthorized, Message = "Invalid 2FA code." };
             }
-
-            var token = await _jwtToken.GenerateJwtToken(user, "Admin");
+            var userProfile = await _userProfileService.GetUserProfile(userId);
+            var token = await _jwtToken.GenerateJwtToken(user, userProfile.Fullname, "Admin");
             var refreshToken = await _jwtToken.GenerateRefreshToken();
             await _redisService.AcquireLock(user.Id, refreshToken);
 

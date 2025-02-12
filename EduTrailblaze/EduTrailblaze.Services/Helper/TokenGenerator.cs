@@ -17,7 +17,7 @@ namespace EduTrailblaze.Services.Helper
             _configuration = configuration;
         }
 
-        public async Task<string> GenerateJwtToken(User user, string role)
+        public async Task<string> GenerateJwtToken(User user,string?  name, string role)
         {
             var date = DateTime.UtcNow;
             TimeZoneInfo asianZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
@@ -28,7 +28,7 @@ namespace EduTrailblaze.Services.Helper
                 new Claim(JwtRegisteredClaimNames.Sub,user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.UserName.ToString()),
                 new Claim("role", role),
-                new Claim("userName", user.UserName)
+                new Claim("fullName", name ??= user.Email)
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtToken:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

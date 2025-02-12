@@ -1177,6 +1177,7 @@ namespace EduTrailblaze.Services.DTOs
     public class CreateUserProfileRequest
     {
         public string UserId { get; set; }
+        public string FullName { get; set; }
     }
 
     public class CreateUserProfileRequestValidator : AbstractValidator<CreateUserProfileRequest>
