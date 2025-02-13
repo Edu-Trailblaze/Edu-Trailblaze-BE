@@ -20,6 +20,7 @@ namespace EduTrailblaze.API.Controllers
             try
             {
                 var cart = await _cartService.GetSystemCart(userId);
+                if (cart == null) return NotFound();
                 return Ok(cart);
             }
             catch (Exception ex)
@@ -160,6 +161,7 @@ namespace EduTrailblaze.API.Controllers
             try
             {
                 var cart = await _cartService.ViewCart(userId);
+                if (cart == null) return NotFound();
                 return Ok(cart);
             }
             catch (Exception ex)

@@ -35,6 +35,10 @@ namespace EduTrailblaze.API.Controllers
             try
             {
                 var course = await _courseService.GetCourse(courseId);
+                if (course == null)
+                {
+                    return NotFound();
+                }
                 return Ok(course);
             }
             catch (Exception ex)
@@ -49,6 +53,7 @@ namespace EduTrailblaze.API.Controllers
             try
             {
                 var course = await _courseService.InstructorInformation(courseId);
+                if (course == null) return NotFound();
                 return Ok(course);
             }
             catch (Exception ex)
@@ -105,6 +110,7 @@ namespace EduTrailblaze.API.Controllers
             try
             {
                 var reviews = await _courseService.GetCoursesByConditions(request);
+                if (reviews == null) return NotFound();
                 return Ok(reviews);
             }
             catch (Exception ex)
@@ -147,6 +153,7 @@ namespace EduTrailblaze.API.Controllers
             try
             {
                 var res = await _courseService.GetPagingCourseInformation(request, paging);
+                if (res == null) return NotFound();
                 return Ok(res);
             }
             catch (Exception ex)
@@ -161,6 +168,7 @@ namespace EduTrailblaze.API.Controllers
             try
             {
                 var res = await _courseService.GetCourseDetailsById(courseId);
+                if (res == null) return NotFound();
                 return Ok(res);
             }
             catch (Exception ex)
@@ -175,6 +183,7 @@ namespace EduTrailblaze.API.Controllers
             try
             {
                 var res = await _courseService.GetCoursePageInformation(courseId);
+                if (res == null) return NotFound();
                 return Ok(res);
             }
             catch (Exception ex)
@@ -189,6 +198,7 @@ namespace EduTrailblaze.API.Controllers
             try
             {
                 var res = await _courseService.GetPersonalItemRecommendation(userId);
+                if (res == null) return NotFound();
                 return Ok(res);
             }
             catch (Exception ex)
