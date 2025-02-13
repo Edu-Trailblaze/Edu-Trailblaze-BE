@@ -139,16 +139,16 @@ namespace EduTrailblaze.Services
                 {
                     var indexResponse = await _client.IndexAsync(course, i => i
                         .Index("courses")
-                        .Id(course.CourseId.ToString()) // Ensure unique ID
+                        .Id(course.Id.ToString()) // Ensure unique ID
                     );
 
                     if (!indexResponse.IsValid)
                     {
-                        Console.WriteLine($"Error indexing course {course.CourseId}: {indexResponse.ServerError.Error.Reason}");
+                        Console.WriteLine($"Error indexing course {course.Id}: {indexResponse.ServerError.Error.Reason}");
                     }
                     else
                     {
-                        Console.WriteLine($"Course {course.CourseId} indexed successfully");
+                        Console.WriteLine($"Course {course.Id} indexed successfully");
                     }
                 }
 

@@ -2,7 +2,7 @@
 {
     public class CourseDTO
     {
-        public int CourseId { get; set; }
+        public int Id { get; set; }
 
         public string Title { get; set; }
 
@@ -44,7 +44,7 @@
 
     public class OrderDTO
     {
-        public int OrderId { get; set; }
+        public int Id { get; set; }
 
         public string UserId { get; set; }
 
@@ -57,7 +57,7 @@
 
     public class VoucherDTO
     {
-        public int VoucherId { get; set; }
+        public int Id { get; set; }
 
         public string DiscountType { get; set; }
 
@@ -80,6 +80,7 @@
 
     public class ReviewDTO
     {
+        public int Id { get; set; }
         public int CourseId { get; set; }
         public string UserId { get; set; }
         public decimal Rating { get; set; }

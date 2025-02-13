@@ -86,7 +86,7 @@ namespace EduTrailblaze.Services
         {
             try
             {
-                
+
                 var instructor = await _userManager.FindByIdAsync(req.CreatedBy);
 
                 if (instructor == null)
@@ -619,7 +619,7 @@ namespace EduTrailblaze.Services
 
                 foreach (var course in courses)
                 {
-                    var discount = await DiscountInformationResponse(course.CourseId);
+                    var discount = await DiscountInformationResponse(course.Id);
 
                     if (discount != null)
                     {
@@ -629,12 +629,12 @@ namespace EduTrailblaze.Services
                     var courseCardResponse = new CourseCardResponse
                     {
                         Course = _mapper.Map<CoursesResponse>(course),
-                        Review = await _reviewService.GetAverageRatingAndNumberOfRatings(course.CourseId),
+                        Review = await _reviewService.GetAverageRatingAndNumberOfRatings(course.Id),
                         Discount = discount,
-                        Instructors = await InstructorInformation(course.CourseId),
+                        Instructors = await InstructorInformation(course.Id),
                         Enrollment = new EnrollmentInformation
                         {
-                            TotalEnrollments = await NumberOfEnrollments(course.CourseId)
+                            TotalEnrollments = await NumberOfEnrollments(course.Id)
                         }
                     };
                     courseCard.Add(courseCardResponse);
