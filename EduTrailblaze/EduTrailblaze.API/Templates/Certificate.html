@@ -1,0 +1,170 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate Template</title>
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f9f9f9, #e0e0e0);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .certificate {
+            width: 900px;
+            height: 600px;
+            border: 8px solid #2a73cc;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            position: relative;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .certificate-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            height: 80px;
+        }
+
+        .header-title {
+            font-size: 26px;
+            font-weight: bold;
+            color: #2a73cc;
+            text-transform: uppercase;
+            margin: 0;
+            background: linear-gradient(135deg, #2a73cc, #00bcd4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .certificate-body {
+            margin: 20px 0;
+        }
+
+        .recipient-name {
+            font-size: 36px;
+            font-weight: bold;
+            color: #2a73cc;
+            margin: 10px 0;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #2a73cc, #00bcd4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .course-title {
+            font-size: 28px;
+            color: #ff6f61;
+            margin: 10px 0;
+            font-weight: 600;
+        }
+
+        .certificate-text {
+            font-size: 18px;
+            color: #555555;
+            line-height: 1.6;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .signature {
+            font-size: 14px;
+            color: #555555;
+            text-align: center;
+        }
+
+            .signature img {
+                height: 50px;
+            }
+
+        .date {
+            font-size: 14px;
+            color: #555555;
+            text-align: right;
+        }
+
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 100px;
+            font-weight: bold;
+            color: rgba(42, 115, 204, 0.1);
+            text-transform: uppercase;
+            pointer-events: none;
+        }
+
+        .decorative-border {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(42, 115, 204, 0.1), rgba(0, 188, 212, 0.1));
+            clip-path: polygon(0 0, 100% 0, 100% 20%, 0 40%);
+        }
+
+        .decorative-border-bottom {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(42, 115, 204, 0.1), rgba(0, 188, 212, 0.1));
+            clip-path: polygon(0 80%, 100% 60%, 100% 100%, 0 100%);
+        }
+    </style>
+</head>
+<body>
+    <div class="certificate">
+        <div class="decorative-border"></div>
+        <div class="decorative-border-bottom"></div>
+        <div class="certificate-header">
+            <img src="https://firebasestorage.googleapis.com/v0/b/court-callers.appspot.com/o/EduTrailblaze%2FETB_Logo%20(1).png?alt=media&token=debbd7d7-22f7-4a28-8abe-c572142f81d0" alt="Logo" class="logo">
+            <div class="header-title">Certificate of Achievement</div>
+        </div>
+
+        <div class="certificate-body">
+            <p class="certificate-text">This is to certify that</p>
+            <div class="recipient-name">[Recipient's Name]</div>
+            <p class="certificate-text">has successfully completed the course</p>
+            <div class="course-title">[Course Name]</div>
+            <p class="certificate-text">offered by EduTrailblaze on [Date]</p>
+        </div>
+
+        <div class="footer">
+            <div class="signature">
+                <img src="[Signature Image URL]" alt="Signature">
+                <div>Authorized Signature</div>
+            </div>
+            <div class="date">
+                Date: [Date]
+            </div>
+        </div>
+
+        <div class="watermark">Certificate</div>
+    </div>
+</body>
+</html>
