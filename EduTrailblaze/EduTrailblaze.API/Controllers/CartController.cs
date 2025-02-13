@@ -184,7 +184,7 @@ namespace EduTrailblaze.API.Controllers
             }
         }
 
-        [HttpPost("add-to-cart")]
+        [HttpPost("add-item-to-cart")]
         public async Task<IActionResult> AddToCart(string? userId, int courseId)
         {
             try
@@ -198,7 +198,7 @@ namespace EduTrailblaze.API.Controllers
             }
         }
 
-        [HttpDelete("remove-from-cart")]
+        [HttpDelete("remove-item-from-cart")]
         public async Task<IActionResult> RemoveFromCart(string? userId, int courseId)
         {
             try
