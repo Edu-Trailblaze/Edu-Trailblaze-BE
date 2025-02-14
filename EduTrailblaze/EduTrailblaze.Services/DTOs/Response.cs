@@ -2,7 +2,7 @@
 {
     public class CoursesResponse
     {
-        public int CourseId { get; set; }
+        public int Id { get; set; }
 
         public string Title { get; set; }
 
@@ -18,7 +18,9 @@
 
         public string CreatedBy { get; set; }
 
-        public DateTime CreatedAt { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
+
+        public DateTimeOffset? UpdatedAt { get; set; }
     }
 
     public class DiscountInformationResponse
@@ -48,6 +50,7 @@
     {
         public string Id { get; set; }
         public string Fullname { get; set; }
+        public string ProfilePictureUrl { get; set; }
         public string UserName { get; set; }
         public string Email { get; set; }
     }

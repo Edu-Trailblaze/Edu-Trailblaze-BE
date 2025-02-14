@@ -154,7 +154,7 @@ namespace EduTrailblaze.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        
+
         [HttpGet("number-of-items-in-cart")]
         public async Task<IActionResult> NumberOfItemsInCart(string? userId)
         {
