@@ -449,6 +449,13 @@ namespace EduTrailblaze.Services
         {
             try
             {
+                var cart = await GetCart(userId);
+
+                if (cart.Any(ci => ci.ItemId == courseId))
+                {
+                    throw new Exception("Course already exists in the cart.");
+                }
+
                 await SaveCartToCookie(courseId, userId);
                 if (userId != null)
                 {
@@ -465,6 +472,13 @@ namespace EduTrailblaze.Services
         {
             try
             {
+                var cart = await GetCart(userId);
+
+                if (!cart.Any(ci => ci.ItemId == courseId))
+                {
+                    throw new Exception("Course not found in the cart.");
+                }
+
                 RemoveCourseFromCookieCart(courseId, userId);
 
                 if (userId != null)
@@ -482,6 +496,12 @@ namespace EduTrailblaze.Services
         {
             try
             {
+                var cart = await GetCart(userId);
+
+                if (cart.Count == 0)
+                {
+                    return;
+                }
                 DeleteCartInCookie(userId);
                 if (userId != null)
                 {
