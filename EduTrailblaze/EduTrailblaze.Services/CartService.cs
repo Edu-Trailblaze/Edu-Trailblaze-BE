@@ -505,8 +505,8 @@ namespace EduTrailblaze.Services
                 DeleteCartInCookie(userId);
                 if (userId != null)
                 {
-                    var cart = await GetSystemCart(userId);
-                    await DeleteCart(cart);
+                    var systemCart = await GetSystemCart(userId);
+                    await DeleteCart(systemCart);
                 }
             }
             catch (Exception ex)
