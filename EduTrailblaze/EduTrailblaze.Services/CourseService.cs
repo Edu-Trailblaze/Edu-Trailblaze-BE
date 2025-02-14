@@ -537,7 +537,8 @@ namespace EduTrailblaze.Services
                               Id = ci.InstructorId,
                               Fullname = up.Fullname ?? null,
                               UserName = ci.Instructor.UserName,
-                              Email = ci.Instructor.Email
+                              Email = ci.Instructor.Email,
+                              ProfilePictureUrl = up.ProfilePictureUrl ?? null
                           })
                     .ToListAsync();
 
