@@ -209,7 +209,8 @@ namespace EduTrailblaze.Services
                 // Check if the item exists in the cart, add or update accordingly
                 if (cartItems.TryGetValue(courseId, out item))
                 {
-                    throw new Exception("Course already exists in the cart.");
+                    //throw new Exception("Course already exists in the cart.");
+                    return;
                 }
 
                 item = new CartItemDTO
@@ -339,23 +340,35 @@ namespace EduTrailblaze.Services
             try
             {
                 var cookieCart = GetCookieCart(userId);
+                var cartItems = new List<CartItemDTO>();
 
                 if (cookieCart != null && cookieCart.Count > 0)
                 {
-                    return cookieCart;
+                    cartItems.AddRange(cookieCart);
                 }
 
-                if (userId == null)
+                if (userId != null)
                 {
-                    return new List<CartItemDTO>();
+                    var systemCart = await GetSystemCart(userId);
+                    var systemCartItems = systemCart.CartItems.Select(ci => new CartItemDTO
+                    {
+                        ItemId = ci.CourseId,
+                    }).ToList();
+
+                    // Merge system cart items with cookie cart items, avoiding duplicates
+                    foreach (var item in systemCartItems)
+                    {
+                        if (!cartItems.Any(ci => ci.ItemId == item.ItemId))
+                        {
+                            cartItems.Add(item);
+                        }
+                    }
                 }
 
-                var systemCart = await GetSystemCart(userId);
-
-                var cartItems = systemCart.CartItems.Select(ci => new CartItemDTO
+                foreach (var item in cartItems)
                 {
-                    ItemId = ci.CourseId,
-                }).ToList();
+                    await SaveCartToCookie(item.ItemId, userId);
+                }
 
                 return cartItems;
             }
@@ -461,6 +474,31 @@ namespace EduTrailblaze.Services
                 {
                     await AddItemToSystemCart(courseId, userId);
                 }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while adding the course to the cart: " + ex.Message);
+            }
+        }
+        
+        public async Task<List<CartItemDTO>> AddToCartV2(string? userId, int courseId)
+        {
+            try
+            {
+                var cart = await GetCart(userId);
+
+                if (cart.Any(ci => ci.ItemId == courseId))
+                {
+                    throw new Exception("Course already exists in the cart.");
+                }
+
+                await SaveCartToCookie(courseId, userId);
+                if (userId != null)
+                {
+                    await AddItemToSystemCart(courseId, userId);
+                }
+
+                return await GetCart(userId);
             }
             catch (Exception ex)
             {

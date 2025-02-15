@@ -197,6 +197,20 @@ namespace EduTrailblaze.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        
+        [HttpPost("add-item-to-cart-v2")]
+        public async Task<IActionResult> AddToCartV2(string? userId, int courseId)
+        {
+            try
+            {
+                var cartItems = await _cartService.AddToCartV2(userId, courseId);
+                return Ok(cartItems);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
         [HttpDelete("remove-item-from-cart")]
         public async Task<IActionResult> RemoveFromCart(string? userId, int courseId)
