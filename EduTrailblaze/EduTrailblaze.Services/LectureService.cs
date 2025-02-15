@@ -232,22 +232,20 @@ namespace EduTrailblaze.Services
         {
             try
             {
-                var dbSet = await _lectureRepository.GetDbSet();
-                var lectures = await dbSet
-                    .Where(x => sectionIds.Contains(x.SectionId))
-                    .Select(x => _mapper.Map<LectureDTO>(x))
-                    .ToListAsync();
-
-                var sectionLectureDetails = lectures
-                    .GroupBy(x => x.SectionId)
-                    .Select(g => new SectionLectureDetails
+                List<SectionLectureDetails> sectionLectureDetails1 = new List<SectionLectureDetails>();
+                foreach (var sectionId in sectionIds)
+                {
+                    var dbSet = await _lectureRepository.GetDbSet();
+                    var sectionLectureDetails = new SectionLectureDetails
                     {
-                        SectionId = g.Key,
-                        Lectures = g.ToList()
-                    })
-                    .ToList();
+                        SectionId = sectionId,
+                        Lectures = await dbSet.Where(x => x.SectionId == sectionId && !x.IsDeleted)
+                            .Select(x => _mapper.Map<LectureDTO>(x)).ToListAsync()
+                    };
+                    sectionLectureDetails1.Add(sectionLectureDetails);
+                }
 
-                return sectionLectureDetails;
+                return sectionLectureDetails1;
             }
             catch (Exception ex)
             {
