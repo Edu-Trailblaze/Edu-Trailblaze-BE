@@ -60,6 +60,20 @@ namespace EduTrailblaze.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+        
+        [HttpGet("get-section-lecture")]
+        public async Task<IActionResult> GetSectionLectures([FromQuery] List<int> sectionIds)
+        {
+            try
+            {
+                var lectures = await _lectureService.GetSectionLectures(sectionIds);
+                return Ok(lectures);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
 
         [HttpPost]
         public async Task<IActionResult> AddLecture([FromBody] CreateLectureRequest lecture)

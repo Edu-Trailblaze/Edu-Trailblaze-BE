@@ -24,5 +24,7 @@ namespace EduTrailblaze.Services.Interfaces
         Task UpdateLectureDuration(int lectureId);
 
         Task<List<LectureDTO>?> GetLecturesByConditions(GetLecturesRequest request);
+
+        Task<List<SectionLectureDetails>> GetSectionLectures(List<int> sectionIds);
     }
 }

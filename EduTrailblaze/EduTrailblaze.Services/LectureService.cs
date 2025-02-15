@@ -227,5 +227,32 @@ namespace EduTrailblaze.Services
                 throw new Exception("An error occurred while getting the lectures: " + ex.Message);
             }
         }
+
+        public async Task<List<SectionLectureDetails>> GetSectionLectures(List<int> sectionIds)
+        {
+            try
+            {
+                var dbSet = await _lectureRepository.GetDbSet();
+                var lectures = await dbSet
+                    .Where(x => sectionIds.Contains(x.SectionId))
+                    .Select(x => _mapper.Map<LectureDTO>(x))
+                    .ToListAsync();
+
+                var sectionLectureDetails = lectures
+                    .GroupBy(x => x.SectionId)
+                    .Select(g => new SectionLectureDetails
+                    {
+                        SectionId = g.Key,
+                        Lectures = g.ToList()
+                    })
+                    .ToList();
+
+                return sectionLectureDetails;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the lectures: " + ex.Message);
+            }
+        }
     }
 }

@@ -200,4 +200,10 @@
         public string Name { get; set; }
         public string Code { get; set; }
     }
+
+    public class SectionLectureDetails
+    {
+        public int SectionId { get; set; }
+        public List<LectureDTO>? Lectures { get; set; }
+    }
 }
