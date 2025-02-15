@@ -49,6 +49,6 @@ namespace EduTrailblaze.Services.Interfaces
 
         Task ClearCart(string? userId);
 
-        Task<List<CartItemDTO>> AddToCartV2(string? userId, int courseId);
+        Task<CartInformation> AddToCartV2(string? userId, int courseId);
     }
 }

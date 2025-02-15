@@ -481,7 +481,7 @@ namespace EduTrailblaze.Services
             }
         }
         
-        public async Task<List<CartItemDTO>> AddToCartV2(string? userId, int courseId)
+        public async Task<CartInformation> AddToCartV2(string? userId, int courseId)
         {
             try
             {
@@ -498,7 +498,7 @@ namespace EduTrailblaze.Services
                     await AddItemToSystemCart(courseId, userId);
                 }
 
-                return await GetCart(userId);
+                return await ViewCart(userId);
             }
             catch (Exception ex)
             {
