@@ -13,6 +13,8 @@ namespace EduTrailblaze.Services.Interfaces
 
         Task<List<UserDTO>?> GetUsersByConditions(GetUsersRequest request);
 
+        Task<UserDTO> GetUserProfile(string userId);
+
         Task<PaginatedList<UserDTO>> GetUserInformation(GetUsersRequest request, Paging paging);
     }
 }

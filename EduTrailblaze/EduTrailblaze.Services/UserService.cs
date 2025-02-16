@@ -121,6 +121,38 @@ namespace EduTrailblaze.Services
             }
         }
 
+        public async Task<UserDTO> GetUserProfile(string userId)
+        {
+            try
+            {
+                var dbSet = _userManager.Users.Include(u => u.UserProfile).AsQueryable();
+                var user = await dbSet.FirstOrDefaultAsync(u => u.Id == userId);
+
+                if (user == null)
+                {
+                    throw new Exception("User not found.");
+                }
+                var roles = await _userManager.GetRolesAsync(user);
+                return new UserDTO
+                {
+                    Id = user.Id,
+                    UserName = user.UserName,
+                    Email = user.Email,
+                    PhoneNumber = user.PhoneNumber,
+                    TwoFactorEnabled = user.TwoFactorEnabled,
+                    LockoutEnabled = user.LockoutEnabled,
+                    FullName = user.UserProfile?.Fullname,
+                    Balance = user.UserProfile?.Balance ?? 0,
+                    ProfilePictureUrl = user.UserProfile?.ProfilePictureUrl,
+                    Role = roles.ToArray()
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the user profile: " + ex.Message);
+            }
+        }
+
         public async Task<PaginatedList<UserDTO>> GetUserInformation(GetUsersRequest request, Paging paging)
         {
             try
