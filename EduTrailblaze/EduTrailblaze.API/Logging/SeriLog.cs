@@ -1,4 +1,5 @@
 ﻿using Serilog;
+using Serilog.Sinks.Elasticsearch;
 
 namespace EduTrailblaze.API.Logging
 {
@@ -12,6 +13,15 @@ namespace EduTrailblaze.API.Logging
             configuration
                 .WriteTo.Debug()
                 .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}")
+                .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(context.Configuration["Elastic:Uri"]))
+                {
+                    AutoRegisterTemplate = true,
+                    AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv6,
+                    IndexFormat = $"edutrail-{applicationName}-logs-{environmentName?.ToLower().Replace(".", "-")}-{DateTime.UtcNow:yyyy.MM}",
+                    NumberOfShards = 2,
+                    NumberOfReplicas = 1,
+                    ModifyConnectionSettings = x => x.BasicAuthentication(context.Configuration["Elastic:Username"], context.Configuration["Elastic:Password"])
+                })
                 .WriteTo.ApplicationInsights(context.Configuration["ApplicationInsights:InstrumentationKey"],
             TelemetryConverter.Traces)
                 .Enrich.FromLogContext()

@@ -23,6 +23,9 @@
 
     <PackageReference Include="Serilog.Sinks.ApplicationInsights" Version="4.0.0" />
 
+
+    <PackageReference Include="Serilog.Sinks.Elasticsearch" Version="9.0.3" />
+
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
