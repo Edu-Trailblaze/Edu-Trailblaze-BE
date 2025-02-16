@@ -52,7 +52,7 @@ namespace EduTrailblaze.API.Controllers
         }
 
         [HttpPut("{userId}")]
-        public async Task<IActionResult> UpdateUserProfile(string userId, [FromBody] UpdateUserProfileRequest userProfile)
+        public async Task<IActionResult> UpdateUserProfile(string userId, [FromForm] UpdateUserProfileRequest userProfile)
         {
             try
             {

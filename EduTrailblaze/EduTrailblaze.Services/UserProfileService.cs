@@ -2,6 +2,7 @@
 using EduTrailblaze.Repositories.Interfaces;
 using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Interfaces;
+using Firebase.Storage;
 using Microsoft.AspNetCore.Identity;
 
 namespace EduTrailblaze.Services
@@ -98,8 +99,34 @@ namespace EduTrailblaze.Services
                 {
                     throw new Exception("UserProfile not found.");
                 }
+
                 existingUserProfile.Fullname = userProfile.FullName;
-                existingUserProfile.ProfilePictureUrl = userProfile.ProfilePictureUrl;
+                if (userProfile.ProfilePicture != null)
+                {
+                    var file = userProfile.ProfilePicture;
+
+                    if (file == null || file.Length == 0)
+                    {
+                        throw new Exception("File is empty.");
+                    }
+
+                    var fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
+                    using (var stream = file.OpenReadStream())
+                    {
+                        var task = new FirebaseStorage("court-callers.appspot.com")
+                            .Child("ProfileImage")
+                            .Child(fileName)
+                            .PutAsync(stream);
+
+                        var downloadUrl = await task;
+                        existingUserProfile.ProfilePictureUrl = downloadUrl;
+                    }
+                }
+                else
+                {
+                    existingUserProfile.ProfilePictureUrl = "https://firebasestorage.googleapis.com/v0/b/storage-8b808.appspot.com/o/OIP.jpeg?alt=media&token=60195a0a-2fd6-4c66-9e3a-0f7f80eb8473";
+                }
+
                 await _userProfileRepository.UpdateAsync(existingUserProfile);
                 var user = await _userManager.FindByIdAsync(userId);
                 if (user != null)
