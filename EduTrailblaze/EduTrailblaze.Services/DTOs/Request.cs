@@ -1190,7 +1190,7 @@ namespace EduTrailblaze.Services.DTOs
     {
         //public string UserId { get; set; }
         public string FullName { get; set; }
-        public string ProfilePictureUrl { get; set; }
+        public string ProfilePictureUrl { get; set; } = "https://firebasestorage.googleapis.com/v0/b/storage-8b808.appspot.com/o/OIP.jpeg?alt=media&token=60195a0a-2fd6-4c66-9e3a-0f7f80eb8473";
         public string PhoneNumber { get; set; }
     }
 
@@ -1203,7 +1203,11 @@ namespace EduTrailblaze.Services.DTOs
             RuleFor(x => x.FullName)
                 .MaximumLength(255).WithMessage("FullName cannot be longer than 255 characters");
             RuleFor(x => x.ProfilePictureUrl)
-                .MaximumLength(255).WithMessage("ProfilePictureUrl cannot be longer than 255 characters");
+             .MaximumLength(255).WithMessage("ProfilePictureUrl cannot be longer than 255 characters")
+             .Must(uri => Uri.IsWellFormedUriString(uri, UriKind.Absolute)).WithMessage("ProfilePictureUrl must be a valid URL");
+            RuleFor(x => x.PhoneNumber)
+                .MaximumLength(20).WithMessage("PhoneNumber cannot be longer than 20 characters")
+                .Matches(@"^\+?[1-9]\d{1,14}$").WithMessage("PhoneNumber must be a valid phone number");
         }
     }
 
