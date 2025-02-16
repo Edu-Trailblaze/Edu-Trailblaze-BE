@@ -134,6 +134,7 @@
         public int Id { get; set; }
         public int LectureId { get; set; }
         public string Title { get; set; }
+        public string VideoUrl { get; set; }
         public string? Transcript { get; set; }
         public TimeSpan Duration { get; set; }
         public bool IsDeleted { get; set; }
