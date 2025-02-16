@@ -51,12 +51,12 @@ namespace EduTrailblaze.API.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateUserProfile([FromBody] UpdateUserProfileRequest userProfile)
+        [HttpPut("{userId}")]
+        public async Task<IActionResult> UpdateUserProfile(string userId, [FromBody] UpdateUserProfileRequest userProfile)
         {
             try
             {
-                await _userProfileService.UpdateUserProfile(userProfile);
+                await _userProfileService.UpdateUserProfile(userId, userProfile);
                 return Ok();
             }
             catch (Exception ex)

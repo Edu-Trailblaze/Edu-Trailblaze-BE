@@ -89,11 +89,11 @@ namespace EduTrailblaze.Services
             }
         }
 
-        public async Task UpdateUserProfile(UpdateUserProfileRequest userProfile)
+        public async Task UpdateUserProfile(string userId, UpdateUserProfileRequest userProfile)
         {
             try
             {
-                var existingUserProfile = await _userProfileRepository.GetByIdAsync(userProfile.UserId);
+                var existingUserProfile = await _userProfileRepository.GetByIdAsync(userId);
                 if (existingUserProfile == null)
                 {
                     throw new Exception("UserProfile not found.");
@@ -101,7 +101,7 @@ namespace EduTrailblaze.Services
                 existingUserProfile.Fullname = userProfile.FullName;
                 existingUserProfile.ProfilePictureUrl = userProfile.ProfilePictureUrl;
                 await _userProfileRepository.UpdateAsync(existingUserProfile);
-                var user = await _userManager.FindByIdAsync(userProfile.UserId);
+                var user = await _userManager.FindByIdAsync(userId);
                 if (user != null)
                 {
                     user.PhoneNumber = userProfile.PhoneNumber;

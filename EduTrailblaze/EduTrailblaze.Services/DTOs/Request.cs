@@ -1188,7 +1188,7 @@ namespace EduTrailblaze.Services.DTOs
 
     public class UpdateUserProfileRequest
     {
-        public string UserId { get; set; }
+        //public string UserId { get; set; }
         public string FullName { get; set; }
         public string ProfilePictureUrl { get; set; }
         public string PhoneNumber { get; set; }
@@ -1198,8 +1198,8 @@ namespace EduTrailblaze.Services.DTOs
     {
         public UpdateUserProfileRequestValidator()
         {
-            RuleFor(x => x.UserId)
-                .NotEmpty().WithMessage("UserId is required");
+            //RuleFor(x => x.UserId)
+            //    .NotEmpty().WithMessage("UserId is required");
             RuleFor(x => x.FullName)
                 .MaximumLength(255).WithMessage("FullName cannot be longer than 255 characters");
             RuleFor(x => x.ProfilePictureUrl)

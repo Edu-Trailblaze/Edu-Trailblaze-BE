@@ -15,7 +15,7 @@ namespace EduTrailblaze.Services.Interfaces
 
         Task UpdateUserProfile(UserProfile userProfile);
 
-        Task UpdateUserProfile(UpdateUserProfileRequest userProfile);
+        Task UpdateUserProfile(string userId, UpdateUserProfileRequest userProfile);
 
         Task DeleteUserProfile(UserProfile userProfile);
     }
