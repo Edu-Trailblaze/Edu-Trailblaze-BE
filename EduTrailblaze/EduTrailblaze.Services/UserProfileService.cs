@@ -104,8 +104,6 @@ namespace EduTrailblaze.Services
                 var user = await _userManager.FindByIdAsync(userProfile.UserId);
                 if (user != null)
                 {
-                    user.UserName = userProfile.UserName;
-                    user.Email = userProfile.Email;
                     user.PhoneNumber = userProfile.PhoneNumber;
                     await _userManager.UpdateAsync(user);
                 }
