@@ -2,16 +2,19 @@
 using EduTrailblaze.Repositories.Interfaces;
 using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace EduTrailblaze.Services
 {
     public class UserProfileService : IUserProfileService
     {
         private readonly IRepository<UserProfile, string> _userProfileRepository;
+        private readonly UserManager<User> _userManager;
 
-        public UserProfileService(IRepository<UserProfile, string> userProfileRepository)
+        public UserProfileService(IRepository<UserProfile, string> userProfileRepository, UserManager<User> userManager)
         {
             _userProfileRepository = userProfileRepository;
+            _userManager = userManager;
         }
 
         public async Task<UserProfile?> GetUserProfile(string userProfileId)
@@ -55,6 +58,12 @@ namespace EduTrailblaze.Services
             try
             {
                 await _userProfileRepository.UpdateAsync(userProfile);
+                var user = await _userManager.FindByIdAsync(userProfile.Id);
+                if (user != null)
+                {
+                    user.UserProfile = userProfile;
+                    await _userManager.UpdateAsync(user);
+                }
             }
             catch (Exception ex)
             {
@@ -72,6 +81,7 @@ namespace EduTrailblaze.Services
                     Fullname = userProfile.FullName,
                 };
                 await _userProfileRepository.AddAsync(newUserProfile);
+                
             }
             catch (Exception ex)
             {
@@ -91,6 +101,14 @@ namespace EduTrailblaze.Services
                 existingUserProfile.Fullname = userProfile.FullName;
                 existingUserProfile.ProfilePictureUrl = userProfile.ProfilePictureUrl;
                 await _userProfileRepository.UpdateAsync(existingUserProfile);
+                var user = await _userManager.FindByIdAsync(userProfile.UserId);
+                if (user != null)
+                {
+                    user.UserName = userProfile.UserName;
+                    user.Email = userProfile.Email;
+                    user.PhoneNumber = userProfile.PhoneNumber;
+                    await _userManager.UpdateAsync(user);
+                }
             }
             catch (Exception ex)
             {
