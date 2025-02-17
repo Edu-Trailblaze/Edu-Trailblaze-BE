@@ -1208,7 +1208,7 @@ namespace EduTrailblaze.Services.DTOs
             // .Must(uri => Uri.IsWellFormedUriString(uri, UriKind.Absolute)).WithMessage("ProfilePictureUrl must be a valid URL");
             RuleFor(x => x.PhoneNumber)
                 .MaximumLength(20).WithMessage("PhoneNumber cannot be longer than 20 characters")
-                .Matches(@"^\+?[1-9]\d{1,14}$").WithMessage("PhoneNumber must be a valid phone number");
+                .Matches(@"^\+?[0-9]\d{1,14}$").WithMessage("PhoneNumber must be a valid phone number");
         }
     }
 
