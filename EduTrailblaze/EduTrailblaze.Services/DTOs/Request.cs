@@ -1209,6 +1209,19 @@ namespace EduTrailblaze.Services.DTOs
             RuleFor(x => x.PhoneNumber)
                 .MaximumLength(20).WithMessage("PhoneNumber cannot be longer than 20 characters")
                 .Matches(@"^\+?[0-9]\d{1,14}$").WithMessage("PhoneNumber must start with an optional '+' followed by 1 to 15 digits, and cannot contain any other characters.");
+            RuleFor(x => x.ProfilePicture)
+                .Must(BeAValidImage).WithMessage("ProfilePicture must be a valid image file (jpg, jpeg, png, gif)");
+        }
+
+        private bool BeAValidImage(IFormFile? file)
+        {
+            if (file == null)
+            {
+                return true;
+            }
+
+            var allowedContentTypes = new[] { "image/jpeg", "image/png", "image/gif" };
+            return allowedContentTypes.Contains(file.ContentType);
         }
     }
 
