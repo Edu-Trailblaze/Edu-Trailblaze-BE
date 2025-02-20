@@ -9,18 +9,20 @@ namespace EduTrailblaze.API.Logging
         {
             var environmentName = context.HostingEnvironment.EnvironmentName ?? "Development";
             var applicationName = context.HostingEnvironment.ApplicationName?.ToLower().Replace(".", "-");
-
+            var elasticUrl = context.Configuration["Elastic:Uri"];
+            var username = context.Configuration["Elastic:Username"];
+            var password = context.Configuration["Elastic:Password"];
             configuration
                 .WriteTo.Debug()
                 .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}")
-                .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(context.Configuration["Elastic:Uri"]))
+                .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(elasticUrl))
                 {
                     AutoRegisterTemplate = true,
                     AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv6,
                     IndexFormat = $"edutrail-{applicationName}-logs-{environmentName?.ToLower().Replace(".", "-")}-{DateTime.UtcNow:yyyy.MM}",
                     NumberOfShards = 2,
                     NumberOfReplicas = 1,
-                    ModifyConnectionSettings = x => x.BasicAuthentication(context.Configuration["Elastic:Username"], context.Configuration["Elastic:Password"])
+                    ModifyConnectionSettings = x => x.BasicAuthentication(username, password)
                 })
                 .WriteTo.ApplicationInsights(context.Configuration["ApplicationInsights:InstrumentationKey"],
             TelemetryConverter.Traces)

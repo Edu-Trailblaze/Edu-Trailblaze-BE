@@ -56,10 +56,10 @@ namespace EduTrailblaze.Services
                 .Settings(s => s
                     .Analysis(a => a
                         .TokenFilters(tf => tf
-                            .Phonetic("my_phonetic_filter", ph => ph
-                                .Encoder(PhoneticEncoder.DoubleMetaphone)
-                                .Replace(false)
-                            )
+                            //.Phonetic("my_phonetic_filter", ph => ph
+                            //    .Encoder(PhoneticEncoder.DoubleMetaphone)
+                            //    .Replace(false)
+                            //)
                             .Synonym("synonym_filter_1", sf => sf
                                 .Synonyms("IT, Information Technology")
                             )
@@ -88,7 +88,8 @@ namespace EduTrailblaze.Services
                                 .Tokenizer("whitespace")
                                 .Filters("lowercase", "synonym_filter_1",
                                          "word_delimiter_custom",
-                                         "my_phonetic_filter", "ngram_filter", "my_stemmer", "shingle_filter")
+                                         //"my_phonetic_filter",
+                                         "ngram_filter", "my_stemmer", "shingle_filter")
                             )
                         )
                     )
