@@ -796,7 +796,7 @@ namespace EduTrailblaze.Services
 
                 var courseDetails = _mapper.Map<CourseDetails>(course);
 
-                courseDetails.Skills = tags;
+                courseDetails.Tags = tags;
                 courseDetails.Languages = _mapper.Map<IEnumerable<SupportedLanguage>>(supportedlanguages);
                 courseDetails.Instructors = await InstructorInformation(courseId);
                 courseDetails.Review = await _reviewService.GetAverageRatingAndNumberOfRatings(courseId);

@@ -164,7 +164,7 @@
 
         public List<string> LearningOutcomes { get; set; }
 
-        public List<string> Skills { get; set; }
+        public List<string> Tags { get; set; }
 
         public decimal EstimatedCompletionTime { get; set; }
 
