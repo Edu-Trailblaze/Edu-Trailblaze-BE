@@ -22,6 +22,8 @@ namespace EduTrailblaze.Entities
         public int Duration { get; set; } = 0;
 
         public bool IsDeleted { get; set; } = false;
+        [StringLength(25)]
+        public string? LectureType { get; set; }
 
 
 
