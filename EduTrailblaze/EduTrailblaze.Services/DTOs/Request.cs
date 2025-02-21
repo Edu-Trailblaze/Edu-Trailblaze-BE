@@ -647,6 +647,7 @@ namespace EduTrailblaze.Services.DTOs
     public class CreateLectureRequest
     {
         public int SectionId { get; set; }
+        public string LectureType { get; set; } // Reading, Video, Quiz
         public string Title { get; set; }
         public string Content { get; set; }
         public string Description { get; set; }
@@ -659,6 +660,10 @@ namespace EduTrailblaze.Services.DTOs
         {
             RuleFor(x => x.SectionId)
                 .NotEmpty().WithMessage("SectionId is required");
+            RuleFor(x => x.LectureType)
+                .NotEmpty().WithMessage("LectureType is required")
+                .Must(type => new[] { "Reading", "Video", "Quiz" }.Contains(type))
+                .WithMessage("LectureType must be Reading, Video, or Quiz");
             RuleFor(x => x.Title)
                 .NotEmpty().WithMessage("Title is required")
                 .MaximumLength(50).WithMessage("Title cannot be longer than 50 characters");
@@ -675,6 +680,7 @@ namespace EduTrailblaze.Services.DTOs
     {
         public int LectureId { get; set; }
         public int SectionId { get; set; }
+        public string LectureType { get; set; } // Reading, Video, Quiz
         public string Title { get; set; }
         public string Content { get; set; }
         public string Description { get; set; }
@@ -689,6 +695,10 @@ namespace EduTrailblaze.Services.DTOs
                 .NotEmpty().WithMessage("LectureId is required");
             RuleFor(x => x.SectionId)
                 .NotEmpty().WithMessage("SectionId is required");
+            RuleFor(x => x.LectureType)
+                .NotEmpty().WithMessage("LectureType is required")
+                .Must(type => new[] { "Reading", "Video", "Quiz" }.Contains(type))
+                .WithMessage("LectureType must be Reading, Video, or Quiz");
             RuleFor(x => x.Title)
                 .NotEmpty().WithMessage("Title is required")
                 .MaximumLength(50).WithMessage("Title cannot be longer than 50 characters");

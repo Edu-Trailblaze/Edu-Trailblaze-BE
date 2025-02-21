@@ -120,6 +120,7 @@
     {
         public int Id { get; set; }
         public int SectionId { get; set; }
+        public string? LectureType { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
         public string Description { get; set; }

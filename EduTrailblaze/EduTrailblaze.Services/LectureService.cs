@@ -76,6 +76,7 @@ namespace EduTrailblaze.Services
                 var lectureEntity = new Lecture
                 {
                     SectionId = lecture.SectionId,
+                    LectureType = lecture.LectureType,
                     Title = lecture.Title,
                     Content = lecture.Content,
                     Description = lecture.Description,
@@ -101,6 +102,7 @@ namespace EduTrailblaze.Services
                     throw new Exception("Lecture not found.");
                 }
                 lectureEntity.SectionId = lecture.SectionId;
+                lectureEntity.LectureType = lecture.LectureType;
                 lectureEntity.Title = lecture.Title;
                 lectureEntity.Content = lecture.Content;
                 lectureEntity.Description = lecture.Description;
