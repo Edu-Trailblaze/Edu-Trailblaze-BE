@@ -63,6 +63,7 @@
     public class CourseCardResponse
     {
         public CoursesResponse Course { get; set; }
+        public List<TagResponse> Tags { get; set; }
         public DiscountInformation? Discount { get; set; }
         public ReviewInformation Review { get; set; }
         public List<InstructorInformation> Instructors { get; set; }
@@ -205,5 +206,11 @@
     {
         public int SectionId { get; set; }
         public List<LectureDTO>? Lectures { get; set; }
+    }
+
+    public class TagResponse
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
     }
 }

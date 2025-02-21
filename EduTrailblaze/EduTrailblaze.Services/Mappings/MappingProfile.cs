@@ -37,6 +37,8 @@ namespace EduTrailblaze.Services.Mappings
             CreateMap<Lecture, LectureDTO>();
 
             CreateMap<Video, VideoDTO>();
+
+            CreateMap<Tag, TagResponse>();
         }
     }
 }

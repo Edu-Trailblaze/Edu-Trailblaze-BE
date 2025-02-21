@@ -54,5 +54,7 @@ namespace EduTrailblaze.Services.Interfaces
         Task<List<CourseCardResponse>> GetPersonalItemRecommendation(string? userId);
 
         Task UpdateCourseDuration(int courseId);
+
+        Task<List<TagResponse>> GetTagInformation(int courseId);
     }
 }

@@ -630,6 +630,7 @@ namespace EduTrailblaze.Services
                     var courseCardResponse = new CourseCardResponse
                     {
                         Course = _mapper.Map<CoursesResponse>(course),
+                        Tags = await GetTagInformation(course.Id),
                         Review = await _reviewService.GetAverageRatingAndNumberOfRatings(course.Id),
                         Discount = discount,
                         Instructors = await InstructorInformation(course.Id),
@@ -724,6 +725,24 @@ namespace EduTrailblaze.Services
             catch (Exception ex)
             {
                 throw new Exception("An error occurred while getting the coupon information: " + ex.Message);
+            }
+        }
+
+        public async Task<List<TagResponse>> GetTagInformation(int courseId)
+        {
+            try
+            {
+                var dbSet = await _courseTagRepository.GetDbSet();
+                var tags = await dbSet
+                    .Where(ct => ct.CourseId == courseId)
+                    .Select(ct => ct.Tag)
+                    .ToListAsync();
+
+                return _mapper.Map<List<TagResponse>>(tags);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the tag information: " + ex.Message);
             }
         }
 
@@ -832,6 +851,7 @@ namespace EduTrailblaze.Services
                     var courseCardResponse = new CourseCardResponse
                     {
                         Course = _mapper.Map<CoursesResponse>(course),
+                        Tags = await GetTagInformation(course.Id),
                         Review = await _reviewService.GetAverageRatingAndNumberOfRatings(courseId),
                         Discount = discount,
                         Instructors = await InstructorInformation(courseId),
@@ -899,6 +919,7 @@ namespace EduTrailblaze.Services
                     var courseCardResponse = new CourseCardResponse
                     {
                         Course = _mapper.Map<CoursesResponse>(course),
+                        Tags = await GetTagInformation(course.Id),
                         Review = await _reviewService.GetAverageRatingAndNumberOfRatings(course.Id),
                         Discount = discount,
                         Instructors = await InstructorInformation(course.Id),
