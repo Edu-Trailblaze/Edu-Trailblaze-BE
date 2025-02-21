@@ -901,7 +901,7 @@ namespace EduTrailblaze.Services
 
                 if (courseRecommendationV2 == null || courseRecommendationV2.Count == 0)
                 {
-                    throw new Exception("No courses found.");
+                    return null;
                 }
                 var courseIds = courseRecommendationV2.OrderByDescending(c => c.Frequency).Take(10).Select(c => c.CourseId).ToList();
 
