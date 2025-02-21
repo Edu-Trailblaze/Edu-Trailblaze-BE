@@ -15,6 +15,7 @@
   <ItemGroup>
     <PackageReference Include="FirebaseStorage.net" Version="1.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+	<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.13" />
     <PackageReference Include="Microsoft.ML" Version="4.0.0" />
     <PackageReference Include="Microsoft.ML.Recommender" Version="0.22.0" />
     <PackageReference Include="NAudio" Version="2.2.1" />

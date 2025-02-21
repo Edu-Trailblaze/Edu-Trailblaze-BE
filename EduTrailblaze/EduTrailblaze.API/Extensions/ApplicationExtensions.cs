@@ -13,7 +13,7 @@ namespace EduTrailblaze.API.Extensions
                 options.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
             });
             app.UseHttpsRedirection();
-
+            app.UseCors("AllowSpecificOrigin");
             app.UseHsts();
             app.Use(async (context, next) =>
             {

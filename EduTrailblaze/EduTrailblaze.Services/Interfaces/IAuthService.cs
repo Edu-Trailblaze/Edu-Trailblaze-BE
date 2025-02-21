@@ -15,6 +15,7 @@ namespace EduTrailblaze.Services.Interfaces
         Task EnableAuthenticator(TwoFactorAuthenticationModel twoFactorAuthenticationViewModel);
         Task ExternalLoginCallback(AuthenticationResult authenticationResult);
         Task<ApiResponse> Logout(string userId);
+        Task<ApiResponse> SignInWithGoogle(string redirectUrl);
         Task<ApiResponse> RefreshToken(string userId, string refreshToken);
     }
 }

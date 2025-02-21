@@ -3,6 +3,7 @@ using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Helper;
 using EduTrailblaze.Services.Interfaces;
 using EduTrailblaze.Services.Models;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
@@ -320,6 +321,18 @@ namespace EduTrailblaze.Services
             var result = await _dbPolicyWrap.ExecuteAsync(async () => await _userManager.ResetPasswordAsync(user, resetPasswordModel.Token, resetPasswordModel.Password));
             return (result.Succeeded) ? new ApiResponse { StatusCode = StatusCodes.Status200OK, Message = "Password reset successfully." } : new ApiResponse { StatusCode = StatusCodes.Status500InternalServerError, Message = "Error when reset password." };
         }
+
+        public async Task<ApiResponse> SignInWithGoogle(string redirectUrl)
+        {
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(GoogleDefaults.AuthenticationScheme, redirectUrl);
+            return new ApiResponse
+            {
+                StatusCode = StatusCodes.Status200OK,
+                Data = properties
+            };
+           
+        }
+
 
         public async Task<ApiResponse> VerifyAuthenticatorCode(string userId, string code)
         {

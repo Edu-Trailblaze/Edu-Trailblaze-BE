@@ -107,6 +107,17 @@ namespace EduTrailblaze.API.Extensions
                             ValidAudience = configuration["JwtToken:Audience"],
                             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtToken:Key"]))
                         };
+                    }).AddGoogle(options =>
+                    {
+                        options.ClientId = configuration["Google:ClientId"];
+                        options.ClientSecret = configuration["Google:ClientSecret"];
+                        options.CallbackPath = "/account/google-response";
+                        options.SignInScheme = IdentityConstants.ExternalScheme;
+                    })
+                    .AddCookie(options =>
+                    {
+                        options.LoginPath = "/account/google-login"; 
+                        options.LogoutPath = "/account/logout"; 
                     });
 
             //Author
@@ -283,7 +294,9 @@ namespace EduTrailblaze.API.Extensions
                         {
                             policy.WithOrigins(
                                 configuration["FE:Url"],
-                                configuration["FE:Url_Http"]
+                                configuration["FE:Url_Http"],
+                                configuration["BE:Local"],
+                                 configuration["BE:Publish"]
                             )
                             .AllowAnyHeader()
                             .AllowAnyMethod()

@@ -2,6 +2,8 @@
 using EduTrailblaze.Services.Helper;
 using EduTrailblaze.Services.Interfaces;
 using EduTrailblaze.Services.Models;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -190,5 +192,40 @@ namespace EduTrailblaze.API.Controllers
             }
             return StatusCode(result.StatusCode, result);
         }
+        
+
+        [HttpGet("signin-google")]
+        public async Task<IActionResult> SignInWithGoogle()
+        {
+            
+            
+
+            var scheme = Request.Scheme ?? "https";
+            var redirectUrl = $"{scheme}://{Request.Host}/authentication/google-response";
+
+            #region test code
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties("Google", redirectUrl);
+            return new ChallengeResult("Google", properties);
+            #endregion
+
+            if (redirectUrl == null)
+            {
+                throw new ArgumentNullException(nameof(redirectUrl));
+            }
+            
+            var result = await _authService.SignInWithGoogle(redirectUrl);
+
+            if (result.StatusCode == 200)
+            {
+                if (result.Data == null)
+                {
+                    return StatusCode(500, "Google authentication data is null.");
+                }
+                return Challenge(result.Data.ToString() ?? throw new ArgumentNullException(nameof(result.Data)), GoogleDefaults.AuthenticationScheme);
+            }
+            return StatusCode(result.StatusCode, result);
+        }
+
+       
     }
 }
