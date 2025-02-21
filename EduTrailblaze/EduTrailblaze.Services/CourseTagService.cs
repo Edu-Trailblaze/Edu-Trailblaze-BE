@@ -1,5 +1,6 @@
 ﻿using EduTrailblaze.Entities;
 using EduTrailblaze.Repositories.Interfaces;
+using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Interfaces;
 
 namespace EduTrailblaze.Services
@@ -42,6 +43,23 @@ namespace EduTrailblaze.Services
             try
             {
                 await _courseTagRepository.AddAsync(courseTag);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while adding the courseTag.", ex);
+            }
+        }
+        
+        public async Task AddCourseTag(CreateCourseTagRequest courseTag)
+        {
+            try
+            {
+                var newCourseTag = new CourseTag
+                {
+                    CourseId = courseTag.CourseId,
+                    TagId = courseTag.TagId
+                };
+                await _courseTagRepository.AddAsync(newCourseTag);
             }
             catch (Exception ex)
             {

@@ -1748,4 +1748,38 @@ namespace EduTrailblaze.Services.DTOs
                 .GreaterThanOrEqualTo(0).WithMessage("MaxDuration must be greater than or equal to 0");
         }
     }
+
+    public class CreateCourseTagRequest
+    {
+        public int CourseId { get; set; }
+        public int TagId { get; set; }
+    }
+
+    public class CreateCourseTagRequestValidator : AbstractValidator<CreateCourseTagRequest>
+    {
+        public CreateCourseTagRequestValidator()
+        {
+            RuleFor(x => x.CourseId)
+                .NotEmpty().WithMessage("CourseId is required");
+            RuleFor(x => x.TagId)
+                .NotEmpty().WithMessage("TagId is required");
+        }
+    }
+
+    public class DeleteCourseTagRequest
+    {
+        public int CourseId { get; set; }
+        public int TagId { get; set; }
+    }
+
+    public class DeleteCourseTagRequestValidator : AbstractValidator<DeleteCourseTagRequest>
+    {
+        public DeleteCourseTagRequestValidator()
+        {
+            RuleFor(x => x.CourseId)
+                .NotEmpty().WithMessage("CourseId is required");
+            RuleFor(x => x.TagId)
+                .NotEmpty().WithMessage("TagId is required");
+        }
+    }
 }
