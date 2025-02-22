@@ -274,5 +274,32 @@ namespace EduTrailblaze.Services
                 throw new Exception("An error occurred while getting the courses: " + ex.Message);
             }
         }
+
+        public async Task<List<RatingDetails>> GetRatingDetails(int courseId)
+        {
+            try
+            {
+                var reviews = await _reviewRepository.GetDbSet();
+                var courseReviews = reviews.Where(r => r.CourseId == courseId && !r.IsDeleted);
+
+                if (courseReviews.Count() == 0)
+                {
+                    return new List<RatingDetails>();
+                }
+
+                var ratingDetails = courseReviews.GroupBy(r => r.Rating)
+                    .Select(r => new RatingDetails
+                    {
+                        Rating = r.Key,
+                        RatingPercentage = (r.Count() * 100) / courseReviews.Count(),
+                        TotalRatings = r.Count()
+                    }).ToList();
+                return ratingDetails;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the average rating: " + ex.Message);
+            }
+        }
     }
 }

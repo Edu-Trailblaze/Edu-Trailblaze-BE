@@ -177,11 +177,11 @@ namespace EduTrailblaze.API.Controllers
         }
 
         [HttpGet("get-course-detail/{courseId}")]
-        public async Task<IActionResult> GetCourseDetailsById(int courseId)
+        public async Task<IActionResult> GetCourseSectionDetailsById(int courseId)
         {
             try
             {
-                var res = await _courseService.GetCourseDetailsById(courseId);
+                var res = await _courseService.GetCourseSectionDetailsById(courseId);
                 if (res == null) return NotFound();
                 return Ok(res);
             }

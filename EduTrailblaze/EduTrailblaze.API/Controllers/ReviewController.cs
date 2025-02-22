@@ -113,5 +113,19 @@ namespace EduTrailblaze.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        [HttpGet("get-rating-details/{courseId}")]
+        public async Task<IActionResult> GetRatingDetails(int courseId)
+        {
+            try
+            {
+                var res = await _reviewService.GetRatingDetails(courseId);
+                return Ok(res);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }

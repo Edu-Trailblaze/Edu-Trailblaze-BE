@@ -194,6 +194,7 @@
     {
         public CourseSectionInformation CourseSectionInformation { get; set; }
         public List<CourseCardResponse> RecommendedCourses { get; set; }
+        public List<RatingDetails> RatingDetails { get; set; }
     }
 
     public class SupportedLanguage
@@ -212,5 +213,12 @@
     {
         public int Id { get; set; }
         public string Name { get; set; }
+    }
+
+    public class RatingDetails
+    {
+        public decimal Rating { get; set; }
+        public decimal RatingPercentage { get; set; }
+        public int TotalRatings { get; set; }
     }
 }

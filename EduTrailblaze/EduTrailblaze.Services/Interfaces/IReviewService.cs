@@ -28,5 +28,7 @@ namespace EduTrailblaze.Services.Interfaces
         Task<List<ReviewDTO>?> GetVReviewsByConditions(GetReviewsRequest request);
 
         Task<PaginatedList<ReviewDTO>> GetReviewInformation(GetReviewsRequest request, Paging paging);
+
+        Task<List<RatingDetails>> GetRatingDetails(int courseId);
     }
 }

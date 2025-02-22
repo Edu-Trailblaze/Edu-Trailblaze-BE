@@ -770,7 +770,7 @@ namespace EduTrailblaze.Services
             }
         }
 
-        public async Task<CourseSectionInformation> GetCourseDetailsById(int courseId)
+        public async Task<CourseSectionInformation> GetCourseSectionDetailsById(int courseId)
         {
             try
             {
@@ -877,12 +877,14 @@ namespace EduTrailblaze.Services
         {
             try
             {
-                var courseSectionInformation = await GetCourseDetailsById(courseId);
+                var courseSectionInformation = await GetCourseSectionDetailsById(courseId);
                 var recommendedCourses = await GetItemDetailsThatStudentsAlsoBought(courseId);
+                var ratingDetails = await _reviewService.GetRatingDetails(courseId);
                 CoursePage coursePage = new CoursePage()
                 {
                     CourseSectionInformation = courseSectionInformation,
-                    RecommendedCourses = recommendedCourses
+                    RecommendedCourses = recommendedCourses,
+                    RatingDetails = ratingDetails
                 };
                 return coursePage;
             }

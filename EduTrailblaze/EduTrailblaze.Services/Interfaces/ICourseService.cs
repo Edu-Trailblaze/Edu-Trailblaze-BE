@@ -47,7 +47,7 @@ namespace EduTrailblaze.Services.Interfaces
 
         Task<CoursePage> GetCoursePageInformation(int courseId);
 
-        Task<CourseSectionInformation> GetCourseDetailsById(int courseId);
+        Task<CourseSectionInformation> GetCourseSectionDetailsById(int courseId);
 
         Task<List<CourseCardResponse>> GetItemDetailsThatStudentsAlsoBought(int courseId);
 
