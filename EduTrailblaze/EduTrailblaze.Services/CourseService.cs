@@ -827,9 +827,9 @@ namespace EduTrailblaze.Services
             {
                 var item = await PredictHybridRecommendationsV2(userId, 7, 10);
 
-                if (item == null)
+                if (item == null || item.Count == 0)
                 {
-                    throw new Exception("No courses found.");
+                    return await GetCourseInformation(new GetCoursesRequest());
                 }
 
                 var courseIds = item.OrderByDescending(c => c.Score).Select(c => c.CourseId).ToList();
@@ -879,6 +879,11 @@ namespace EduTrailblaze.Services
             {
                 var courseSectionInformation = await GetCourseSectionDetailsById(courseId);
                 var recommendedCourses = await GetItemDetailsThatStudentsAlsoBought(courseId);
+                if (recommendedCourses == null || recommendedCourses.Count == 0)
+                {
+                    recommendedCourses = await GetCourseInformation(new GetCoursesRequest());
+                    recommendedCourses = recommendedCourses.Take(10).ToList();
+                }
                 var ratingDetails = await _reviewService.GetRatingDetails(courseId);
                 CoursePage coursePage = new CoursePage()
                 {
@@ -1148,7 +1153,7 @@ namespace EduTrailblaze.Services
             }
         }
 
-        public async Task<List<string>> GetTrendingCourseInNumberOfPrviousDays(int days, int numberOfCourses)
+        public async Task<List<int>> GetTrendingCourseInNumberOfPrviousDays(int days, int numberOfCourses)
         {
             try
             {
@@ -1165,10 +1170,7 @@ namespace EduTrailblaze.Services
                     .Select(g => g.Key)
                     .Take(numberOfCourses)
                     .ToListAsync();
-                return await courses
-                    .Where(c => trendingCourses.Contains(c.Id))
-                    .Select(c => c.Title)
-                    .ToListAsync();
+                return trendingCourses;
             }
             catch (Exception ex)
             {
@@ -1176,72 +1178,72 @@ namespace EduTrailblaze.Services
             }
         }
 
-        public async Task<List<CourseRecommendation>> PredictHybridRecommendations(string userId, int days, int numberOfCourses)
-        {
-            try
-            {
-                double weightCF = 0.3; // Collaborative Filtering weight
-                double weightCBF = 0.5; // Content-Based Filtering weight
-                double weightTrending = 0.2; // Trending weight
+        //public async Task<List<CourseRecommendation>> PredictHybridRecommendations(string userId, int days, int numberOfCourses)
+        //{
+        //    try
+        //    {
+        //        double weightCF = 0.3; // Collaborative Filtering weight
+        //        double weightCBF = 0.5; // Content-Based Filtering weight
+        //        double weightTrending = 0.2; // Trending weight
 
-                // Get CF Recommendations
-                var collaborativeRecommendations = await PredictHybridRecommendationsByRating(userId);
+        //        // Get CF Recommendations
+        //        var collaborativeRecommendations = await PredictHybridRecommendationsByRating(userId);
 
-                // Get CBF Recommendations from the latest order
-                var contentBasedRecommendations = await PredictRecommendationsByPersonalLatestOrder(userId);
+        //        // Get CBF Recommendations from the latest order
+        //        var contentBasedRecommendations = await PredictRecommendationsByPersonalLatestOrder(userId);
 
-                // Get Trending Courses
-                var trendingCourseTitles = await GetTrendingCourseInNumberOfPrviousDays(days, numberOfCourses);
-                var trendingRecommendations = (await _courseRepository.GetDbSet())
-                    .Where(c => trendingCourseTitles.Contains(c.Title))
-                    .Select(c => new CourseRecommendation
-                    {
-                        CourseId = c.Id,
-                        Score = 1 // Assign equal score for all trending courses
-                    })
-                    .ToList();
+        //        // Get Trending Courses
+        //        var trendingCourseTitles = await GetTrendingCourseInNumberOfPrviousDays(days, numberOfCourses);
+        //        var trendingRecommendations = (await _courseRepository.GetDbSet())
+        //            .Where(c => trendingCourseTitles.Contains(c.Title))
+        //            .Select(c => new CourseRecommendation
+        //            {
+        //                CourseId = c.Id,
+        //                Score = 1 // Assign equal score for all trending courses
+        //            })
+        //            .ToList();
 
-                // Merge scores
-                var recommendationDictionary = new Dictionary<int, double>();
+        //        // Merge scores
+        //        var recommendationDictionary = new Dictionary<int, double>();
 
-                void AddOrUpdateScore(int courseId, double score, double weight)
-                {
-                    if (!recommendationDictionary.ContainsKey(courseId))
-                        recommendationDictionary[courseId] = 0;
+        //        void AddOrUpdateScore(int courseId, double score, double weight)
+        //        {
+        //            if (!recommendationDictionary.ContainsKey(courseId))
+        //                recommendationDictionary[courseId] = 0;
 
-                    recommendationDictionary[courseId] += score * weight;
-                }
+        //            recommendationDictionary[courseId] += score * weight;
+        //        }
 
-                // Add CF scores
-                foreach (var rec in collaborativeRecommendations)
-                    AddOrUpdateScore(rec.CourseId, (double)rec.Score, weightCF);
+        //        // Add CF scores
+        //        foreach (var rec in collaborativeRecommendations)
+        //            AddOrUpdateScore(rec.CourseId, (double)rec.Score, weightCF);
 
-                // Add CBF scores
-                foreach (var rec in contentBasedRecommendations)
-                    AddOrUpdateScore(rec.CourseId, (double)rec.Score, weightCBF);
+        //        // Add CBF scores
+        //        foreach (var rec in contentBasedRecommendations)
+        //            AddOrUpdateScore(rec.CourseId, (double)rec.Score, weightCBF);
 
-                // Add Trending scores
-                foreach (var rec in trendingRecommendations)
-                    AddOrUpdateScore(rec.CourseId, (double)rec.Score, weightTrending);
+        //        // Add Trending scores
+        //        foreach (var rec in trendingRecommendations)
+        //            AddOrUpdateScore(rec.CourseId, (double)rec.Score, weightTrending);
 
-                // Prepare final recommendations
-                var finalRecommendations = recommendationDictionary
-                    .Select(kvp => new CourseRecommendation
-                    {
-                        CourseId = kvp.Key,
-                        Score = (decimal)kvp.Value
-                    })
-                    .OrderByDescending(r => r.Score)
-                    .Take(numberOfCourses) // Limit to requested number of courses
-                    .ToList();
+        //        // Prepare final recommendations
+        //        var finalRecommendations = recommendationDictionary
+        //            .Select(kvp => new CourseRecommendation
+        //            {
+        //                CourseId = kvp.Key,
+        //                Score = (decimal)kvp.Value
+        //            })
+        //            .OrderByDescending(r => r.Score)
+        //            .Take(numberOfCourses) // Limit to requested number of courses
+        //            .ToList();
 
-                return finalRecommendations;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("An error occurred while predicting hybrid recommendations: " + ex.Message);
-            }
-        }
+        //        return finalRecommendations;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception("An error occurred while predicting hybrid recommendations: " + ex.Message);
+        //    }
+        //}
 
         public async Task<List<CourseRecommendation>> PredictHybridRecommendationsV2(string? userId, int days, int numberOfCourses)
         {
@@ -1264,15 +1266,16 @@ namespace EduTrailblaze.Services
                     ? new List<CourseRecommendation>()
                     : await PredictRecommendationsByPersonalLatestOrder(userId);
 
-                var trendingCourseTitles = await GetTrendingCourseInNumberOfPrviousDays(days, numberOfCourses);
-                var trendingRecommendations = (await _courseRepository.GetDbSet())
-                    .Where(c => trendingCourseTitles.Contains(c.Title))
-                    .Select(c => new CourseRecommendation
+                var trendingCourseIds = await GetTrendingCourseInNumberOfPrviousDays(days, numberOfCourses);
+                var trendingRecommendations = new List<CourseRecommendation>();
+                foreach (var courseId in trendingCourseIds)
+                {
+                    trendingRecommendations.Add(new CourseRecommendation
                     {
-                        CourseId = c.Id,
+                        CourseId = courseId,
                         Score = 1 // Assign equal score for all trending courses
-                    })
-                    .ToList();
+                    });
+                }
 
                 // Merge scores
                 var recommendationDictionary = new Dictionary<int, double>();
