@@ -4,6 +4,7 @@ using EduTrailblaze.Services.Interfaces;
 using EduTrailblaze.Services.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.Facebook;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -192,14 +193,24 @@ namespace EduTrailblaze.API.Controllers
             }
             return StatusCode(result.StatusCode, result);
         }
-        
 
+        [HttpGet("signin-facebook")]
+        public IActionResult SignInWithFacebook()
+        {
+            try
+            {
+                var redirectUrl = Url.Action("FacebookResponse", "Authentication");
+                var properties = _signInManager.ConfigureExternalAuthenticationProperties(FacebookDefaults.AuthenticationScheme, redirectUrl);
+                return Challenge(properties, FacebookDefaults.AuthenticationScheme);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
         [HttpGet("signin-google")]
         public async Task<IActionResult> SignInWithGoogle()
         {
-            
-            
-
             var scheme = Request.Scheme ?? "https";
             var redirectUrl = $"{scheme}://{Request.Host}/authentication/google-response";
 

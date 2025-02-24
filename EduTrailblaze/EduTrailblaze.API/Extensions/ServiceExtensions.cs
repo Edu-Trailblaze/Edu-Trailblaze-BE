@@ -87,7 +87,7 @@ namespace EduTrailblaze.API.Extensions
                                }
                            });
             });
-
+            
             // JWT Configuration
             services.AddAuthentication(options =>
             {
@@ -107,7 +107,8 @@ namespace EduTrailblaze.API.Extensions
                             ValidAudience = configuration["JwtToken:Audience"],
                             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtToken:Key"]))
                         };
-                    }).AddGoogle(options =>
+                    })
+                    .AddGoogle(options =>
                     {
                         options.ClientId = configuration["Google:ClientId"];
                         options.ClientSecret = configuration["Google:ClientSecret"];
@@ -118,8 +119,12 @@ namespace EduTrailblaze.API.Extensions
                     {
                         options.LoginPath = "/account/google-login"; 
                         options.LogoutPath = "/account/logout"; 
+                    })
+                    .AddFacebook(authenticationScheme =>
+                    {
+                        authenticationScheme.ClientSecret = configuration["Facebook:ClientSecret"];
+                        authenticationScheme.ClientId = configuration["Facebook:ClientId"];
                     });
-
             //Author
             //services.AddAuthorization(options =>
             //{

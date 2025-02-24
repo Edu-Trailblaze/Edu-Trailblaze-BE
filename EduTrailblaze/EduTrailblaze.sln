@@ -13,6 +13,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EduTrailblaze.Services", "E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EduTrailblaze.Tests", "EduTrailblaze.Tests\EduTrailblaze.Tests.csproj", "{0BBDD933-CB0A-4D76-BE90-8B1CF4133205}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1FAF5C46-FFCD-4BB5-897A-B7625E608FF4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{69D61935-EAB2-42A8-989E-93A4F727A7D4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cart", "Cart", "{5C0617BB-D5F5-41F7-ABF4-30986B525F87}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +48,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{69D61935-EAB2-42A8-989E-93A4F727A7D4} = {1FAF5C46-FFCD-4BB5-897A-B7625E608FF4}
+		{5C0617BB-D5F5-41F7-ABF4-30986B525F87} = {69D61935-EAB2-42A8-989E-93A4F727A7D4}
 	EndGlobalSection
 EndGlobal
