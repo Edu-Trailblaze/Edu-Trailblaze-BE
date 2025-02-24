@@ -1,6 +1,8 @@
 ﻿using EduTrailblaze.Services.Helper;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace EduTrailblaze.Services.DTOs
 {
@@ -1790,6 +1792,46 @@ namespace EduTrailblaze.Services.DTOs
                 .NotEmpty().WithMessage("CourseId is required");
             RuleFor(x => x.TagId)
                 .NotEmpty().WithMessage("TagId is required");
+        }
+    }
+
+    public class GetPaymentRequest
+    {
+        public int? OrderId { get; set; }
+        public decimal? MinAmount { get; set; }
+        public decimal? MaxAmount { get; set; }
+        public string? PaymentMethod { get; set; }
+        //'VNPAY', 'MoMo', 'PayPal', 'SystemBalance'
+        public string? PaymentStatus { get; set; }
+        //'Success', 'Failed', 'Processing'
+        public DateTime? FromDate { get; set; }
+        public DateTime? ToDate { get; set; }
+    }
+
+    public class GetPaymentRequestValidator : AbstractValidator<GetPaymentRequest>
+    {
+        public GetPaymentRequestValidator()
+        {
+            RuleFor(x => x.MinAmount)
+                .GreaterThanOrEqualTo(0).WithMessage("MinAmount must be greater than or equal to 0");
+            RuleFor(x => x.MaxAmount)
+                .GreaterThanOrEqualTo(0).WithMessage("MaxAmount must be greater than or equal to 0");
+            RuleFor(x => x)
+                .Must(x => !x.MinAmount.HasValue || !x.MaxAmount.HasValue || x.MinAmount <= x.MaxAmount)
+                .WithMessage("MinAmount must be less than or equal to MaxAmount")
+                .When(x => x.MinAmount.HasValue && x.MaxAmount.HasValue);
+            RuleFor(x => x.PaymentMethod)
+                .Must(status => string.IsNullOrEmpty(status) || new[] { "VNPAY", "MoMo", "PayPal", "SystemBalance" }.Contains(status))
+                .WithMessage("PaymentMethod must be VNPAY, MoMo, PayPal, or SystemBalance");
+            RuleFor(x => x.PaymentStatus)
+                .Must(status => string.IsNullOrEmpty(status) || new[] { "Success", "Failed", "Processing" }.Contains(status))
+                .WithMessage("PaymentStatus must be Success, Failed, or Processing");
+            RuleFor(x => x.FromDate)
+                .LessThanOrEqualTo(x => x.ToDate).WithMessage("FromDate must be less than or equal to ToDate")
+                .When(x => x.FromDate != default && x.ToDate != default);
+            RuleFor(x => x.ToDate)
+                .GreaterThanOrEqualTo(x => x.FromDate).WithMessage("ToDate must be greater than or equal to FromDate")
+                .When(x => x.FromDate != default && x.ToDate != default);
         }
     }
 }

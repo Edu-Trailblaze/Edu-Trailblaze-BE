@@ -120,7 +120,7 @@ namespace EduTrailblaze.Services
                     return new PaymentResponse
                     {
                         IsSuccessful = true,
-                        RedirectUrl = _configuration["FE:Url"] + $"/confirm?orderId={orderId}"
+                        RedirectUrl = _configuration["FE:Url"] + $"/payment/paymentSuccess?orderId={orderId}"
                     };
                 }
                 else
@@ -136,7 +136,7 @@ namespace EduTrailblaze.Services
                     return new PaymentResponse
                     {
                         IsSuccessful = false,
-                        RedirectUrl = _configuration["FE:Url"] + $"/reject?orderId={orderId}"
+                        RedirectUrl = _configuration["FE:Url"] + $"/payment/paymentFailed?orderId={orderId}"
                     };
                 }
             }

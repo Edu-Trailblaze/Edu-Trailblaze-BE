@@ -107,7 +107,7 @@ namespace EduTrailblaze.Services
                         return new PaymentResponse
                         {
                             IsSuccessful = true,
-                            RedirectUrl = _configuration["FE:Url"] + $"/confirm?orderId={json["vnp_TxnRef"].ToString()}"
+                            RedirectUrl = _configuration["FE:Url"] + $"/payment/paymentSuccess?orderId={json["vnp_TxnRef"].ToString()}"
                         };
                     }
                     else
@@ -125,7 +125,7 @@ namespace EduTrailblaze.Services
                         return new PaymentResponse
                         {
                             IsSuccessful = false,
-                            RedirectUrl = _configuration["FE:Url"] + $"/reject?orderId={json["vnp_TxnRef"].ToString()}"
+                            RedirectUrl = _configuration["FE:Url"] + $"/payment/paymentFailed?orderId={json["vnp_TxnRef"].ToString()}"
                         };
                     }
                 }

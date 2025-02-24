@@ -38,6 +38,8 @@ namespace EduTrailblaze.Services.Mappings
 
             CreateMap<Video, VideoDTO>();
 
+            CreateMap<Payment, PaymentDTO>();
+
             CreateMap<Tag, TagResponse>();
         }
     }

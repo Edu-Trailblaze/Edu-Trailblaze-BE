@@ -18,5 +18,7 @@ namespace EduTrailblaze.Services.Interfaces
         Task UpdatePayment(UpdatePaymentRequest payment);
 
         Task DeletePayment(Payment payment);
+
+        Task<List<PaymentDTO>> GetPaymentsByCondition(GetPaymentRequest request);
     }
 }

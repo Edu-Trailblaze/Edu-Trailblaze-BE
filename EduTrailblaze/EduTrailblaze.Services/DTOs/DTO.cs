@@ -1,4 +1,6 @@
-﻿namespace EduTrailblaze.Services.DTOs
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace EduTrailblaze.Services.DTOs
 {
     public class CourseDTO
     {
@@ -139,6 +141,18 @@
         public string? Transcript { get; set; }
         public TimeSpan Duration { get; set; }
         public bool IsDeleted { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
+        public DateTimeOffset? UpdatedAt { get; set; }
+    }
+
+    public class PaymentDTO
+    {
+        public int Id { get; set; }
+        public int OrderId { get; set; }
+        public decimal Amount { get; set; }
+        public string PaymentMethod { get; set; }
+        public string PaymentStatus { get; set; }
+        public DateTime PaymentDate { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset? UpdatedAt { get; set; }
     }
