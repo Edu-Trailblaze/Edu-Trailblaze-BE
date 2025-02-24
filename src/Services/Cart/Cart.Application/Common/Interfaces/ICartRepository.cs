@@ -9,8 +9,8 @@ namespace Cart.Application.Common.Interfaces
 {
     public interface ICartRepository
     {
-        Task<Domain.Entities.Cart?> GetBasketByUsername(string username);
-        Task<Domain.Entities.Cart> UpdateBasket(Domain.Entities.Cart basket, DistributedCacheEntryOptions entryOptions);
-        Task<bool> DeleteBasketByUsername(string username);
+        Task<Domain.Entities.Cart?> GetCartByUsername(string username);
+        Task<Domain.Entities.Cart> UpdateCart(Domain.Entities.Cart basket, DistributedCacheEntryOptions entryOptions);
+        Task<bool> DeleteCartByUsername(string username);
     }
 }

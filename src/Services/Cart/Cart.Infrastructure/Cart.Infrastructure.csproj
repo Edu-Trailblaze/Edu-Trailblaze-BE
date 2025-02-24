@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\BuildingBlocks\Infrastructure\Infrastructure.csproj" />
+    <ProjectReference Include="..\Cart.Application\Cart.Application.csproj" />
     <ProjectReference Include="..\Cart.Domain\Cart.Domain.csproj" />
   </ItemGroup>
 
