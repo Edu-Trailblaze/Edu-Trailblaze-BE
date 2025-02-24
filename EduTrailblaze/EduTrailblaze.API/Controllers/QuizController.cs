@@ -9,10 +9,12 @@ namespace EduTrailblaze.API.Controllers
     public class QuizController : ControllerBase
     {
         private readonly IQuizService _quizService;
+
         public QuizController(IQuizService quizService)
         {
             _quizService = quizService;
         }
+
         [HttpGet("{quizId}")]
         public async Task<IActionResult> GetQuiz(int quizId)
         {
@@ -30,6 +32,25 @@ namespace EduTrailblaze.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+        
+        [HttpGet("get-quiz-details")]
+        public async Task<IActionResult> GetQuizDetails(int lectureId)
+        {
+            try
+            {
+                var quiz = await _quizService.GetQuizDetails(lectureId);
+                if (quiz == null)
+                {
+                    return NotFound();
+                }
+                return Ok(quiz);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> AddQuiz([FromBody] CreateQuizRequest quiz)
         {
@@ -43,6 +64,7 @@ namespace EduTrailblaze.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
         [HttpPut]
         public async Task<IActionResult> UpdateQuiz([FromBody] UpdateQuizRequest quiz)
         {

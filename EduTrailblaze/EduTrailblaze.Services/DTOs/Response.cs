@@ -1,4 +1,6 @@
-﻿namespace EduTrailblaze.Services.DTOs
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace EduTrailblaze.Services.DTOs
 {
     public class CoursesResponse
     {
@@ -220,5 +222,28 @@
         public decimal Rating { get; set; }
         public decimal RatingPercentage { get; set; }
         public int TotalRatings { get; set; }
+    }
+
+    public class QuizDetails
+    {
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public decimal PassingScore { get; set; }
+        public List<QuestionDetails> Questions { get; set; }
+    }
+
+    public class QuestionDetails
+    {
+        public int Id { get; set; }
+        public int QuizzId { get; set; }
+        public string QuestionText { get; set; }
+        public List<AnswerDetails> Answers { get; set; }
+    }
+
+    public class AnswerDetails
+    {
+        public int QuestionId { get; set; }
+        public string AnswerText { get; set; }
+        public bool IsCorrect { get; set; }
     }
 }

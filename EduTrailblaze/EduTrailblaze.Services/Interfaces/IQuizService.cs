@@ -20,5 +20,7 @@ namespace EduTrailblaze.Services.Interfaces
         Task UpdateQuiz(UpdateQuizRequest quiz);
 
         Task DeleteQuiz(int quiz);
+
+        Task<QuizDetails> GetQuizDetails(int lectureId);
     }
 }

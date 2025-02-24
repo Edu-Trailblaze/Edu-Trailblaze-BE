@@ -3,6 +3,7 @@ using EduTrailblaze.Repositories.Interfaces;
 using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Helper;
 using EduTrailblaze.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace EduTrailblaze.Services
 {
@@ -20,6 +21,50 @@ namespace EduTrailblaze.Services
             try
             {
                 return await _quizRepository.GetByIdAsync(quizId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the quiz.", ex);
+            }
+        }
+
+        public async Task<QuizDetails> GetQuizDetails(int lectureId)
+        {
+            try
+            {
+                // Retrieve the quiz associated with the given lectureId
+                var quizDbSet = await _quizRepository.GetDbSet();
+
+                var quiz = await quizDbSet.Include(q => q.Questions)
+                  .ThenInclude(q => q.Answers)
+                  .FirstOrDefaultAsync(q => q.LectureId == lectureId);
+
+                if (quiz == null)
+                {
+                    throw new Exception("Quiz not found.");
+                }
+
+                // Map the quiz to QuizDetails
+                var quizDetails = new QuizDetails
+                {
+                    Id = quiz.Id,
+                    Title = quiz.Title,
+                    PassingScore = quiz.PassingScore,
+                    Questions = quiz.Questions.Select(q => new QuestionDetails
+                    {
+                        Id = q.Id,
+                        QuizzId = q.QuizzId,
+                        QuestionText = q.QuestionText,
+                        Answers = q.Answers.Select(a => new AnswerDetails
+                        {
+                            QuestionId = a.QuestionId,
+                            AnswerText = a.AnswerText,
+                            IsCorrect = a.IsCorrect
+                        }).ToList()
+                    }).ToList()
+                };
+
+                return quizDetails;
             }
             catch (Exception ex)
             {
