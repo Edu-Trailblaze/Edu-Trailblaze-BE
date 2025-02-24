@@ -4,6 +4,8 @@ using Microsoft.Extensions.Caching.Distributed;
 using System.ComponentModel.DataAnnotations;
 using Entity = Cart.Domain.Entities;
 using System.Net;
+using Cart.Application.Features.V1.Carts.Queries.GetCarts;
+using MediatR;
 
 namespace Cart.API.Controllers
 {
@@ -12,18 +14,21 @@ namespace Cart.API.Controllers
     public class CartController : Controller
     {
         private readonly ICartRepository _basketService;
-        public CartController(ICartRepository basketService)
+        private readonly IMediator _mediator;
+        public CartController(ICartRepository basketService, IMediator mediator)
         {
             _basketService = basketService;
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
-        //[HttpGet("{username}", Name = "GetCart")]
-        //[ProducesResponseType(typeof(Entity.Cart), (int)HttpStatusCode.OK)]
-        //public async Task<ActionResult<Entity.Cart>> GetBasket([Required] string username)
-        //{
-        //    var basket = await _basketService.GetBasket(username);
-        //    return Ok(basket ?? new Entity.Cart());
-        //}
+        [HttpGet("{username}", Name = "GetCart")]
+        [ProducesResponseType(typeof(Entity.Cart), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<Entity.Cart>> GetBasket([Required] string username)
+        {
+            var query = new GetCartQuery(username);
+            var cart = await _mediator.Send(query);
+            return Ok(cart );
+        }
 
         //[HttpPost(Name = "AddBasket")]
         //[ProducesResponseType(typeof(Entity.Cart), (int)HttpStatusCode.OK)]
