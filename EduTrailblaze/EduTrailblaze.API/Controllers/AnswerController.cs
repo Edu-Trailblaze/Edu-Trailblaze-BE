@@ -15,6 +15,24 @@ namespace EduTrailblaze.API.Controllers
             _answerService = answerService;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAnswers(int answerId)
+        {
+            try
+            {
+                var answers = await _answerService.GetAnswers();
+                if (answers == null)
+                {
+                    return NotFound();
+                }
+                return Ok(answers);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+        
         [HttpGet("{answerId}")]
         public async Task<IActionResult> GetAnswer(int answerId)
         {
