@@ -57,6 +57,7 @@ namespace EduTrailblaze.Services
                         QuestionText = q.QuestionText,
                         Answers = q.Answers.Select(a => new AnswerDetails
                         {
+                            Id = a.Id,
                             QuestionId = a.QuestionId,
                             AnswerText = a.AnswerText,
                             IsCorrect = a.IsCorrect
