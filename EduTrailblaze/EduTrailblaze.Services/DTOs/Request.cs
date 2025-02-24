@@ -386,7 +386,7 @@ namespace EduTrailblaze.Services.DTOs
                 .NotEmpty().WithMessage("AnswerText is required");
 
             RuleFor(x => x.IsCorrect)
-                .NotEmpty().WithMessage("IsCorrect is required");
+                .Must(value => value == true || value == false).WithMessage("IsCorrect is required");
         }
     }
 
