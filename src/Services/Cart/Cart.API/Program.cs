@@ -1,4 +1,6 @@
 
+using Cart.Infrastructure;
+
 namespace Cart.API
 {
     public class Program
@@ -10,7 +12,9 @@ namespace Cart.API
             // Add services to the container.
 
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+            
+            builder.Services.AddInfrastructor(builder.Configuration);
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 

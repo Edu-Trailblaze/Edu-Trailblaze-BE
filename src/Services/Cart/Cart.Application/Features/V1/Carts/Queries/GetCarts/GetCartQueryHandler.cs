@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Cart.Application.Features.V1.Carts.Queries.GetCarts
 {
-    public class GetCartQueryHandler : IRequestHandler<GetCartQuery, ApiResult<List<Cart.Domain.Entities.Cart>>>
+    public class GetCartQueryHandler : IRequestHandler<GetCartQuery, ApiResult<Cart.Domain.Entities.Cart>>
     {
         private readonly ICartRepository _cartRepository;
         private readonly IMapper _mapper;
@@ -30,9 +30,6 @@ namespace Cart.Application.Features.V1.Carts.Queries.GetCarts
             return new ApiSuccessResult<Domain.Entities.Cart>(orders);
         }
 
-        Task<ApiResult<List<Domain.Entities.Cart>>> IRequestHandler<GetCartQuery, ApiResult<List<Domain.Entities.Cart>>>.Handle(GetCartQuery request, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }
