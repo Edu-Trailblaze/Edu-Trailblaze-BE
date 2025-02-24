@@ -1,4 +1,4 @@
-﻿using EduTrailblaze.API.Domain;
+﻿using Contracts.Domain;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 

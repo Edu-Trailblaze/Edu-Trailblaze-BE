@@ -1,4 +1,4 @@
-﻿using EduTrailblaze.API.Domain;
+﻿using Contracts.Domain;
 using EduTrailblaze.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Data.SqlTypes;

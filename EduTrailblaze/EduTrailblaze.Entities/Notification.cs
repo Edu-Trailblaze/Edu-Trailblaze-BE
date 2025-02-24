@@ -1,5 +1,5 @@
-﻿using EduTrailblaze.API.Domain;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using Contracts.Domain;
 
 namespace EduTrailblaze.Entities
 {

@@ -1,4 +1,4 @@
-﻿using EduTrailblaze.API.Domain;
+﻿using Contracts.Domain;
 using System.Linq.Expressions;
 
 namespace EduTrailblaze.Repositories.Interfaces
