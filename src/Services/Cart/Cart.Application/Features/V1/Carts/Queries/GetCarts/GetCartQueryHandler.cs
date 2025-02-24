@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace Cart.Application.Features.V1.Carts.Queries.GetCarts
 {
     public class GetCartQueryHandler : IRequestHandler<GetCartQuery, ApiResult<Cart.Domain.Entities.Cart>>

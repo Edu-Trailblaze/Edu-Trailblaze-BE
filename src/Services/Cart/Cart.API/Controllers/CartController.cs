@@ -6,6 +6,8 @@ using Entity = Cart.Domain.Entities;
 using System.Net;
 using Cart.Application.Features.V1.Carts.Queries.GetCarts;
 using MediatR;
+using Cart.Application.Features.V1.Carts.Commands.AddCarts;
+using Cart.Application.Features.V1.Carts.Commands.DeleteCarts;
 
 namespace Cart.API.Controllers
 {
@@ -23,26 +25,25 @@ namespace Cart.API.Controllers
 
         [HttpGet("{username}", Name = "GetCart")]
         [ProducesResponseType(typeof(Entity.Cart), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<Entity.Cart>> GetBasket([Required] string username)
+        public async Task<ActionResult<Entity.Cart>> GetCart([Required] string username)
         {
             var query = new GetCartQuery(username);
             var cart = await _mediator.Send(query);
             return Ok(cart );
         }
 
-        //[HttpPost(Name = "AddBasket")]
-        //[ProducesResponseType(typeof(Entity.Cart), (int)HttpStatusCode.OK)]
-        //public async Task<ActionResult<Entity.Cart>> UpdateBasket([FromBody] Entity.Cart basket)
-        //{
-        //    var option = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTime.UtcNow.AddMinutes(1)).SetSlidingExpiration(TimeSpan.FromMinutes(10));
-        //    var updatedBasket = await _basketService.UpdateCart(basket, option);
-        //    return Ok(updatedBasket);
-        //}
-        //[HttpDelete("{username}", Name = "DeleteCart")]
-        //[ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
-        //public async Task<ActionResult<bool>> DeleteBasket([Required] string username)
-        //{
-        //    return Ok(await _basketService.DeleteBasket(username));
-        //}
+        [HttpPost(Name = "AddToCart")]
+        [ProducesResponseType(typeof(Entity.Cart), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<Entity.Cart>> UpdateCart([FromBody] Entity.Cart cart)
+        {
+            var updatedCart = await _mediator.Send(new AddCartQuery(cart));
+            return Ok(updatedCart);
+        }
+        [HttpDelete("{username}", Name = "DeleteCart")]
+        [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<bool>> DeleteCart([Required] string username)
+        {
+            return Ok(await _mediator.Send(new DeleteCartQuery(username)));
+        }
     }
 }

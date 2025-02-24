@@ -1,5 +1,8 @@
 
 using Cart.Infrastructure;
+using Serilog;
+using Common.Logging;
+using Cart.Application;
 
 namespace Cart.API
 {
@@ -8,12 +11,12 @@ namespace Cart.API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            Log.Information("Start Basket API");
 
-            // Add services to the container.
-
+            builder.Host.UseSerilog(SeriLog.Configure);
             builder.Services.AddControllers();
 
-            
+            builder.Services.AddApplicationServices();
             builder.Services.AddInfrastructor(builder.Configuration);
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

@@ -9,12 +9,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using StackExchange.Redis;
+using ILogger = Serilog.ILogger;
 
 namespace Cart.Infrastructure.Repositories
 {
     public class CartRepository : ICartRepository
     {
         private readonly IDistributedCache _redisCacheService;
+        private readonly IDatabase _database;
         private readonly ISerializeService _serializeService;
         private readonly ILogger _logger;
 
@@ -23,34 +26,38 @@ namespace Cart.Infrastructure.Repositories
             _redisCacheService = distributedCache;
             _serializeService = serializeService;
             _logger = logger;
+           
         }
-        public async Task<bool> DeleteCartByUsername(string username)
+        public async Task<bool> DeleteCartByUsername(string userName)
         {
+            string key = $"Cart:{userName}";
             try
             {
-                await _redisCacheService.RemoveAsync(username);
+                await _redisCacheService.RemoveAsync(key);
                 return true;
             }
             catch
             {
-                _logger.LogError("Error deleting basket for username: {username}", username);
+                _logger.Error("Error deleting basket for username: {username}", userName);
                 return false;
             }
         }
 
-        public async Task<Entity.Cart?> GetCartByUsername(string username)
+        public async Task<Entity.Cart?> GetCartByUsername(string userName)
         {
-            var basket = await _redisCacheService.GetStringAsync(username);
+            string key = $"Cart:{userName}";
+            var basket = await _redisCacheService.GetStringAsync(key);
             return string.IsNullOrEmpty(basket) ? null : _serializeService.Deserialize<Entity.Cart>(basket);
         }
 
         public async Task<Entity.Cart> UpdateCart(Entity.Cart basket, DistributedCacheEntryOptions entryOptions)
         {
+            string key = $"Cart:{basket.UserName}";
             if (entryOptions != null)
             {
-                await _redisCacheService.SetStringAsync(basket.UserName, _serializeService.Serialize(basket), entryOptions);
+               await _redisCacheService.SetStringAsync(key, _serializeService.Serialize(basket), entryOptions);
             }
-            else await _redisCacheService.SetStringAsync(basket.UserName, _serializeService.Serialize(basket));
+            else await _redisCacheService.SetStringAsync(key, _serializeService.Serialize(basket));
             return await GetCartByUsername(basket.UserName);
         }
     }
