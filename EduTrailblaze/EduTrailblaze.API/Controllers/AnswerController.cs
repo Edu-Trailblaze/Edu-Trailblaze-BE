@@ -16,7 +16,7 @@ namespace EduTrailblaze.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAnswers(int answerId)
+        public async Task<IActionResult> GetAnswers()
         {
             try
             {
