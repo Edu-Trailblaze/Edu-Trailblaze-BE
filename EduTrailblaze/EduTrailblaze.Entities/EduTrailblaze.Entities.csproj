@@ -21,4 +21,8 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\BuildingBlocks\Contracts\Contracts.csproj" />
+  </ItemGroup>
+
 </Project>

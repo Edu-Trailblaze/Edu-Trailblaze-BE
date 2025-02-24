@@ -1,4 +1,5 @@
-﻿using EduTrailblaze.API.Domain.Interfaces;
+﻿
+using Contracts.Domain.Interfaces;
 using EduTrailblaze.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
