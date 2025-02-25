@@ -141,7 +141,7 @@ namespace EduTrailblaze.Services
                     };
                     await _paymentService.UpdatePayment(updatePaymentRequest);
 
-                    var order = await _orderRepository.GetByIdAsync(paymentId);
+                    var order = await _orderRepository.GetByIdAsync(orderId);
                     if (order == null)
                     {
                         throw new Exception("Order not found.");
