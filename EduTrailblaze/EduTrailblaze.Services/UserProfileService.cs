@@ -82,7 +82,7 @@ namespace EduTrailblaze.Services
                     Fullname = userProfile.FullName,
                 };
                 await _userProfileRepository.AddAsync(newUserProfile);
-                
+
             }
             catch (Exception ex)
             {

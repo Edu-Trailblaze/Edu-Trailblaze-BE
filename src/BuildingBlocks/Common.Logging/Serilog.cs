@@ -1,5 +1,5 @@
-﻿using Serilog;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
+using Serilog;
 namespace Common.Logging
 {
     public static class SeriLog

@@ -197,7 +197,7 @@ namespace EduTrailblaze.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        
+
         [HttpPost("add-item-to-cart-v2")]
         public async Task<IActionResult> AddToCartV2(string? userId, int courseId)
         {

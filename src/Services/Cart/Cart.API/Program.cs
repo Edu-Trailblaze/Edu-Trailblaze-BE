@@ -1,8 +1,8 @@
 
-using Cart.Infrastructure;
-using Serilog;
-using Common.Logging;
 using Cart.Application;
+using Cart.Infrastructure;
+using Common.Logging;
+using Serilog;
 
 namespace Cart.API
 {

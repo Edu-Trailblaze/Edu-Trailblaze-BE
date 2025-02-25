@@ -1,6 +1,5 @@
 ﻿using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EduTrailblaze.API.Controllers
@@ -51,7 +50,7 @@ namespace EduTrailblaze.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-        
+
         [HttpGet("get-payments-by-condition")]
         public async Task<IActionResult> GetPaymentsByCondition([FromQuery] GetPaymentRequest request)
         {

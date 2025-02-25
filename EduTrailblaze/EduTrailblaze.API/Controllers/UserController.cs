@@ -74,7 +74,7 @@ namespace EduTrailblaze.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-        
+
         [HttpGet("get-user-profile")]
         public async Task<IActionResult> GetUserProfile([FromQuery] string userId)
         {

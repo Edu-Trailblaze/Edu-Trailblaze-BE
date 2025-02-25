@@ -1,13 +1,11 @@
-﻿using Cart.Application.Common.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Distributed;
-using System.ComponentModel.DataAnnotations;
-using Entity = Cart.Domain.Entities;
-using System.Net;
+﻿using Cart.Application.Features.V1.Carts.Commands.AddCarts;
+using Cart.Application.Features.V1.Carts.Commands.DeleteCarts;
 using Cart.Application.Features.V1.Carts.Queries.GetCarts;
 using MediatR;
-using Cart.Application.Features.V1.Carts.Commands.AddCarts;
-using Cart.Application.Features.V1.Carts.Commands.DeleteCarts;
+using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
+using System.Net;
+using Entity = Cart.Domain.Entities;
 
 namespace Cart.API.Controllers
 {
@@ -15,11 +13,9 @@ namespace Cart.API.Controllers
     [Route("api/[controller]")]
     public class CartController : Controller
     {
-        private readonly ICartRepository _basketService;
         private readonly IMediator _mediator;
-        public CartController(ICartRepository basketService, IMediator mediator)
+        public CartController(IMediator mediator)
         {
-            _basketService = basketService;
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
@@ -29,7 +25,7 @@ namespace Cart.API.Controllers
         {
             var query = new GetCartQuery(username);
             var cart = await _mediator.Send(query);
-            return Ok(cart );
+            return Ok(cart);
         }
 
         [HttpPost(Name = "AddToCart")]

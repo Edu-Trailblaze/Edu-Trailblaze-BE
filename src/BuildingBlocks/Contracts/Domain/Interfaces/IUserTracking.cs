@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Contracts.Domain.Interfaces
+﻿namespace Contracts.Domain.Interfaces
 {
     public interface IUserTracking
     {

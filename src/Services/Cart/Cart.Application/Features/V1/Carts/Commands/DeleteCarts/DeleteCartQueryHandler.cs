@@ -1,10 +1,5 @@
 ﻿using Cart.Application.Common.Interfaces;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cart.Application.Features.V1.Carts.Commands.DeleteCarts
 {
@@ -18,7 +13,7 @@ namespace Cart.Application.Features.V1.Carts.Commands.DeleteCarts
         }
         public async Task<bool> Handle(DeleteCartQuery request, CancellationToken cancellationToken)
         {
-             return await _cartService.DeleteCartByUsername(request.Username);
+            return await _cartService.DeleteCartByUsername(request.Username);
         }
     }
 }

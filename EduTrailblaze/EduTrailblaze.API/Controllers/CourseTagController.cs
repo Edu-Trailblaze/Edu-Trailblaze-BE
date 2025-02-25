@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Interfaces;
-using EduTrailblaze.Services.DTOs;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EduTrailblaze.API.Controllers
 {

@@ -32,7 +32,7 @@ namespace EduTrailblaze.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-        
+
         [HttpGet("get-quiz-details")]
         public async Task<IActionResult> GetQuizDetails(int lectureId)
         {

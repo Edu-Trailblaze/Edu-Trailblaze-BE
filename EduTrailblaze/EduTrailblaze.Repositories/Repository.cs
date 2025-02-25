@@ -2,15 +2,14 @@
 using EduTrailblaze.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Data.SqlTypes;
-using System.Linq.Expressions;
 
 namespace EduTrailblaze.Repositories
 {
-    public class Repository<T, TKey> : RepositoryQueryBase<T,TKey>, IRepository<T, TKey> where T : EntityBase<TKey>
+    public class Repository<T, TKey> : RepositoryQueryBase<T, TKey>, IRepository<T, TKey> where T : EntityBase<TKey>
     {
         private readonly EduTrailblazeDbContext _context;
         private readonly DbSet<T> _dbSet;
-        
+
 
         public Repository(EduTrailblazeDbContext context) : base(context)
         {
@@ -117,7 +116,7 @@ namespace EduTrailblaze.Repositories
             }
         }
 
-        
+
     }
 }
 

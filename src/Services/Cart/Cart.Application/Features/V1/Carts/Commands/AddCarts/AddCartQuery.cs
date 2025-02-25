@@ -1,11 +1,5 @@
-﻿using Contracts.Domain;
-using Entity =  Cart.Domain.Entities;
-using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MediatR;
+using Entity = Cart.Domain.Entities;
 
 namespace Cart.Application.Features.V1.Carts.Commands.AddCarts
 {

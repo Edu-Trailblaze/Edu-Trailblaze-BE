@@ -330,7 +330,7 @@ namespace EduTrailblaze.Services
                 StatusCode = StatusCodes.Status200OK,
                 Data = properties
             };
-           
+
         }
 
 

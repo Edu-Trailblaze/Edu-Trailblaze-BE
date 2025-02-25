@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace EduTrailblaze.Services.DTOs
+﻿namespace EduTrailblaze.Services.DTOs
 {
     public class CourseDTO
     {

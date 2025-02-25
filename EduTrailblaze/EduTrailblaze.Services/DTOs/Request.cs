@@ -1,8 +1,6 @@
 ﻿using EduTrailblaze.Services.Helper;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
 
 namespace EduTrailblaze.Services.DTOs
 {

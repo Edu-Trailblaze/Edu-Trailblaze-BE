@@ -49,7 +49,7 @@ namespace EduTrailblaze.Services
                 throw new Exception("An error occurred while adding the courseTag.", ex);
             }
         }
-        
+
         public async Task AddCourseTag(CreateCourseTagRequest courseTag)
         {
             try

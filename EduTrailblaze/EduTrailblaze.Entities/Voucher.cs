@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Contracts.Domain;
+﻿using Contracts.Domain;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 

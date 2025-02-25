@@ -1,15 +1,8 @@
 ﻿using Cart.Application.Common.Interfaces;
-using Contracts.Domain;
-using Entity =  Cart.Domain.Entities;
 using Contracts.Common.Interfaces;
 using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using StackExchange.Redis;
+using Entity = Cart.Domain.Entities;
 using ILogger = Serilog.ILogger;
 
 namespace Cart.Infrastructure.Repositories
@@ -26,7 +19,7 @@ namespace Cart.Infrastructure.Repositories
             _redisCacheService = distributedCache;
             _serializeService = serializeService;
             _logger = logger;
-           
+
         }
         public async Task<bool> DeleteCartByUsername(string userName)
         {
@@ -55,7 +48,7 @@ namespace Cart.Infrastructure.Repositories
             string key = $"Cart:{basket.UserName}";
             if (entryOptions != null)
             {
-               await _redisCacheService.SetStringAsync(key, _serializeService.Serialize(basket), entryOptions);
+                await _redisCacheService.SetStringAsync(key, _serializeService.Serialize(basket), entryOptions);
             }
             else await _redisCacheService.SetStringAsync(key, _serializeService.Serialize(basket));
             return await GetCartByUsername(basket.UserName);

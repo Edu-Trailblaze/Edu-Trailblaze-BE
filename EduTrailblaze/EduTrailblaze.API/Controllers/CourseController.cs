@@ -146,7 +146,7 @@ namespace EduTrailblaze.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-        
+
         [HttpGet("get-tag-information")]
         public async Task<IActionResult> GetTagInformation([FromQuery] int courseId)
         {

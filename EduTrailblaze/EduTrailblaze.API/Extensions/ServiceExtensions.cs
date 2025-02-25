@@ -87,7 +87,7 @@ namespace EduTrailblaze.API.Extensions
                                }
                            });
             });
-            
+
             // JWT Configuration
             services.AddAuthentication(options =>
             {
@@ -117,8 +117,8 @@ namespace EduTrailblaze.API.Extensions
                     })
                     .AddCookie(options =>
                     {
-                        options.LoginPath = "/account/google-login"; 
-                        options.LogoutPath = "/account/logout"; 
+                        options.LoginPath = "/account/google-login";
+                        options.LogoutPath = "/account/logout";
                     })
                     .AddFacebook(authenticationScheme =>
                     {

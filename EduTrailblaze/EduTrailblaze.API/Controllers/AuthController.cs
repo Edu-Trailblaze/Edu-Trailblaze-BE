@@ -2,9 +2,8 @@
 using EduTrailblaze.Services.Helper;
 using EduTrailblaze.Services.Interfaces;
 using EduTrailblaze.Services.Models;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.Facebook;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -223,7 +222,7 @@ namespace EduTrailblaze.API.Controllers
             {
                 throw new ArgumentNullException(nameof(redirectUrl));
             }
-            
+
             var result = await _authService.SignInWithGoogle(redirectUrl);
 
             if (result.StatusCode == 200)
@@ -237,6 +236,6 @@ namespace EduTrailblaze.API.Controllers
             return StatusCode(result.StatusCode, result);
         }
 
-       
+
     }
 }

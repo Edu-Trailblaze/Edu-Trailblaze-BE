@@ -480,7 +480,7 @@ namespace EduTrailblaze.Services
                 throw new Exception("An error occurred while adding the course to the cart: " + ex.Message);
             }
         }
-        
+
         public async Task<CartInformation> AddToCartV2(string? userId, int courseId)
         {
             try

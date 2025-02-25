@@ -1,10 +1,5 @@
 ﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Mapping
 {
@@ -13,7 +8,7 @@ namespace Infrastructure.Mapping
         public static IMappingExpression<TSource, TDestination> IgnoreAllNonExisting<TSource, TDestination>(
             this IMappingExpression<TSource, TDestination> expression)
         {
-            var flag  = BindingFlags.Public | BindingFlags.Instance;
+            var flag = BindingFlags.Public | BindingFlags.Instance;
             var sourceType = typeof(TSource);
             var destinationProperties = typeof(TDestination).GetProperties(flag);
             foreach (var prop in destinationProperties)

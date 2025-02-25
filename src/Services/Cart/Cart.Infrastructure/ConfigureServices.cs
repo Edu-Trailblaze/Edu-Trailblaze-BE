@@ -1,13 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
-using Cart.Application.Common.Interfaces;
+﻿using Cart.Application.Common.Interfaces;
 using Cart.Infrastructure.Repositories;
-using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Caching.StackExchangeRedis;
-using StackExchange.Redis;
 using Contracts.Common.Interfaces;
 using Infrastructure.Common;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using StackExchange.Redis;
 
 namespace Cart.Infrastructure
 {
@@ -40,12 +37,12 @@ namespace Cart.Infrastructure
             //    return ConnectionMultiplexer.Connect(configuration);
             //});
             services.AddDistributedMemoryCache();
-            services.AddScoped<ISerializeService,SerializeService>();
+            services.AddScoped<ISerializeService, SerializeService>();
             services.AddScoped<ICartRepository, CartRepository>();
             return services;
         }
-       }
-     public class RedisConfig
+    }
+    public class RedisConfig
     {
         public string Host { get; set; }
         public string Port { get; set; }

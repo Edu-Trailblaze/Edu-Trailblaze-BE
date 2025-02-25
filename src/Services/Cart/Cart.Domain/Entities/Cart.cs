@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Contracts.Domain;
-
-namespace Cart.Domain.Entities
+﻿namespace Cart.Domain.Entities
 {
-    public class Cart 
+    public class Cart
     {
         public string UserName { get; set; }
         public List<CartItem> Items { get; set; } = new List<CartItem>();

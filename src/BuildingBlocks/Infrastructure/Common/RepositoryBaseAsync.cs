@@ -2,16 +2,10 @@
 using Contracts.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Common
 {
-    public class RepositoryBaseAsync<T, K, TContext> : RepositoryQueryBase<T,K,TContext> ,  IRepositoryBaseAsync<T, K, TContext> where T : EntityBase<K> where TContext : DbContext
+    public class RepositoryBaseAsync<T, K, TContext> : RepositoryQueryBase<T, K, TContext>, IRepositoryBaseAsync<T, K, TContext> where T : EntityBase<K> where TContext : DbContext
     {
         private readonly TContext _dbcontext;
         private readonly IUnitOfWork<TContext> _unitOfWork;
@@ -20,7 +14,7 @@ namespace Infrastructure.Common
             _dbcontext = dbcontext ?? throw new ArgumentNullException(nameof(dbcontext));
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         }
-        public Task<IDbContextTransaction> BeginTransactionAsync()=> _dbcontext.Database.BeginTransactionAsync();
+        public Task<IDbContextTransaction> BeginTransactionAsync() => _dbcontext.Database.BeginTransactionAsync();
 
         public async Task<K> CreateAsync(T entity)
         {
@@ -52,10 +46,10 @@ namespace Infrastructure.Common
             await _dbcontext.Database.CommitTransactionAsync();
         }
 
-       
+
         public Task RollBackTransactionAsync() => _dbcontext.Database.RollbackTransactionAsync();
 
-        public Task<int> SaveChangesAsync() => _unitOfWork.CommitAsync();  
+        public Task<int> SaveChangesAsync() => _unitOfWork.CommitAsync();
 
         public Task UpdateAsync(T entity)
         {

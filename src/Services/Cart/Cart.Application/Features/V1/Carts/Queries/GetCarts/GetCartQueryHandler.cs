@@ -3,11 +3,6 @@ using Cart.Application.Common.Interfaces;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Shared.SeedWork;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 
 namespace Cart.Application.Features.V1.Carts.Queries.GetCarts
@@ -31,6 +26,6 @@ namespace Cart.Application.Features.V1.Carts.Queries.GetCarts
             return new ApiSuccessResult<Domain.Entities.Cart>(orders);
         }
 
-        
+
     }
 }

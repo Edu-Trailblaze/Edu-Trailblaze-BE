@@ -1,16 +1,12 @@
 ﻿using Contracts.Common.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 namespace Infrastructure.Common
 {
     public class UnitOfWork<TContext> : IUnitOfWork<TContext> where TContext : DbContext
     {
         private readonly TContext _context;
-        public UnitOfWork(TContext context) {
+        public UnitOfWork(TContext context)
+        {
             _context = context;
         }
 
