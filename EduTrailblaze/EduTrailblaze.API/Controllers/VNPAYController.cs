@@ -20,7 +20,7 @@ namespace EduTrailblaze.API.Controllers
             try
             {
                 string paymentUrl = _vnpayService.CreatePaymentUrl(amount, orderId, paymentId);
-                return Ok(paymentUrl);
+                return Redirect(paymentUrl);
             }
             catch (Exception ex)
             {
@@ -29,12 +29,17 @@ namespace EduTrailblaze.API.Controllers
         }
 
         [HttpGet("validate")]
-        public async Task<IActionResult> ValidatePaymentResponse([FromQuery] string queryString)
+        public async Task<IActionResult> ValidatePaymentResponse()
         {
             try
             {
-                var response = await _vnpayService.ValidatePaymentResponse(queryString);
-                return Ok(response);
+                if (Request.QueryString.HasValue)
+                {
+                    string queryString = Request.QueryString.Value;
+                    var response = await _vnpayService.ValidatePaymentResponse(queryString);
+                    return Redirect(response.RedirectUrl);
+                }
+                return BadRequest();
             }
             catch (Exception ex)
             {

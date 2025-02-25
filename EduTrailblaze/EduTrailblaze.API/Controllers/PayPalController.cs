@@ -20,7 +20,7 @@ namespace EduTrailblaze.API.Controllers
             try
             {
                 string paymentUrl = await _payPalService.CreatePaymentUrl(amount, orderId, paymentId);
-                return Ok(paymentUrl);
+                return Redirect(paymentUrl);
             }
             catch (Exception ex)
             {
@@ -34,7 +34,7 @@ namespace EduTrailblaze.API.Controllers
             try
             {
                 var payment = await _payPalService.ExecutePayment(paymentId, token, payerId);
-                return Ok(payment);
+                return Redirect(payment.RedirectUrl);
             }
             catch (Exception ex)
             {

@@ -14,14 +14,16 @@ namespace EduTrailblaze.Services
         private readonly IConfiguration _configuration;
         private readonly IRepository<Order, int> _orderRepository;
         private readonly IPaymentService _paymentService;
+        private readonly ICartService _cartService;
         private readonly HttpClient _httpClient;
 
-        public PayPalService(IConfiguration configuration, IRepository<Order, int> orderRepository, IPaymentService paymentService, HttpClient httpClient)
+        public PayPalService(IConfiguration configuration, IRepository<Order, int> orderRepository, IPaymentService paymentService, HttpClient httpClient, ICartService cartService)
         {
             _configuration = configuration;
             _orderRepository = orderRepository;
             _paymentService = paymentService;
             _httpClient = httpClient;
+            _cartService = cartService;
         }
 
         private async Task<string> GetAccessTokenAsync()
@@ -132,20 +134,23 @@ namespace EduTrailblaze.Services
 
                 if (executedPayment.state == "approved")
                 {
-                    //UpdatePaymentRequest updatePaymentRequest = new UpdatePaymentRequest
-                    //{
-                    //    PaymentId = paymentId,
-                    //    PaymentStatus = "Success",
-                    //};
-                    //await _paymentService.UpdatePayment(updatePaymentRequest);
+                    UpdatePaymentRequest updatePaymentRequest = new UpdatePaymentRequest
+                    {
+                        PaymentId = paymentId,
+                        PaymentStatus = "Success",
+                    };
+                    await _paymentService.UpdatePayment(updatePaymentRequest);
 
-                    //var order = await _orderRepository.GetByIdAsync(paymentId);
-                    //if (order == null)
-                    //{
-                    //    throw new Exception("Order not found.");
-                    //}
-                    //order.OrderStatus = "Completed";
-                    //await _orderRepository.UpdateAsync(order);
+                    var order = await _orderRepository.GetByIdAsync(paymentId);
+                    if (order == null)
+                    {
+                        throw new Exception("Order not found.");
+                    }
+                    order.OrderStatus = "Completed";
+
+                    await _cartService.ClearCart(order.UserId);
+
+                    await _orderRepository.UpdateAsync(order);
 
                     return new PaymentResponse
                     {
@@ -157,13 +162,13 @@ namespace EduTrailblaze.Services
                 else
                 {
                     // Handle payment failure
-                    //UpdatePaymentRequest updatePaymentRequest = new()
-                    //{
-                    //    PaymentId = paymentId,
-                    //    PaymentStatus = "Failed",
-                    //};
+                    UpdatePaymentRequest updatePaymentRequest = new()
+                    {
+                        PaymentId = paymentId,
+                        PaymentStatus = "Failed",
+                    };
 
-                    //await _paymentService.UpdatePayment(updatePaymentRequest);
+                    await _paymentService.UpdatePayment(updatePaymentRequest);
 
                     return new PaymentResponse
                     {

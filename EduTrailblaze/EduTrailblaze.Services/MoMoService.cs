@@ -12,15 +12,17 @@ namespace EduTrailblaze.Services
     {
         private readonly IRepository<Order, int> _orderRepository;
         private readonly IPaymentService _paymentService;
+        private readonly ICartService _cartService;
         private readonly MoMoSettings _momoSettings;
         private readonly IConfiguration _configuration;
 
-        public MoMoService(IRepository<Order, int> orderRepository, IPaymentService paymentService, IConfiguration configuration)
+        public MoMoService(IRepository<Order, int> orderRepository, IPaymentService paymentService, IConfiguration configuration, ICartService cartService)
         {
             _orderRepository = orderRepository;
             _paymentService = paymentService;
             _momoSettings = configuration.GetSection("MoMoSettings").Get<MoMoSettings>();
             _configuration = configuration;
+            _cartService = cartService;
         }
 
         public async Task<string> CreatePaymentUrl(decimal amount, int orderId, int paymentId)
@@ -114,6 +116,8 @@ namespace EduTrailblaze.Services
                     await _paymentService.UpdatePayment(updatePaymentRequest);
 
                     order.OrderStatus = "Completed";
+
+                    await _cartService.ClearCart(order.UserId);
 
                     await _orderRepository.UpdateAsync(order);
 

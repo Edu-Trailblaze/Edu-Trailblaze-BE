@@ -1,4 +1,5 @@
-﻿using EduTrailblaze.Services.Interfaces;
+﻿using EduTrailblaze.Services;
+using EduTrailblaze.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EduTrailblaze.API.Controllers
@@ -20,7 +21,7 @@ namespace EduTrailblaze.API.Controllers
             try
             {
                 string paymentUrl = await _momoService.CreatePaymentUrl(amount, orderId, paymentId);
-                return Ok(paymentUrl);
+                return Redirect(paymentUrl);
             }
             catch (Exception ex)
             {
@@ -28,13 +29,19 @@ namespace EduTrailblaze.API.Controllers
             }
         }
 
-        [HttpPost("validate")]
-        public async Task<IActionResult> ValidatePaymentResponse([FromQuery] string queryString)
+        [HttpGet("validate")]
+        public async Task<IActionResult> ValidatePaymentResponse()
         {
             try
             {
-                var response = await _momoService.ValidatePaymentResponse(queryString);
-                return Ok(response);
+                if (Request.QueryString.HasValue)
+                {
+                    string queryString = Request.QueryString.Value;
+
+                    var response = await _momoService.ValidatePaymentResponse(queryString);
+                    return Redirect(response.RedirectUrl);
+                }
+                return BadRequest();
             }
             catch (Exception ex)
             {

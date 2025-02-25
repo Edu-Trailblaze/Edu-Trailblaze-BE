@@ -13,15 +13,17 @@ namespace EduTrailblaze.Services
     {
         private readonly IRepository<Order, int> _orderRepository;
         private readonly IPaymentService _paymentService;
+        private readonly ICartService _cartService;
         private readonly VNPAYSettings _VNPAYSettings;
         private readonly IConfiguration _configuration;
 
-        public VNPAYService(IRepository<Order, int> orderRepository, IPaymentService paymentService, IConfiguration configuration)
+        public VNPAYService(IRepository<Order, int> orderRepository, IPaymentService paymentService, IConfiguration configuration, ICartService cartService)
         {
             _configuration = configuration;
             _orderRepository = orderRepository;
             _paymentService = paymentService;
             _VNPAYSettings = configuration.GetSection("VNPAYSettings").Get<VNPAYSettings>();
+            _cartService = cartService;
         }
 
         public string CreatePaymentUrl(decimal amount, int orderId, int paymentId)
@@ -103,6 +105,8 @@ namespace EduTrailblaze.Services
 
                         order.OrderStatus = "Completed";
                         await _orderRepository.UpdateAsync(order);
+
+                        await _cartService.ClearCart(order.UserId);
 
                         return new PaymentResponse
                         {
