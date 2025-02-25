@@ -17,22 +17,34 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up .NET Core
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.x'
+          dotnet-version: '8.x.x'
           include-prerelease: true
+      - name: Add appsettings.json
+        run: |
+          echo '${{ secrets.APPSETTINGS_JSON_CART }}' > src/Services/Cart/Cart.API/appsettings.json
+            try {
+              ConvertFrom-Json -InputObject '${{ secrets.APPSETTINGS_JSON_CART }}' | Out-Null
+              Write-Host "JSON is valid."
+            } catch {
+              Write-Error "Invalid JSON format in appsettings.json"
+              exit 1
+            }
+        shell: pwsh    
 
       - name: Build with dotnet
         run: dotnet build --configuration Release
+        working-directory: EduTrailblaze/
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish src/Services/Cart/Cart.API/Cart.API.csproj -c Release -o output
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          path: output
 
   deploy:
     runs-on: windows-latest
@@ -49,7 +61,7 @@ jobs:
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
+        uses: azure/webapps-deploy@v3
         with:
           app-name: 'edu-cart-service'
           slot-name: 'Production'
