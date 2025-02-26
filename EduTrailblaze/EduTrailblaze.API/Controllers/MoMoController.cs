@@ -1,4 +1,5 @@
-﻿using EduTrailblaze.Services.Interfaces;
+﻿using EduTrailblaze.Services;
+using EduTrailblaze.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EduTrailblaze.API.Controllers

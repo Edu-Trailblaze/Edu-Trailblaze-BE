@@ -26,7 +26,5 @@ namespace EduTrailblaze.Services.Interfaces
         Task<List<LectureDTO>?> GetLecturesByConditions(GetLecturesRequest request);
 
         Task<List<SectionLectureDetails>> GetSectionLectures(List<int> sectionIds);
-
-        Task CreateLecture(CreateLectureDetails lecture);
     }
 }
