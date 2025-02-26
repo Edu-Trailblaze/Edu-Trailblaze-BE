@@ -678,15 +678,15 @@ namespace EduTrailblaze.Services.DTOs
                 .NotEmpty().WithMessage("Description is required");
 
             RuleFor(x => x.Duration)
-                .GreaterThanOrEqualTo(0).WithMessage("Duration must be greater than or equal to 0")
+                .GreaterThanOrEqualTo(0).WithMessage("Duration must be greater than or equal to 0 if LectureType is not Video")
                 .When(x => x.LectureType != "Video");
 
             RuleFor(x => x.Video)
-                .NotEmpty().WithMessage("Videos are required")
+                .NotEmpty().WithMessage("Videos are required if LectureType is Video")
                 .When(x => x.LectureType == "Video");
 
             RuleFor(x => x.Video)
-                .Null().WithMessage("Videos should be null")
+                .Null().WithMessage("Videos should be null if LectureType is not Video")
                 .When(x => x.LectureType != "Video");
         }
     }
