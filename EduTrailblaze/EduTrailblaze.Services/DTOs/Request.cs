@@ -644,6 +644,53 @@ namespace EduTrailblaze.Services.DTOs
         }
     }
 
+    public class CreateLectureDetails
+    {
+        public int SectionId { get; set; }
+        public string LectureType { get; set; } // Reading, Video, Quiz
+        public string Title { get; set; }
+        public string Content { get; set; }
+        public string Description { get; set; }
+        public int? Duration { get; set; }
+        public List<UploadVideoRequest>? Videos { get; set; }
+    }
+
+    public class CreateLectureDetailsValidator : AbstractValidator<CreateLectureDetails>
+    {
+        public CreateLectureDetailsValidator()
+        {
+            RuleFor(x => x.SectionId)
+                .NotEmpty().WithMessage("SectionId is required");
+
+            RuleFor(x => x.LectureType)
+                .NotEmpty().WithMessage("LectureType is required")
+                .Must(type => new[] { "Reading", "Video", "Quiz" }.Contains(type))
+                .WithMessage("LectureType must be Reading, Video, or Quiz");
+
+            RuleFor(x => x.Title)
+                .NotEmpty().WithMessage("Title is required")
+                .MaximumLength(50).WithMessage("Title cannot be longer than 50 characters");
+
+            RuleFor(x => x.Content)
+                .NotEmpty().WithMessage("Content is required");
+
+            RuleFor(x => x.Description)
+                .NotEmpty().WithMessage("Description is required");
+
+            RuleFor(x => x.Duration)
+                .GreaterThanOrEqualTo(0).WithMessage("Duration must be greater than or equal to 0")
+                .When(x => x.LectureType != "Video");
+
+            RuleFor(x => x.Videos)
+                .NotEmpty().WithMessage("Videos are required")
+                .When(x => x.LectureType == "Video");
+
+            RuleFor(x => x.Videos)
+                .Null().WithMessage("Videos should be null")
+                .When(x => x.LectureType != "Video");
+        }
+    }
+
     public class CreateLectureRequest
     {
         public int SectionId { get; set; }
