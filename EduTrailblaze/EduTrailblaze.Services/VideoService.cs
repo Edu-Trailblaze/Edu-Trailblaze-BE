@@ -198,7 +198,7 @@ namespace EduTrailblaze.Services
             }
         }
 
-        public async Task<int> UploadVideoWithCloudinaryAsync(UploadVideoRequest video)
+        public async Task<VideoDTO> UploadVideoWithCloudinaryAsync(UploadVideoRequest video)
         {
             var tempFilePath = Path.GetTempFileName();
             try
@@ -236,7 +236,7 @@ namespace EduTrailblaze.Services
                 // Enqueue the background job for generating the transcript
                 //_backgroundJobClient.Enqueue(() => GenerateAndUpdateTranscript(newVideo.VideoId));
 
-                return newVideo.LectureId;
+                return _mapper.Map<VideoDTO>(newVideo);
             }
             catch (Exception ex)
             {

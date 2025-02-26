@@ -108,8 +108,8 @@ namespace EduTrailblaze.API.Controllers
         {
             try
             {
-                var id = await _videoService.UploadVideoWithCloudinaryAsync(video);
-                return Ok(new { VideoId = id});
+                var res = await _videoService.UploadVideoWithCloudinaryAsync(video);
+                return Ok(res);
             }
             catch (Exception ex)
             {
