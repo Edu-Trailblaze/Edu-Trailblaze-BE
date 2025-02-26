@@ -103,18 +103,18 @@ namespace EduTrailblaze.API.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> UploadVideo([FromForm] UploadVideoRequest video)
-        {
-            try
-            {
-                await _videoService.UploadVideoWithCloudinaryAsync(video);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
+        //[HttpPost]
+        //public async Task<IActionResult> UploadVideo([FromForm] UploadVideoRequest video)
+        //{
+        //    try
+        //    {
+        //        await _videoService.UploadVideoWithCloudinaryAsync(video);
+        //        return Ok();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        //    }
+        //}
     }
 }

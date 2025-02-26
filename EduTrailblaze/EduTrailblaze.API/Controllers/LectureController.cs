@@ -116,5 +116,33 @@ namespace EduTrailblaze.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        [HttpPost("upload-video")]
+        public async Task<IActionResult> UploadVideo([FromForm] UploadVideoRequest video)
+        {
+            try
+            {
+                await _lectureService.UploadVideoWithCloudinaryAsync(video);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpPost("create-lecture")]
+        public async Task<IActionResult> CreateLecture([FromForm] CreateLectureDetails lecture)
+        {
+            try
+            {
+                await _lectureService.CreateLecture(lecture);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }

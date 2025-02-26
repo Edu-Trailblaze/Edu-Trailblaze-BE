@@ -16,13 +16,13 @@ namespace EduTrailblaze.Services
         private readonly IClamAVService _clamAVService;
         //private readonly IWindowsDefenderService _windowsDefenderService;
         private readonly IVimeoService _vimeoService;
-        private readonly ILectureService _lectureService;
+        //private readonly ILectureService _lectureService;
         private readonly ICloudinaryService _cloudinaryService;
         private readonly IBackgroundJobClient _backgroundJobClient;
         private readonly IAIService _aIService;
         private readonly IMapper _mapper;
 
-        public VideoService(IRepository<Video, int> videoRepository, IVimeoService vimeoService, IClamAVService clamAVService, IAIService aIService, IBackgroundJobClient backgroundJobClient, ICloudinaryService cloudinaryService, ILectureService lectureService, IMapper mapper)
+        public VideoService(IRepository<Video, int> videoRepository, IVimeoService vimeoService, IClamAVService clamAVService, IAIService aIService, IBackgroundJobClient backgroundJobClient, ICloudinaryService cloudinaryService, IMapper mapper)
         {
             _videoRepository = videoRepository;
             _vimeoService = vimeoService;
@@ -31,7 +31,7 @@ namespace EduTrailblaze.Services
             //_windowsDefenderService = windowsDefenderService;
             _aIService = aIService;
             _backgroundJobClient = backgroundJobClient;
-            _lectureService = lectureService;
+            //_lectureService = lectureService;
             _mapper = mapper;
         }
 
@@ -198,7 +198,7 @@ namespace EduTrailblaze.Services
             }
         }
 
-        public async Task<UploadVideoResponse> UploadVideoWithCloudinaryAsync(UploadVideoRequest video)
+        public async Task<int> UploadVideoWithCloudinaryAsync(UploadVideoRequest video)
         {
             var tempFilePath = Path.GetTempFileName();
             try
@@ -231,12 +231,12 @@ namespace EduTrailblaze.Services
                 newVideo.Duration = uploadResponse.Duration;
                 newVideo.VideoUrl = uploadResponse.VideoUri;
                 await _videoRepository.UpdateAsync(newVideo);
-                await _lectureService.UpdateLectureDuration(newVideo.LectureId);
+                //await _lectureService.UpdateLectureDuration(newVideo.LectureId);
 
                 // Enqueue the background job for generating the transcript
                 //_backgroundJobClient.Enqueue(() => GenerateAndUpdateTranscript(newVideo.VideoId));
 
-                return uploadResponse;
+                return newVideo.LectureId;
             }
             catch (Exception ex)
             {
