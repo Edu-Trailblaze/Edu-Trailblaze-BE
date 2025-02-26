@@ -65,19 +65,19 @@ namespace EduTrailblaze.API.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AddQuiz([FromBody] CreateQuizRequest quiz)
-        {
-            try
-            {
-                await _quizService.AddQuiz(quiz);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
+        //[HttpPost]
+        //public async Task<IActionResult> AddQuiz([FromBody] CreateQuizRequest quiz)
+        //{
+        //    try
+        //    {
+        //        var res = await _quizService.AddQuiz(quiz);
+        //        return Ok(res);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        //    }
+        //}
 
         [HttpPut]
         public async Task<IActionResult> UpdateQuiz([FromBody] UpdateQuizRequest quiz)

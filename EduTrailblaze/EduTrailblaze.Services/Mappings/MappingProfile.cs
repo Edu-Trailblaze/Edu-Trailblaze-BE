@@ -41,6 +41,8 @@ namespace EduTrailblaze.Services.Mappings
             CreateMap<Payment, PaymentDTO>();
 
             CreateMap<Tag, TagResponse>();
+
+            CreateMap<Quiz, QuizDTO>();
         }
     }
 }

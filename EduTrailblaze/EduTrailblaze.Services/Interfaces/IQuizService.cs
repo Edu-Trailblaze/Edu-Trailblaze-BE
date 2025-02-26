@@ -15,7 +15,7 @@ namespace EduTrailblaze.Services.Interfaces
 
         Task DeleteQuiz(Quiz quiz);
 
-        Task AddQuiz(CreateQuizRequest quiz);
+        Task<QuizDTO> AddQuiz(CreateQuizRequest quiz);
 
         Task UpdateQuiz(UpdateQuizRequest quiz);
 

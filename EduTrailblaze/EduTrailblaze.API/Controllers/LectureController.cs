@@ -75,19 +75,19 @@ namespace EduTrailblaze.API.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AddLecture([FromBody] CreateLectureRequest lecture)
-        {
-            try
-            {
-                await _lectureService.AddLecture(lecture);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
+        //[HttpPost]
+        //public async Task<IActionResult> AddLecture([FromBody] CreateLectureRequest lecture)
+        //{
+        //    try
+        //    {
+        //        var res = await _lectureService.AddLecture(lecture);
+        //        return Ok(res);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        //    }
+        //}
 
         [HttpPut]
         public async Task<IActionResult> UpdateLecture([FromBody] UpdateLectureRequest lecture)
@@ -117,27 +117,27 @@ namespace EduTrailblaze.API.Controllers
             }
         }
 
-        [HttpPost("upload-video")]
-        public async Task<IActionResult> UploadVideo([FromForm] UploadVideoRequest video)
-        {
-            try
-            {
-                await _lectureService.UploadVideoWithCloudinaryAsync(video);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
+        //[HttpPost("create-lecture")]
+        //public async Task<IActionResult> CreateLecture([FromForm] CreateLectureDetails lecture)
+        //{
+        //    try
+        //    {
+        //        await _lectureService.CreateLecture(lecture);
+        //        return Ok();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        //    }
+        //}
 
         [HttpPost("create-lecture")]
-        public async Task<IActionResult> CreateLecture([FromForm] CreateLectureDetails lecture)
+        public async Task<IActionResult> CreateLecture([FromForm] CreateLecture lecture)
         {
             try
             {
-                await _lectureService.CreateLecture(lecture);
-                return Ok();
+                var res = await _lectureService.CreateLecture(lecture);
+                return Ok(res);
             }
             catch (Exception ex)
             {

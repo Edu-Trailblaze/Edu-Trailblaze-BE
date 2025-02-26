@@ -12,15 +12,13 @@ namespace EduTrailblaze.Services
     {
         private readonly IRepository<Lecture, int> _lectureRepository;
         private readonly ISectionService _sectionService;
-        private readonly IVideoService _videoService;
         private readonly IMapper _mapper;
 
-        public LectureService(IRepository<Lecture, int> lectureRepository, ISectionService sectionService, IMapper mapper, IVideoService videoService)
+        public LectureService(IRepository<Lecture, int> lectureRepository, ISectionService sectionService, IMapper mapper)
         {
             _lectureRepository = lectureRepository;
             _sectionService = sectionService;
             _mapper = mapper;
-            _videoService = videoService;
         }
 
         public async Task<Lecture?> GetLecture(int lectureId)
@@ -71,42 +69,60 @@ namespace EduTrailblaze.Services
             }
         }
 
-        public async Task CreateLecture(CreateLectureDetails lecture)
-        {
-            try
-            {
-                var lectureEntity = new Lecture
-                {
-                    SectionId = lecture.SectionId,
-                    LectureType = lecture.LectureType,
-                    Title = lecture.Title,
-                    Content = lecture.Content,
-                    Description = lecture.Description,
-                    Duration = lecture.Duration ?? 0,
-                };
-                await _lectureRepository.AddAsync(lectureEntity);
-                await UpdateLectureDuration(lecture.SectionId);
-                await _sectionService.UpdateNumberOfLectures(lecture.SectionId);
+        //public async Task CreateLecture(CreateLectureDetails lecture)
+        //{
+        //    try
+        //    {
+        //        var lectureEntity = new Lecture
+        //        {
+        //            SectionId = lecture.SectionId,
+        //            LectureType = lecture.LectureType,
+        //            Title = lecture.Title,
+        //            Content = lecture.Content,
+        //            Description = lecture.Description,
+        //            Duration = lecture.Duration ?? 0,
+        //        };
+        //        await _lectureRepository.AddAsync(lectureEntity);
+        //        await UpdateLectureDuration(lecture.SectionId);
+        //        await _sectionService.UpdateNumberOfLectures(lecture.SectionId);
 
-                if (lecture.Video != null)
-                {
-                    lecture.Video.LectureId = lectureEntity.Id;
-                    await UploadVideoWithCloudinaryAsync(lecture.Video);
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("An error occurred while adding the lecture.", ex);
-            }
-        }
+        //        if (lecture.Video != null)
+        //        {
+        //            lecture.Video.LectureId = lectureEntity.Id;
+        //            await UploadVideoWithCloudinaryAsync(lecture.Video);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception("An error occurred while adding the lecture.", ex);
+        //    }
+        //}
         
-        public async Task UploadVideoWithCloudinaryAsync(UploadVideoRequest video)
+        public async Task<LectureDTO> CreateLecture(CreateLecture lecture)
         {
             try
             {
-                var res = await _videoService.UploadVideoWithCloudinaryAsync(video);
+                string? content = null;
 
-                await UpdateLectureDuration(res);
+                if (lecture.ContentPDFFile != null && lecture.ContentPDFFile.Length > 0)
+                {
+                    content = PDFReader.ExtractText(lecture.ContentPDFFile);
+                }
+
+                var lectureEntity = new Lecture
+                {
+                    SectionId = lecture.SectionId,
+                    LectureType = lecture.LectureType,
+                    Title = lecture.Title,
+                    Content = content ?? lecture.Content,
+                    Description = lecture.Description,
+                    Duration = lecture.Duration ?? 0,
+                };
+                await _lectureRepository.AddAsync(lectureEntity);
+                await UpdateLectureDuration(lecture.SectionId);
+                await _sectionService.UpdateNumberOfLectures(lecture.SectionId);
+
+                return _mapper.Map<LectureDTO>(lectureEntity);
             }
             catch (Exception ex)
             {
@@ -114,7 +130,7 @@ namespace EduTrailblaze.Services
             }
         }
 
-        public async Task AddLecture(CreateLectureRequest lecture)
+        public async Task<LectureDTO> AddLecture(CreateLectureRequest lecture)
         {
             try
             {
@@ -130,6 +146,8 @@ namespace EduTrailblaze.Services
                 await _lectureRepository.AddAsync(lectureEntity);
                 await UpdateLectureDuration(lecture.SectionId);
                 await _sectionService.UpdateNumberOfLectures(lecture.SectionId);
+
+                return _mapper.Map<LectureDTO>(lectureEntity);
             }
             catch (Exception ex)
             {

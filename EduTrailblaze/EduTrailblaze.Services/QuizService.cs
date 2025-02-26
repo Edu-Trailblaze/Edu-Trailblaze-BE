@@ -1,4 +1,5 @@
-﻿using EduTrailblaze.Entities;
+﻿using AutoMapper;
+using EduTrailblaze.Entities;
 using EduTrailblaze.Repositories.Interfaces;
 using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Helper;
@@ -11,11 +12,15 @@ namespace EduTrailblaze.Services
     {
         private readonly IRepository<Quiz, int> _quizRepository;
         private readonly IRepository<Question, int> _questionRepository;
+        private readonly IRepository<Lecture, int> _lectureRepository;
+        private readonly IMapper _mapper;
 
-        public QuizService(IRepository<Quiz, int> quizRepository, IRepository<Question, int> questionRepository)
+        public QuizService(IRepository<Quiz, int> quizRepository, IRepository<Question, int> questionRepository, IMapper mapper, IRepository<Lecture, int> lectureRepository)
         {
             _quizRepository = quizRepository;
             _questionRepository = questionRepository;
+            _mapper = mapper;
+            _lectureRepository = lectureRepository;
         }
 
         public async Task<Quiz?> GetQuiz(int quizId)
@@ -79,16 +84,31 @@ namespace EduTrailblaze.Services
         {
             try
             {
+                var lecture = await _lectureRepository.GetByIdAsync(request.LectureId);
+                if (lecture == null)
+                {
+                    throw new Exception("Lecture not found.");
+                }
+
                 if (request.Questions == null || request.Questions.Count == 0)
                 {
-                    throw new Exception("Invalid request.");
+                    throw new Exception("Not found Questions");
                 }
+
+                CreateQuizRequest createQuizRequest = new CreateQuizRequest
+                {
+                    LectureId = request.LectureId,
+                    Title = request.Title,
+                    PassingScore = request.PassingScore
+                };
+
+                var quiz = await AddQuiz(createQuizRequest);
 
                 foreach (var item in request.Questions)
                 {
                     var question = new Question
                     {
-                        QuizzId = request.QuizId,
+                        QuizzId = quiz.Id,
                         QuestionText = item.QuestionText,
                         Answers = item.Answers.Select(a => new Answer
                         {
@@ -102,7 +122,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while creating the question details.", ex);
+                throw new Exception("An error occurred while creating the question details: " + ex.Message);
             }
         }
 
@@ -154,7 +174,7 @@ namespace EduTrailblaze.Services
             }
         }
 
-        public async Task AddQuiz(CreateQuizRequest quiz)
+        public async Task<QuizDTO> AddQuiz(CreateQuizRequest quiz)
         {
             try
             {
@@ -165,6 +185,8 @@ namespace EduTrailblaze.Services
                     PassingScore = quiz.PassingScore
                 };
                 await _quizRepository.AddAsync(newQuiz);
+
+                return _mapper.Map<QuizDTO>(newQuiz);
             }
             catch (Exception ex)
             {

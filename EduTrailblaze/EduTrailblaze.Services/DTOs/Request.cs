@@ -690,6 +690,50 @@ namespace EduTrailblaze.Services.DTOs
                 .When(x => x.LectureType != "Video");
         }
     }
+    
+    public class CreateLecture
+    {
+        public int SectionId { get; set; }
+        public string LectureType { get; set; } // Reading, Video, Quiz
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public string? Content { get; set; }
+        public IFormFile? ContentPDFFile { get; set; }
+        public int? Duration { get; set; } = 15;
+    }
+
+    public class CreateLectureValidator : AbstractValidator<CreateLecture>
+    {
+        public CreateLectureValidator()
+        {
+            RuleFor(x => x.SectionId)
+                .NotEmpty().WithMessage("SectionId is required");
+
+            RuleFor(x => x.LectureType)
+                .NotEmpty().WithMessage("LectureType is required")
+                .Must(type => new[] { "Reading", "Video", "Quiz" }.Contains(type))
+                .WithMessage("LectureType must be Reading, Video, or Quiz");
+
+            RuleFor(x => x.Title)
+                .NotEmpty().WithMessage("Title is required")
+                .MaximumLength(50).WithMessage("Title cannot be longer than 50 characters");
+
+            RuleFor(x => x.Description)
+                .NotEmpty().WithMessage("Description is required");
+
+            RuleFor(x => x.Duration)
+                .GreaterThanOrEqualTo(0).WithMessage("Duration must be greater than or equal to 0 if LectureType is not Video")
+                .When(x => x.LectureType != "Video");
+
+            RuleFor(x => x.Content)
+                .NotEmpty().WithMessage("Content is required if ContentPDFFile is not provided")
+                .When(x => x.ContentPDFFile == null);
+
+            RuleFor(x => x.ContentPDFFile)
+                .NotEmpty().WithMessage("ContentPDFFile is required if Content is not provided")
+                .When(x => string.IsNullOrEmpty(x.Content));
+        }
+    }
 
     public class CreateLectureRequest
     {
@@ -1882,7 +1926,9 @@ namespace EduTrailblaze.Services.DTOs
 
     public class CreateQuizDetails
     {
-        public int QuizId { get; set; }
+        public int LectureId { get; set; }
+        public string Title { get; set; }
+        public decimal PassingScore { get; set; }
         public List<CreateQuestionDetails> Questions { get; set; }
     }
 
@@ -1890,8 +1936,15 @@ namespace EduTrailblaze.Services.DTOs
     {
         public CreateQuizDetailsValidator()
         {
-            RuleFor(x => x.QuizId)
-                .NotEmpty().WithMessage("QuizId is required");
+
+            RuleFor(x => x.LectureId)
+                .NotEmpty().WithMessage("LectureId is required");
+            RuleFor(x => x.Title)
+                .NotEmpty().WithMessage("Title is required")
+                .MaximumLength(200).WithMessage("Title cannot be longer than 200 characters");
+            RuleFor(x => x.PassingScore)
+                .NotEmpty().WithMessage("PassingScore is required")
+                .GreaterThanOrEqualTo(0).WithMessage("PassingScore must be greater than or equal to 0");
             RuleFor(x => x.Questions)
                 .NotEmpty().WithMessage("Questions is required")
                 .Must(x => x.Count >= 1).WithMessage("Questions must have at least 1 item");
