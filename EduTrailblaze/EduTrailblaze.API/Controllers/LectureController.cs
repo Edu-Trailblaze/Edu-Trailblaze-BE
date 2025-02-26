@@ -75,20 +75,6 @@ namespace EduTrailblaze.API.Controllers
             }
         }
 
-        [HttpPost("create-lecture-details")]
-        public async Task<IActionResult> CreateLectureDetails([FromForm] CreateLectureDetails lecture)
-        {
-            try
-            {
-                await _lectureService.CreateLecture(lecture);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
-
         [HttpPost]
         public async Task<IActionResult> AddLecture([FromBody] CreateLectureRequest lecture)
         {
