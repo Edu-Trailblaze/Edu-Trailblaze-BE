@@ -10,10 +10,12 @@ namespace EduTrailblaze.Services
     public class QuizService : IQuizService
     {
         private readonly IRepository<Quiz, int> _quizRepository;
+        private readonly IRepository<Question, int> _questionRepository;
 
-        public QuizService(IRepository<Quiz, int> quizRepository)
+        public QuizService(IRepository<Quiz, int> quizRepository, IRepository<Question, int> questionRepository)
         {
             _quizRepository = quizRepository;
+            _questionRepository = questionRepository;
         }
 
         public async Task<Quiz?> GetQuiz(int quizId)
@@ -70,6 +72,37 @@ namespace EduTrailblaze.Services
             catch (Exception ex)
             {
                 throw new Exception("An error occurred while getting the quiz.", ex);
+            }
+        }
+
+        public async Task CreateQuizDetails(CreateQuizDetails request)
+        {
+            try
+            {
+                if (request.Questions == null || request.Questions.Count == 0)
+                {
+                    throw new Exception("Invalid request.");
+                }
+
+                foreach (var item in request.Questions)
+                {
+                    var question = new Question
+                    {
+                        QuizzId = request.QuizId,
+                        QuestionText = item.QuestionText,
+                        Answers = item.Answers.Select(a => new Answer
+                        {
+                            AnswerText = a.AnswerText,
+                            IsCorrect = a.IsCorrect
+                        }).ToList()
+                    };
+
+                    await _questionRepository.AddAsync(question);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while creating the question details.", ex);
             }
         }
 

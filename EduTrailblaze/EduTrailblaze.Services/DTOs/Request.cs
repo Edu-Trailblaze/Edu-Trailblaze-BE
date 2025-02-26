@@ -1832,4 +1832,57 @@ namespace EduTrailblaze.Services.DTOs
                 .When(x => x.FromDate != default && x.ToDate != default);
         }
     }
+
+    public class CreateQuizDetails
+    {
+        public int QuizId { get; set; }
+        public List<CreateQuestionDetails> Questions { get; set; }
+    }
+
+    public class CreateQuizDetailsValidator : AbstractValidator<CreateQuizDetails>
+    {
+        public CreateQuizDetailsValidator()
+        {
+            RuleFor(x => x.QuizId)
+                .NotEmpty().WithMessage("QuizId is required");
+            RuleFor(x => x.Questions)
+                .NotEmpty().WithMessage("Questions is required")
+                .Must(x => x.Count >= 1).WithMessage("Questions must have at least 1 item");
+        }
+    }
+
+    public class CreateQuestionDetails
+    {
+        public string QuestionText { get; set; }
+        public List<CreateAnswerDetails> Answers { get; set; }
+    }
+
+    public class CreateQuestionDetailsValidator : AbstractValidator<CreateQuestionDetails>
+    {
+        public CreateQuestionDetailsValidator()
+        {
+            RuleFor(x => x.QuestionText)
+                .NotEmpty().WithMessage("QuestionText is required");
+            RuleFor(x => x.Answers)
+                .NotEmpty().WithMessage("Answers is required")
+                .Must(x => x.Count >= 1).WithMessage("Answers must have at least 1 item");
+        }
+    }
+
+    public class CreateAnswerDetails
+    {
+        public string AnswerText { get; set; }
+        public bool IsCorrect { get; set; }
+    }
+
+    public class CreateAnswerDetailsValidator : AbstractValidator<CreateAnswerDetails>
+    {
+        public CreateAnswerDetailsValidator()
+        {
+            RuleFor(x => x.AnswerText)
+                .NotEmpty().WithMessage("AnswerText is required");
+            RuleFor(x => x.IsCorrect)
+                .NotEmpty().WithMessage("IsCorrect is required");
+        }
+    }
 }

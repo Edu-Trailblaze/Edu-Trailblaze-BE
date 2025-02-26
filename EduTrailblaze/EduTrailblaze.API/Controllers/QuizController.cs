@@ -51,6 +51,20 @@ namespace EduTrailblaze.API.Controllers
             }
         }
 
+        [HttpPost("create-quiz-details")]
+        public async Task<IActionResult> CreateQuizDetails([FromBody] CreateQuizDetails quiz)
+        {
+            try
+            {
+                await _quizService.CreateQuizDetails(quiz);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> AddQuiz([FromBody] CreateQuizRequest quiz)
         {
