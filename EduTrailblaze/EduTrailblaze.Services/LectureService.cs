@@ -12,13 +12,15 @@ namespace EduTrailblaze.Services
     {
         private readonly IRepository<Lecture, int> _lectureRepository;
         private readonly ISectionService _sectionService;
+        private readonly IVideoService _videoService;
         private readonly IMapper _mapper;
 
-        public LectureService(IRepository<Lecture, int> lectureRepository, ISectionService sectionService, IMapper mapper)
+        public LectureService(IRepository<Lecture, int> lectureRepository, ISectionService sectionService, IMapper mapper, IVideoService videoService)
         {
             _lectureRepository = lectureRepository;
             _sectionService = sectionService;
             _mapper = mapper;
+            _videoService = videoService;
         }
 
         public async Task<Lecture?> GetLecture(int lectureId)
@@ -66,6 +68,38 @@ namespace EduTrailblaze.Services
             catch (Exception ex)
             {
                 throw new Exception("An error occurred while updating the lecture.", ex);
+            }
+        }
+
+        public async Task CreateLecture(CreateLectureDetails lecture)
+        {
+            try
+            {
+                var lectureEntity = new Lecture
+                {
+                    SectionId = lecture.SectionId,
+                    LectureType = lecture.LectureType,
+                    Title = lecture.Title,
+                    Content = lecture.Content,
+                    Description = lecture.Description,
+                    Duration = lecture.Duration ?? 0,
+                };
+                await _lectureRepository.AddAsync(lectureEntity);
+                await UpdateLectureDuration(lecture.SectionId);
+                await _sectionService.UpdateNumberOfLectures(lecture.SectionId);
+
+                if (lecture.Videos != null && lecture.Videos.Any())
+                {
+                    foreach (var video in lecture.Videos)
+                    {
+                        video.LectureId = lectureEntity.Id;
+                        await _videoService.UploadVideoWithCloudinaryAsync(video);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while adding the lecture.", ex);
             }
         }
 
