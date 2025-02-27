@@ -31,6 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\BuildingBlocks\Common.Logging\Common.Logging.csproj" />
     <ProjectReference Include="..\EduTrailblaze.Services\EduTrailblaze.Services.csproj">
       <Private>True</Private>
     </ProjectReference>

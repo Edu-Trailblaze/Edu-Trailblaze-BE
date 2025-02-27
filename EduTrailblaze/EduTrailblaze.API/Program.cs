@@ -1,5 +1,5 @@
 using EduTrailblaze.API.Extensions;
-using EduTrailblaze.API.Logging;
+using Common.Logging;
 using EduTrailblaze.Repositories;
 using Serilog;
 
