@@ -1,5 +1,6 @@
 ﻿using EduTrailblaze.Entities;
 using EduTrailblaze.Services.DTOs;
+using EduTrailblaze.Services.Models;
 
 namespace EduTrailblaze.Services.Interfaces
 {
@@ -30,5 +31,7 @@ namespace EduTrailblaze.Services.Interfaces
         //Task CreateLecture(CreateLectureDetails lecture);
 
         Task<LectureDTO> CreateLecture(CreateLecture lecture);
+
+        Task<ApiResponse> CreateListSectionLectures(CreateListSectionLectureRequest sectionLecture);
     }
 }

@@ -1139,11 +1139,24 @@ namespace EduTrailblaze.Services.DTOs
         }
     }
 
+    public class CreateListSectionLectureRequest
+    {
+        public int CourseId { get; set; }
+        public List<CreateSectionWithNoCourseRequest> Sections { get; set; }
+    }
+    public class CreateSectionWithNoCourseRequest
+    {
+        
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public List<CreateLecture> Lectures { get; set; }
+    }
     public class CreateSectionRequest
     {
         public int CourseId { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
+        public CreateLecture Lectures { get; set; }
     }
 
     public class CreateSectionRequestValidator : AbstractValidator<CreateSectionRequest>

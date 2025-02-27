@@ -4,6 +4,7 @@ using EduTrailblaze.Repositories.Interfaces;
 using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Helper;
 using EduTrailblaze.Services.Interfaces;
+using EduTrailblaze.Services.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace EduTrailblaze.Services
@@ -315,6 +316,58 @@ namespace EduTrailblaze.Services
             catch (Exception ex)
             {
                 throw new Exception("An error occurred while getting the lectures: " + ex.Message);
+            }
+        }
+
+        public async Task<ApiResponse> CreateListSectionLectures(CreateListSectionLectureRequest sectionLecture)
+        {
+            try
+            {
+                foreach (var section in sectionLecture.Sections)
+                {
+                    var sectionEntity = new Section
+                    {
+                        CourseId = sectionLecture.CourseId,
+                        Title = section.Title,
+                        Description = section.Description,
+                        NumberOfLectures = 0,
+                        Duration = TimeSpan.FromMinutes(section.Lectures.Sum(l => l.Duration ?? 0))
+                    };
+
+                    await _sectionService.AddSection(sectionEntity);
+
+                    foreach (var lecture in section.Lectures)
+                    {
+                        var createLecture = new CreateLecture
+                        {
+                            SectionId = sectionEntity.Id,
+                            LectureType = lecture.LectureType,
+                            Title = lecture.Title,
+                            ContentPDFFile = lecture.ContentPDFFile,
+                            Content = lecture.Content,
+                            Description = lecture.Description,
+                            Duration = lecture.Duration
+                        };
+
+                        await CreateLecture(createLecture);
+                    }
+
+                    await _sectionService.UpdateSectionDuration(sectionEntity.Id);
+                }
+
+                return new ApiResponse
+                {
+                    StatusCode = 200,
+                    Message = "Sections and lectures created successfully."
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse
+                {
+                    StatusCode = 500,
+                    Message = "An error occurred while creating sections and lectures: " + ex.Message
+                };
             }
         }
     }

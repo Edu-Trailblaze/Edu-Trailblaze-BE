@@ -144,5 +144,19 @@ namespace EduTrailblaze.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+        [HttpPost("create-section-lecture-vip")]
+        public async Task<IActionResult> CreateListLectureSection([FromForm] CreateListSectionLectureRequest lectures  )
+        {
+            try
+            {
+                
+                var res = await _lectureService.CreateListSectionLectures(lectures);
+                return Ok(res);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }
