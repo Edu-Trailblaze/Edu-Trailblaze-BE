@@ -3,6 +3,7 @@ using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Helper;
 using EduTrailblaze.Services.Interfaces;
 using EduTrailblaze.Services.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -12,6 +13,7 @@ using Polly;
 using Polly.Retry;
 using Polly.Timeout;
 using Polly.Wrap;
+using System.Security.Claims;
 
 namespace EduTrailblaze.Services
 {
@@ -82,6 +84,88 @@ namespace EduTrailblaze.Services
             var isSendMailSuccess = await _sendMail.SendForgotEmailAsync(forgotPasswordModel.Email, "Reset Password", resetPasswordUrl);
             return (isSendMailSuccess is true) ? new ApiResponse { StatusCode = StatusCodes.Status200OK, Message = "Email sent successfully." } : new ApiResponse { StatusCode = StatusCodes.Status500InternalServerError, Message = "Error sending email." };
 
+        }
+
+        public async Task<ApiResponse> HandleExternalLoginProviderCallBack(AuthenticateResult authenticateResult)
+        {
+            try
+            {
+                if (authenticateResult?.Principal == null)
+                {
+                    throw new ArgumentNullException(nameof(authenticateResult.Principal), "Principal cannot be null");
+                }
+                var principal = authenticateResult.Principal;
+
+                var email = authenticateResult.Principal.FindFirstValue(ClaimTypes.Email);
+                var name = authenticateResult.Principal.FindFirstValue(ClaimTypes.Name);
+                var providerKey = authenticateResult.Principal.FindFirstValue(ClaimTypes.NameIdentifier); // Use this for provider login info
+                var provider = authenticateResult.Properties.Items["LoginProvider"]; // Get the provider name
+                var refreshToken = Guid.NewGuid().ToString();
+                var tokenExpiration = DateTime.Now.AddDays(30); 
+
+                var existedUser = await _dbPolicyWrap.ExecuteAsync(async () => await _userManager.FindByEmailAsync(email));
+                var user = new User();
+
+                if (existedUser == null)
+                {
+                    user = new User
+                    {
+                        Email = email,
+                        UserName = email,
+                        EmailConfirmed = true // Set as confirmed if you trust the external provider
+                    };
+
+                    // Create user without a password
+                    var result = await _userManager.CreateAsync(user);
+                    if (!result.Succeeded)
+                    {
+                        var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                        throw new ArgumentException("User creation failed: " + errors);
+                    }
+
+                    // Create and add to the Customer role if not exists
+                    if (!await _roleManager.RoleExistsAsync("Customer"))
+                    {
+                        await _roleManager.CreateAsync(new IdentityRole("Customer"));
+                    }
+
+                    await _userManager.AddToRoleAsync(user, "Customer");
+
+
+                    // Link the external login to the user
+                    var loginInfo = new UserLoginInfo(provider, providerKey, provider);
+                    await _userManager.AddLoginAsync(existedUser ?? user, loginInfo);
+                }
+
+                var loginInfos = await _dbPolicyWrap.ExecuteAsync(async () => await _userManager.GetLoginsAsync(existedUser ?? user));
+
+                var hasLinkedProvider = loginInfos.Any(login => login.LoginProvider == provider);
+
+                if (!hasLinkedProvider)
+                {
+                    throw new ApplicationException("User exists but has not linked this provider.");
+                }
+
+                var roles = await _dbPolicyWrap.ExecuteAsync(() => _userManager.GetRolesAsync(user));
+                var userRole = roles.FirstOrDefault();
+                var token = _jwtToken.GenerateJwtToken(user, "", userRole);
+
+              
+
+                return new ApiResponse
+                {
+                    Data = new
+                    {
+                        AccessToken = token,
+                        RefreshToken = refreshToken,
+                        TokenExpiration = tokenExpiration
+                    }
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error handling external login: {ex.Message}");
+            }
         }
 
         public async Task<ApiResponse> Login(LoginModel loginModel)

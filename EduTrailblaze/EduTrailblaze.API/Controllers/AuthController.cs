@@ -2,6 +2,7 @@
 using EduTrailblaze.Services.Helper;
 using EduTrailblaze.Services.Interfaces;
 using EduTrailblaze.Services.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Facebook;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
@@ -210,8 +211,9 @@ namespace EduTrailblaze.API.Controllers
         [HttpGet("signin-google")]
         public async Task<IActionResult> SignInWithGoogle()
         {
+            var redirectUrl = Url.Action("GoogleResponse", "Authentication", null, Request.Scheme);
             var scheme = Request.Scheme ?? "https";
-            var redirectUrl = $"{scheme}://{Request.Host}/authentication/google-response";
+            var redirectUrl1 = $"{scheme}://{Request.Host}/authentication/google-response";
 
             #region test code
             var properties = _signInManager.ConfigureExternalAuthenticationProperties("Google", redirectUrl);
@@ -234,6 +236,27 @@ namespace EduTrailblaze.API.Controllers
                 return Challenge(result.Data.ToString() ?? throw new ArgumentNullException(nameof(result.Data)), GoogleDefaults.AuthenticationScheme);
             }
             return StatusCode(result.StatusCode, result);
+        }
+        [HttpGet("google/callback")]
+        public async Task<IActionResult> GoogleResponse()
+        {
+            try
+            {
+                var result = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
+
+                if (result == null || !result.Succeeded)
+                {
+                    return BadRequest("External authentication error");
+                }
+
+                var response = await _authService.HandleExternalLoginProviderCallBack(result);
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
 

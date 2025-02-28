@@ -1,4 +1,5 @@
 ﻿using EduTrailblaze.Services.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.Identity.Client;
 
 namespace EduTrailblaze.Services.Interfaces
@@ -17,5 +18,6 @@ namespace EduTrailblaze.Services.Interfaces
         Task<ApiResponse> Logout(string userId);
         Task<ApiResponse> SignInWithGoogle(string redirectUrl);
         Task<ApiResponse> RefreshToken(string userId, string refreshToken);
+        Task<ApiResponse> HandleExternalLoginProviderCallBack(AuthenticateResult authenticateResult);
     }
 }
