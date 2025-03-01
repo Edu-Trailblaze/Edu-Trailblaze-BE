@@ -108,8 +108,9 @@
         public string VideoUri { get; set; }
         public TimeSpan Duration { get; set; }
     }
-    
-    public class ExchangeRateResponse
+
+   
+        public class ExchangeRateResponse
     {
         public Dictionary<string, decimal> Rates { get; set; }
     }

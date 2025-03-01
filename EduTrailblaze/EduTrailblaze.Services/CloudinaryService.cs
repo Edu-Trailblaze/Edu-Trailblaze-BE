@@ -2,6 +2,7 @@
 using CloudinaryDotNet.Actions;
 using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Interfaces;
+using Firebase.Storage;
 using Microsoft.Extensions.Configuration;
 
 namespace EduTrailblaze.Services
@@ -70,6 +71,21 @@ namespace EduTrailblaze.Services
             catch (Exception ex)
             {
                 throw new Exception($"Error deleting video: {ex.Message}");
+            }
+        }
+
+        
+        public async Task<string> UploadImageAsync(UploadImageRequest file)
+        {
+            var fileName = Guid.NewGuid() + Path.GetExtension(file.File.FileName);
+            using (var stream = file.File.OpenReadStream())
+            {
+                var task = new FirebaseStorage("court-callers.appspot.com")
+                    .Child("ProfileImage")
+                    .Child(fileName)
+                    .PutAsync(stream);
+
+                return await task;
             }
         }
     }

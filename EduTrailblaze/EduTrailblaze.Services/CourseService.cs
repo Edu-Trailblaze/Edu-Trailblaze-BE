@@ -4,6 +4,7 @@ using EduTrailblaze.Repositories.Interfaces;
 using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Helper;
 using EduTrailblaze.Services.Interfaces;
+using EduTrailblaze.Services.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -28,8 +29,9 @@ namespace EduTrailblaze.Services
         private readonly IElasticsearchService _elasticsearchService;
         private readonly IDiscountService _discountService;
         private readonly IMapper _mapper;
+        private readonly ICloudinaryService _cloudinaryService;
 
-        public CourseService(IRepository<Course, int> courseRepository, IReviewService reviewService, IElasticsearchService elasticsearchService, IMapper mapper, IDiscountService discountService, IRepository<CourseInstructor, int> courseInstructorRepository, IRepository<Enrollment, int> enrollment, UserManager<User> userManager, IRepository<CourseLanguage, int> courseLanguageRepository, IRepository<CourseTag, int> courseTagRepository, ICourseClassService courseClassService, IRepository<UserProfile, string> userProfileRepository, IRepository<Coupon, int> couponRepository, IRepository<Order, int> orderRepository, IRepository<OrderDetail, int> orderDetailRepository)
+        public CourseService(IRepository<Course, int> courseRepository, IReviewService reviewService, IElasticsearchService elasticsearchService, IMapper mapper, IDiscountService discountService, IRepository<CourseInstructor, int> courseInstructorRepository, IRepository<Enrollment, int> enrollment, UserManager<User> userManager, IRepository<CourseLanguage, int> courseLanguageRepository, IRepository<CourseTag, int> courseTagRepository, ICourseClassService courseClassService, IRepository<UserProfile, string> userProfileRepository, IRepository<Coupon, int> couponRepository, IRepository<Order, int> orderRepository, IRepository<OrderDetail, int> orderDetailRepository, ICloudinaryService cloudinaryService)
         {
             _courseRepository = courseRepository;
             _reviewService = reviewService;
@@ -46,6 +48,8 @@ namespace EduTrailblaze.Services
             _couponRepository = couponRepository;
             _orderDetailRepository = orderDetailRepository;
             _orderRepository = orderRepository;
+            _cloudinaryService = cloudinaryService;
+           
         }
 
         public async Task<Course?> GetCourse(int courseId)
@@ -84,23 +88,38 @@ namespace EduTrailblaze.Services
             }
         }
 
-        public async Task AddCourse(CreateCourseRequest req)
+        public async Task<ApiResponse> AddCourse(CreateCourseRequest req)
         {
+            var tempFilePath1 = Path.GetTempFileName();
+            var tempFilePath2 = Path.GetTempFileName();
             try
             {
-
+                
                 var instructor = await _userManager.FindByIdAsync(req.CreatedBy);
 
                 if (instructor == null)
                 {
                     throw new ArgumentException("Invalid instructor ID");
                 }
-
+                //add image, intro to cloudinary
+                using (var stream = new FileStream(tempFilePath1, FileMode.Create))
+                {
+                    await req.ImageURL.CopyToAsync(stream);
+                  
+                }
+                using (var stream = new FileStream(tempFilePath2, FileMode.Create))
+                {
+                    
+                    await req.IntroURL.CopyToAsync(stream);
+                }
+               
+                var introResponse = await _cloudinaryService.UploadVideoAsync(tempFilePath2, "vd-intro" + Guid.NewGuid());
+                var imageResponse = await _cloudinaryService.UploadImageAsync( new UploadImageRequest() { File = req.ImageURL });
                 var newCourse = new Course
                 {
                     Title = req.Title,
-                    ImageURL = req.ImageURL,
-                    IntroURL = req.IntroURL,
+                    ImageURL = imageResponse,
+                    IntroURL = introResponse.VideoUri,
                     Description = req.Description,
                     Price = req.Price,
                     CreatedBy = req.CreatedBy,
@@ -125,8 +144,8 @@ namespace EduTrailblaze.Services
                 {
                     CourseId = newCourse.Id,
                     Title = req.Title,
-                    ImageURL = req.ImageURL,
-                    IntroURL = req.IntroURL,
+                    ImageURL = imageResponse,
+                    IntroURL = introResponse.VideoUri,
                     Description = req.Description,
                     Price = req.Price,
                     Duration = newCourse.Duration,
@@ -138,6 +157,10 @@ namespace EduTrailblaze.Services
                 };
 
                 await _courseClassService.AddCourseClass(createCourseClassRequest);
+                return new ApiResponse {
+                    Data = new { CourseId = newCourse.Id },
+                    StatusCode = 200
+                };
             }
             catch (Exception ex)
             {

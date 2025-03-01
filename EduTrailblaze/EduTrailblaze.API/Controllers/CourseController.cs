@@ -63,12 +63,12 @@ namespace EduTrailblaze.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddCourse([FromBody] CreateCourseRequest course)
+        public async Task<IActionResult> AddCourse([FromForm] CreateCourseRequest course)
         {
             try
             {
-                await _courseService.AddCourse(course);
-                return Ok();
+               var result = await _courseService.AddCourse(course);
+                return Ok(result);
             }
             catch (Exception ex)
             {

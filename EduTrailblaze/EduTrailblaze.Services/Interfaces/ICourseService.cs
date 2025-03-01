@@ -1,5 +1,6 @@
 ﻿using EduTrailblaze.Entities;
 using EduTrailblaze.Services.DTOs;
+using EduTrailblaze.Services.Models;
 
 namespace EduTrailblaze.Services.Interfaces
 {
@@ -25,7 +26,7 @@ namespace EduTrailblaze.Services.Interfaces
 
         Task<PaginatedList<CourseCardResponse>> GetPagingCourseInformation(GetCoursesRequest request, Paging paging);
 
-        Task AddCourse(CreateCourseRequest course);
+        Task<ApiResponse> AddCourse(CreateCourseRequest course);
 
         Task UpdateCourse(UpdateCourseRequest req);
 

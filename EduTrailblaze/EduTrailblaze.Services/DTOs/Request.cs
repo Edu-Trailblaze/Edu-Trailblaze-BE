@@ -1,6 +1,7 @@
 ﻿using EduTrailblaze.Services.Helper;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace EduTrailblaze.Services.DTOs
 {
@@ -78,9 +79,9 @@ namespace EduTrailblaze.Services.DTOs
     {
         public string Title { get; set; }
 
-        public string ImageURL { get; set; }
+        public IFormFile? ImageURL { get; set; }
 
-        public string IntroURL { get; set; }
+        public IFormFile? IntroURL { get; set; }
 
         public string Description { get; set; }
 
@@ -104,12 +105,13 @@ namespace EduTrailblaze.Services.DTOs
              .MaximumLength(255).WithMessage("Title cannot be longer than 255 characters");
 
             RuleFor(x => x.ImageURL)
-                .NotEmpty().WithMessage("ImageURL is required")
-                .Must(uri => Uri.IsWellFormedUriString(uri, UriKind.Absolute)).WithMessage("ImageURL must be a valid URL");
+                .NotEmpty().WithMessage("ImageURL is required");
+
+
 
             RuleFor(x => x.IntroURL)
-                .NotEmpty().WithMessage("IntroURL is required")
-                .Must(uri => Uri.IsWellFormedUriString(uri, UriKind.Absolute)).WithMessage("IntroURL must be a valid URL");
+                .NotEmpty().WithMessage("IntroURL is required");
+              
 
             RuleFor(x => x.Description)
                 .NotEmpty().WithMessage("Description is required");
@@ -1554,6 +1556,13 @@ namespace EduTrailblaze.Services.DTOs
         public int LectureId { get; set; }
         public string Title { get; set; }
     }
+    public class UploadImageRequest
+    {
+        [Required(AllowEmptyStrings = false,ErrorMessage = "Image is required")]
+        public IFormFile File { get; set; }
+       
+    }
+
 
     public class UploadVideoRequestValidator : AbstractValidator<UploadVideoRequest>
     {
