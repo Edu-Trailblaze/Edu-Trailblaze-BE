@@ -289,5 +289,20 @@ namespace EduTrailblaze.Services
                 throw new Exception("An error occurred while getting nearest time for revenue: " + ex.Message);
             }
         }
+
+        public async Task<decimal> GetCourseCompletionRate(string instructorId)
+        {
+            try
+            {
+                var enrollmentDbSet = await _enrollmentRepository.GetDbSet();
+                var totalEnrollments = enrollmentDbSet.Where(e => e.CourseClass.Course.CreatedBy == instructorId).Count();
+                var totalCompletedEnrollments = enrollmentDbSet.Where(e => e.CourseClass.Course.CreatedBy == instructorId && e.IsCompleted).Count();
+                return totalEnrollments > 0 ? Math.Round((decimal)totalCompletedEnrollments / totalEnrollments * 100, 2) : 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting course completion rate: " + ex.Message);
+            }
+        }
     }
 }

@@ -98,5 +98,19 @@ namespace EduTrailblaze.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("get-course-completion-rate")]
+        public async Task<IActionResult> GetCourseCompletionRate(string instructorId)
+        {
+            try
+            {
+                var result = await _instructorDashboardService.GetCourseCompletionRate(instructorId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
