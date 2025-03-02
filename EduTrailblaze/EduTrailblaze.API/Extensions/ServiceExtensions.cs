@@ -202,6 +202,7 @@ namespace EduTrailblaze.API.Extensions
             services.AddScoped<ISendMail, SendMail>();
             services.AddScoped<IPayPalService, PayPalService>();
             services.AddScoped<IVoskService, VoskService>();
+            services.AddScoped<IInstructorDashboardService, InstructorDashboardService>();
 
             services.AddHttpClient<ICurrencyExchangeService, CurrencyExchangeService>();
 

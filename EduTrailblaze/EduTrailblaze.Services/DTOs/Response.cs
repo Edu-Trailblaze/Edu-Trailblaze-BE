@@ -246,4 +246,10 @@
         public string AnswerText { get; set; }
         public bool IsCorrect { get; set; }
     }
+
+    public class DataDashboard
+    {
+        public decimal CurrentData { get; set; }
+        public decimal ComparisonData { get; set; }
+    }
 }
