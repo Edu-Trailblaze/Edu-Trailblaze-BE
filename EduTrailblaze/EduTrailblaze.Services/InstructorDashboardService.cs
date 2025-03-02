@@ -304,5 +304,33 @@ namespace EduTrailblaze.Services
                 throw new Exception("An error occurred while getting course completion rate: " + ex.Message);
             }
         }
+
+        public async Task<List<CourseDashboardResponse>> GetTopPerformingCourses(string instructorId, int top)
+        {
+            try
+            {
+                var courseDbSet = await _courseRepository.GetDbSet();
+                var orderDbSet = await _orderRepository.GetDbSet();
+                var enrollmentDbSet = await _enrollmentRepository.GetDbSet();
+                var reviewDbSet = await _reviewRepository.GetDbSet();
+                var topPerformingCourses = courseDbSet
+                    .Where(c => c.CreatedBy == instructorId)
+                    .Select(c => new CourseDashboardResponse
+                    {
+                        Title = c.Title,
+                        NumberOfStudents = enrollmentDbSet.Where(e => e.CourseClass.CourseId == c.Id).Count(),
+                        Rating = reviewDbSet.Where(r => r.CourseId == c.Id).Average(r => r.Rating),
+                        Revenue = orderDbSet.Where(o => o.OrderDetails.Any(od => od.CourseId == c.Id)).SelectMany(o => o.OrderDetails).Sum(od => od.Price)
+                    })
+                    .OrderByDescending(c => c.NumberOfStudents)
+                    .Take(top)
+                    .ToList();
+                return topPerformingCourses;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting top performing courses: " + ex.Message);
+            }
+        }
     }
 }

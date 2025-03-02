@@ -112,5 +112,19 @@ namespace EduTrailblaze.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("get-top-performing-courses")]
+        public async Task<IActionResult> GetTopPerformingCourses(string instructorId, int top)
+        {
+            try
+            {
+                var result = await _instructorDashboardService.GetTopPerformingCourses(instructorId, top);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
