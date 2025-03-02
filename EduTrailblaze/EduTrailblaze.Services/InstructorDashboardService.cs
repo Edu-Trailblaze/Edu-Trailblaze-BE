@@ -92,21 +92,35 @@ namespace EduTrailblaze.Services
             }
         }
 
-        //revenue all course
         public async Task<DataDashboard> GetTotalRevenue(string instructorId, string time)
         {
             try
             {
                 DataDashboard dataDashboard = new DataDashboard();
                 var orderDbSet = await _orderRepository.GetDbSet();
-                var totalRevenue = orderDbSet.Where(o => o.OrderDetails.Any(od => od.Course.CreatedBy == instructorId)).Sum(o => o.OrderDetails.Sum(od => od.Price));
+
+                // Flatten the data and calculate the total revenue
+                var totalRevenue = orderDbSet
+                    .Where(o => o.OrderDetails.Any(od => od.Course.CreatedBy == instructorId))
+                    .SelectMany(o => o.OrderDetails)
+                    .Where(od => od.Course.CreatedBy == instructorId)
+                    .Sum(od => od.Price);
+
                 dataDashboard.CurrentData = totalRevenue;
+
                 if (!string.IsNullOrEmpty(time))
                 {
                     var currentTime = DateTime.UtcNow;
                     var startDate = time == "week" ? currentTime.AddDays(-7) : time == "month" ? currentTime.AddMonths(-1) : time == "year" ? currentTime.AddYears(-1) : currentTime;
-                    totalRevenue = orderDbSet.Where(o => o.OrderDetails.Any(od => od.Course.CreatedBy == instructorId && o.OrderDate >= startDate)).Sum(o => o.OrderDetails.Sum(od => od.Price));
+
+                    // Flatten the data and calculate the total revenue for the specified time period
+                    totalRevenue = orderDbSet
+                        .Where(o => o.OrderDate >= startDate && o.OrderDetails.Any(od => od.Course.CreatedBy == instructorId))
+                        .SelectMany(o => o.OrderDetails)
+                        .Where(od => od.Course.CreatedBy == instructorId)
+                        .Sum(od => od.Price);
                 }
+
                 dataDashboard.ComparisonData = totalRevenue;
                 return dataDashboard;
             }
