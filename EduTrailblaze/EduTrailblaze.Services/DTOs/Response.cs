@@ -258,8 +258,8 @@
         public DateTime FromDate { get; set; }
         public DateTime ToDate { get; set; }
         public decimal Data { get; set; }
-    }    
-    
+    }
+
     public class CourseDashboardResponse
     {
         public string Title { get; set; }
