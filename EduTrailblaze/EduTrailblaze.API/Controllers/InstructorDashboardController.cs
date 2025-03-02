@@ -1,4 +1,5 @@
 ﻿using EduTrailblaze.Services.Interfaces;
+using EduTrailblaze.Services.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EduTrailblaze.API.Controllers
@@ -14,13 +15,13 @@ namespace EduTrailblaze.API.Controllers
             _instructorDashboardService = instructorDashboardService;
         }
 
-        [HttpGet("total-courses")]
-        public async Task<IActionResult> GetTotalCourses(string instructorId, string time)
+        [HttpGet("get-total-courses")]
+        public async Task<IActionResult> GetTotalCourses([FromQuery] InstructorDashboardRequest request)
         {
             try
             {
-                var data = await _instructorDashboardService.GetTotalCourses(instructorId, time);
-                return Ok(data);
+                var result = await _instructorDashboardService.GetTotalCourses(request);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -28,13 +29,13 @@ namespace EduTrailblaze.API.Controllers
             }
         }
 
-        [HttpGet("total-enrollments")]
-        public async Task<IActionResult> GetTotalEnrollments(string instructorId, string time)
+        [HttpGet("get-total-enrollments")]
+        public async Task<IActionResult> GetTotalEnrollments([FromQuery] InstructorDashboardRequest request)
         {
             try
             {
-                var data = await _instructorDashboardService.GetTotalEnrollments(instructorId, time);
-                return Ok(data);
+                var result = await _instructorDashboardService.GetTotalEnrollments(request);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -42,13 +43,13 @@ namespace EduTrailblaze.API.Controllers
             }
         }
 
-        [HttpGet("average-rating")]
-        public async Task<IActionResult> GetAverageRating(string instructorId, string time)
+        [HttpGet("get-avarage-rating")]
+        public async Task<IActionResult> GetAverageRating([FromQuery] InstructorDashboardRequest request)
         {
             try
             {
-                var data = await _instructorDashboardService.GetAverageRating(instructorId, time);
-                return Ok(data);
+                var result = await _instructorDashboardService.GetAverageRating(request);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -56,13 +57,41 @@ namespace EduTrailblaze.API.Controllers
             }
         }
 
-        [HttpGet("total-revenue")]
-        public async Task<IActionResult> GetTotalRevenue(string instructorId, string time)
+        [HttpGet("get-total-revenue")]
+        public async Task<IActionResult> GetTotalRevenue([FromQuery] InstructorDashboardRequest request)
         {
             try
             {
-                var data = await _instructorDashboardService.GetTotalRevenue(instructorId, time);
-                return Ok(data);
+                var result = await _instructorDashboardService.GetTotalRevenue(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("get-nearest-time-for-revenue")]
+        public async Task<IActionResult> GetNearestTimeForRevenue([FromQuery] InstructorDashboardRequest request)
+        {
+            try
+            {
+                var result = await _instructorDashboardService.GetNearestTimeForRevenue(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("get-nearest-time-for-enrollments")]
+        public async Task<IActionResult> GetNearestTimeForEnrollments([FromQuery] InstructorDashboardRequest request)
+        {
+            try
+            {
+                var result = await _instructorDashboardService.GetNearestTimeForEnrollments(request);
+                return Ok(result);
             }
             catch (Exception ex)
             {

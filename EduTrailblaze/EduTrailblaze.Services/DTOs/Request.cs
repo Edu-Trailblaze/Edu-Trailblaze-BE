@@ -111,7 +111,7 @@ namespace EduTrailblaze.Services.DTOs
 
             RuleFor(x => x.IntroURL)
                 .NotEmpty().WithMessage("IntroURL is required");
-              
+
 
             RuleFor(x => x.Description)
                 .NotEmpty().WithMessage("Description is required");
@@ -692,7 +692,7 @@ namespace EduTrailblaze.Services.DTOs
                 .When(x => x.LectureType != "Video");
         }
     }
-    
+
     public class CreateLecture
     {
         public int SectionId { get; set; }
@@ -1148,7 +1148,7 @@ namespace EduTrailblaze.Services.DTOs
     }
     public class CreateSectionWithNoCourseRequest
     {
-        
+
         public string Title { get; set; }
         public string Description { get; set; }
         public List<CreateLecture> Lectures { get; set; }
@@ -1558,9 +1558,9 @@ namespace EduTrailblaze.Services.DTOs
     }
     public class UploadImageRequest
     {
-        [Required(AllowEmptyStrings = false,ErrorMessage = "Image is required")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Image is required")]
         public IFormFile File { get; set; }
-       
+
     }
 
 
@@ -2005,6 +2005,25 @@ namespace EduTrailblaze.Services.DTOs
                 .NotEmpty().WithMessage("AnswerText is required");
             RuleFor(x => x.IsCorrect)
                 .NotEmpty().WithMessage("IsCorrect is required");
+        }
+    }
+
+    public class InstructorDashboardRequest
+    {
+        public string InstructorId { get; set; }
+        public string Time { get; set; } // "week", "month", "year"
+    }
+
+    public class InstructorDashboardRequestValidator : AbstractValidator<InstructorDashboardRequest>
+    {
+        public InstructorDashboardRequestValidator()
+        {
+            RuleFor(x => x.InstructorId)
+                .NotEmpty().WithMessage("InstructorId is required");
+            RuleFor(x => x.Time)
+                .NotEmpty().WithMessage("Time is required")
+                .Must(x => new[] { "week", "month", "year" }.Contains(x))
+                .WithMessage("Time must be week, month, or year");
         }
     }
 }

@@ -109,8 +109,8 @@
         public TimeSpan Duration { get; set; }
     }
 
-   
-        public class ExchangeRateResponse
+
+    public class ExchangeRateResponse
     {
         public Dictionary<string, decimal> Rates { get; set; }
     }
@@ -251,5 +251,12 @@
     {
         public decimal CurrentData { get; set; }
         public decimal ComparisonData { get; set; }
+    }
+
+    public class ChartData
+    {
+        public DateTime FromDate { get; set; }
+        public DateTime ToDate { get; set; }
+        public decimal Data { get; set; }
     }
 }

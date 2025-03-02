@@ -1,5 +1,4 @@
 ﻿using EduTrailblaze.Services.DTOs;
-using Firebase.Storage;
 
 namespace EduTrailblaze.Services.Interfaces
 {
@@ -9,6 +8,6 @@ namespace EduTrailblaze.Services.Interfaces
 
         Task DeleteVideoAsync(string publicId);
         Task<string> UploadImageAsync(UploadImageRequest file);
-        
+
     }
 }

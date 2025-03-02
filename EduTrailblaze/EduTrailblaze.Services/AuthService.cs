@@ -101,7 +101,7 @@ namespace EduTrailblaze.Services
                 var providerKey = authenticateResult.Principal.FindFirstValue(ClaimTypes.NameIdentifier); // Use this for provider login info
                 var provider = authenticateResult.Properties.Items["LoginProvider"]; // Get the provider name
                 var refreshToken = Guid.NewGuid().ToString();
-                var tokenExpiration = DateTime.Now.AddDays(30); 
+                var tokenExpiration = DateTime.Now.AddDays(30);
 
                 var existedUser = await _dbPolicyWrap.ExecuteAsync(async () => await _userManager.FindByEmailAsync(email));
                 var user = new User();
@@ -150,7 +150,7 @@ namespace EduTrailblaze.Services
                 var userRole = roles.FirstOrDefault();
                 var token = _jwtToken.GenerateJwtToken(user, "", userRole);
 
-              
+
 
                 return new ApiResponse
                 {

@@ -67,7 +67,7 @@ namespace EduTrailblaze.API.Controllers
         {
             try
             {
-               var result = await _courseService.AddCourse(course);
+                var result = await _courseService.AddCourse(course);
                 return Ok(result);
             }
             catch (Exception ex)

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace EduTrailblaze.Services.DTOs
+﻿namespace EduTrailblaze.Services.DTOs
 {
     public class CourseDTO
     {
@@ -155,8 +153,8 @@ namespace EduTrailblaze.Services.DTOs
         public DateTime PaymentDate { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset? UpdatedAt { get; set; }
-    }    
-    
+    }
+
     public class QuizDTO
     {
         public int Id { get; set; }

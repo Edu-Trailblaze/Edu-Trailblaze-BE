@@ -49,7 +49,7 @@ namespace EduTrailblaze.Services
             _orderDetailRepository = orderDetailRepository;
             _orderRepository = orderRepository;
             _cloudinaryService = cloudinaryService;
-           
+
         }
 
         public async Task<Course?> GetCourse(int courseId)
@@ -94,7 +94,7 @@ namespace EduTrailblaze.Services
             var tempFilePath2 = Path.GetTempFileName();
             try
             {
-                
+
                 var instructor = await _userManager.FindByIdAsync(req.CreatedBy);
 
                 if (instructor == null)
@@ -105,16 +105,16 @@ namespace EduTrailblaze.Services
                 using (var stream = new FileStream(tempFilePath1, FileMode.Create))
                 {
                     await req.ImageURL.CopyToAsync(stream);
-                  
+
                 }
                 using (var stream = new FileStream(tempFilePath2, FileMode.Create))
                 {
-                    
+
                     await req.IntroURL.CopyToAsync(stream);
                 }
-               
+
                 var introResponse = await _cloudinaryService.UploadVideoAsync(tempFilePath2, "vd-intro" + Guid.NewGuid());
-                var imageResponse = await _cloudinaryService.UploadImageAsync( new UploadImageRequest() { File = req.ImageURL });
+                var imageResponse = await _cloudinaryService.UploadImageAsync(new UploadImageRequest() { File = req.ImageURL });
                 var newCourse = new Course
                 {
                     Title = req.Title,
@@ -157,7 +157,8 @@ namespace EduTrailblaze.Services
                 };
 
                 await _courseClassService.AddCourseClass(createCourseClassRequest);
-                return new ApiResponse {
+                return new ApiResponse
+                {
                     Data = new { CourseId = newCourse.Id },
                     StatusCode = 200
                 };

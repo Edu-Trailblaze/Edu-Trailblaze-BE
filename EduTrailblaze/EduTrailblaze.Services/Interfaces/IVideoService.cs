@@ -26,6 +26,6 @@ namespace EduTrailblaze.Services.Interfaces
         Task<VideoDTO> UploadVideoWithCloudinaryAsync(UploadVideoRequest video);
 
         Task<List<VideoDTO>?> GetVideosByConditions(GetVideosRequest request);
-        
+
     }
 }

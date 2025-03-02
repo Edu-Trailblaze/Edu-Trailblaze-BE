@@ -4,9 +4,11 @@ namespace EduTrailblaze.Services.Interfaces
 {
     public interface IInstructorDashboardService
     {
-        Task<DataDashboard> GetTotalCourses(string instructorId, string time);
-        Task<DataDashboard> GetTotalEnrollments(string instructorId, string time);
-        Task<DataDashboard> GetAverageRating(string instructorId, string time);
-        Task<DataDashboard> GetTotalRevenue(string instructorId, string time);
+        Task<DataDashboard> GetTotalCourses(InstructorDashboardRequest request);
+        Task<DataDashboard> GetTotalEnrollments(InstructorDashboardRequest request);
+        Task<DataDashboard> GetAverageRating(InstructorDashboardRequest request);
+        Task<DataDashboard> GetTotalRevenue(InstructorDashboardRequest request);
+        Task<List<ChartData>> GetNearestTimeForRevenue(InstructorDashboardRequest request);
+        Task<List<ChartData>> GetNearestTimeForEnrollments(InstructorDashboardRequest request);
     }
 }

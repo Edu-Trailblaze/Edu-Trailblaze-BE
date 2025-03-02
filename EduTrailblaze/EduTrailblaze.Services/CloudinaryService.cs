@@ -74,7 +74,7 @@ namespace EduTrailblaze.Services
             }
         }
 
-        
+
         public async Task<string> UploadImageAsync(UploadImageRequest file)
         {
             var fileName = Guid.NewGuid() + Path.GetExtension(file.File.FileName);

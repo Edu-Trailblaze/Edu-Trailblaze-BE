@@ -145,11 +145,11 @@ namespace EduTrailblaze.API.Controllers
             }
         }
         [HttpPost("create-section-lecture-vip")]
-        public async Task<IActionResult> CreateListLectureSection([FromForm] CreateListSectionLectureRequest lectures  )
+        public async Task<IActionResult> CreateListLectureSection([FromForm] CreateListSectionLectureRequest lectures)
         {
             try
             {
-                
+
                 var res = await _lectureService.CreateListSectionLectures(lectures);
                 return Ok(res);
             }

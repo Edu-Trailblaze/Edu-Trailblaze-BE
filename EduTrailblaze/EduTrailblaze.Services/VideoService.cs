@@ -4,7 +4,6 @@ using EduTrailblaze.Repositories.Interfaces;
 using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Helper;
 using EduTrailblaze.Services.Interfaces;
-using Firebase.Storage;
 using Hangfire;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -313,6 +312,6 @@ namespace EduTrailblaze.Services
             }
         }
 
-       
+
     }
 }

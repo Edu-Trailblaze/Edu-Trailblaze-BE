@@ -23,6 +23,6 @@ namespace EduTrailblaze.Services
             return refreshTokenInRedis == token ? true : false;
         }
 
-        public async Task<string> GetLockKey(string lockKey) =>  _database.StringGetAsync(lockKey).Result;
+        public async Task<string> GetLockKey(string lockKey) => _database.StringGetAsync(lockKey).Result;
     }
 }

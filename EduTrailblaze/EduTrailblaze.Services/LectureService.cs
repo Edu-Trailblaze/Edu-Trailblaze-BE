@@ -98,7 +98,7 @@ namespace EduTrailblaze.Services
         //        throw new Exception("An error occurred while adding the lecture.", ex);
         //    }
         //}
-        
+
         public async Task<LectureDTO> CreateLecture(CreateLecture lecture)
         {
             try
