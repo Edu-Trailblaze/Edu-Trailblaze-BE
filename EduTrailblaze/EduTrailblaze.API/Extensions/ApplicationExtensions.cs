@@ -12,17 +12,17 @@ namespace EduTrailblaze.API.Extensions
             {
                 options.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
             });
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
-            app.UseHsts();
-            app.Use(async (context, next) =>
-            {
-                context.Response.Headers["X-Content-Type-Options"] = "nosniff";
-                context.Response.Headers["Referrer-Policy"] = "no-referrer";
-                context.Response.Headers["X-XSS-Protection"] = "1; mode=block";
-                context.Response.Headers["X-Frame-Options"] = "DENY";
-                await next();
-            });
+            //app.UseHsts();
+            //app.Use(async (context, next) =>
+            //{
+            //    context.Response.Headers["X-Content-Type-Options"] = "nosniff";
+            //    context.Response.Headers["Referrer-Policy"] = "no-referrer";
+            //    context.Response.Headers["X-XSS-Protection"] = "1; mode=block";
+            //    context.Response.Headers["X-Frame-Options"] = "DENY";
+            //    await next();
+            //});
 
             app.UseStaticFiles();
             app.UseAuthentication();

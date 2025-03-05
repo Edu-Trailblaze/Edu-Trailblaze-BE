@@ -211,31 +211,31 @@ namespace EduTrailblaze.API.Controllers
         [HttpGet("signin-google")]
         public async Task<IActionResult> SignInWithGoogle()
         {
-            var redirectUrl = Url.Action("GoogleResponse", "Authentication", null, Request.Scheme);
+            var redirectUrl = Url.Action("GoogleResponse", "Auth", null, Request.Scheme);
             var scheme = Request.Scheme ?? "https";
             var redirectUrl1 = $"{scheme}://{Request.Host}/authentication/google-response";
 
-            #region test code
-            var properties = _signInManager.ConfigureExternalAuthenticationProperties("Google", redirectUrl);
-            return new ChallengeResult("Google", properties);
-            #endregion
+          
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(GoogleDefaults.AuthenticationScheme, redirectUrl);
+            return Challenge( properties, GoogleDefaults.AuthenticationScheme);
+          
 
-            if (redirectUrl == null)
-            {
-                throw new ArgumentNullException(nameof(redirectUrl));
-            }
+            //if (redirectUrl == null)
+            //{
+            //    throw new ArgumentNullException(nameof(redirectUrl));
+            //}
 
-            var result = await _authService.SignInWithGoogle(redirectUrl);
+            //var result = await _authService.SignInWithGoogle(redirectUrl);
 
-            if (result.StatusCode == 200)
-            {
-                if (result.Data == null)
-                {
-                    return StatusCode(500, "Google authentication data is null.");
-                }
-                return Challenge(result.Data.ToString() ?? throw new ArgumentNullException(nameof(result.Data)), GoogleDefaults.AuthenticationScheme);
-            }
-            return StatusCode(result.StatusCode, result);
+            //if (result.StatusCode == 200)
+            //{
+            //    if (result.Data == null)
+            //    {
+            //        return StatusCode(500, "Google authentication data is null.");
+            //    }
+            //    return Challenge(result.Data.ToString() ?? throw new ArgumentNullException(nameof(result.Data)), GoogleDefaults.AuthenticationScheme);
+            //}
+            //return StatusCode(result.StatusCode, result);
         }
         [HttpGet("google/callback")]
         public async Task<IActionResult> GoogleResponse()

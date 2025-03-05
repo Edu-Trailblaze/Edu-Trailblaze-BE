@@ -112,8 +112,7 @@ namespace EduTrailblaze.API.Extensions
                     {
                         options.ClientId = configuration["Google:ClientId"];
                         options.ClientSecret = configuration["Google:ClientSecret"];
-                        //options.CallbackPath = "/account/google-response";
-                        //options.SignInScheme = IdentityConstants.ExternalScheme;
+                        options.SignInScheme = IdentityConstants.ExternalScheme;
                     })
                     .AddCookie(options =>
                     {

@@ -148,7 +148,7 @@ namespace EduTrailblaze.Services
 
                 var roles = await _dbPolicyWrap.ExecuteAsync(() => _userManager.GetRolesAsync(user));
                 var userRole = roles.FirstOrDefault();
-                var token = _jwtToken.GenerateJwtToken(user, "", userRole);
+                var token = _jwtToken.GenerateJwtToken(user, name, userRole);
 
 
 
