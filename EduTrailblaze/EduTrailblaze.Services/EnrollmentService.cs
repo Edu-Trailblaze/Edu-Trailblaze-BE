@@ -1,6 +1,8 @@
 ﻿using EduTrailblaze.Entities;
 using EduTrailblaze.Repositories.Interfaces;
+using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace EduTrailblaze.Services
 {
@@ -37,15 +39,27 @@ namespace EduTrailblaze.Services
             }
         }
 
-        public async Task AddEnrollment(Enrollment enrollment)
+        public async Task AddEnrollment(CreateEnrollRequest  enrollment)
         {
             try
             {
-                await _enrollmentRepository.AddAsync(enrollment);
+                var isEnrollmentExists = await _enrollmentRepository.FindByCondition(e => e.StudentId == enrollment.StudentId && e.CourseClassId == enrollment.CourseClassId).AnyAsync();
+
+                if (isEnrollmentExists)
+                {
+                    throw new Exception("User Is Already Enroll");
+                }
+                var newEnrollment = new Enrollment
+                {
+                    StudentId = enrollment.StudentId,
+                    CourseClassId = enrollment.CourseClassId
+                };
+
+                await _enrollmentRepository.AddAsync(newEnrollment);
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the enrollment.", ex);
+                throw;
             }
         }
 

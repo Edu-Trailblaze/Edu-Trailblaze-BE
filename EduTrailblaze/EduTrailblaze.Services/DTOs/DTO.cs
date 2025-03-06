@@ -29,6 +29,7 @@
         public string UpdatedBy { get; set; }
 
         public bool IsPublished { get; set; }
+        public bool? IsEnroll { get; set; }
 
         public bool IsDeleted { get; set; } = false;
     }

@@ -47,9 +47,8 @@ namespace EduTrailblaze.Repositories
         }
 
         public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges = false)
-        {
-            throw new NotImplementedException();
-        }
+        =>
+!trackChanges ? _dbSet.Where(expression).AsNoTracking() : _dbSet.Where(expression);
 
         public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges = false, params Expression<Func<T, object>>[] includeProperties)
         {

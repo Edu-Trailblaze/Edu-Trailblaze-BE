@@ -1,4 +1,5 @@
 ﻿using EduTrailblaze.Entities;
+using EduTrailblaze.Services.DTOs;
 
 namespace EduTrailblaze.Services.Interfaces
 {
@@ -8,7 +9,7 @@ namespace EduTrailblaze.Services.Interfaces
 
         Task<IEnumerable<Enrollment>> GetEnrollments();
 
-        Task AddEnrollment(Enrollment enrollment);
+        Task AddEnrollment(CreateEnrollRequest enrollment);
 
         Task UpdateEnrollment(Enrollment enrollment);
 

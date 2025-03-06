@@ -435,6 +435,17 @@ namespace EduTrailblaze.Services
                     dbSet = dbSet.Where(c => c.DifficultyLevel == request.DifficultyLevel);
                 }
 
+                if (request.UserId != null)
+                {
+                    // Sử dụng enrollment repository để lấy dữ liệu liên quan
+                    var enrollmentQuery = await _enrollmentRepository.GetDbSet();
+                       var classUserEnroll = enrollmentQuery .Where(e => e.StudentId == request.UserId)
+                        .Select(e => e.CourseClassId);
+
+                    // Thêm điều kiện vào query gốc
+                    dbSet = dbSet.Where(c => classUserEnroll.Contains(c.Id));
+                }
+
                 if (request.IsFree == true)
                 {
                     dbSet = dbSet.Where(c => c.Price == 0);
@@ -1456,5 +1467,7 @@ namespace EduTrailblaze.Services
                 throw new Exception("An error occurred while updating the course duration: " + ex.Message);
             }
         }
+
+        
     }
 }

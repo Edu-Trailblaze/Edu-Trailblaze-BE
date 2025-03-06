@@ -19,6 +19,7 @@ namespace EduTrailblaze.Services.DTOs
         public int? MinDuration { get; set; } = null;
         public int? MaxDuration { get; set; } = null;
         public bool? HasQuizzes { get; set; } = null;
+        public string? UserId { get; set; } = null;
         public string? DifficultyLevel { get; set; } = null;
         public bool? IsPublished { get; set; } = null;
         public bool? IsDeleted { get; set; } = null;
@@ -804,7 +805,15 @@ namespace EduTrailblaze.Services.DTOs
                 .GreaterThanOrEqualTo(0).WithMessage("Duration must be greater than or equal to 0");
         }
     }
+    public class CreateEnrollRequest
+    {
+        [Required(AllowEmptyStrings = false, ErrorMessage = "CourseClassId is required")]
+        public int CourseClassId { get; set; }
+        [Required(AllowEmptyStrings = false, ErrorMessage = "StudentId is required")]
+        public string StudentId { get; set; }
+    }
 
+    
     public class CreateNewsRequest
     {
         public string Title { get; set; }
