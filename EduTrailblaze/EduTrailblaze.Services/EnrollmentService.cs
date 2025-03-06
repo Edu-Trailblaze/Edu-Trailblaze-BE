@@ -47,9 +47,8 @@ namespace EduTrailblaze.Services
         {
             try
             {
-                var courseClassIds = await _courseClassRepository.FindByCondition(cc => cc.CourseId == enrollment.CourseId)
-                    .Select(cc => cc.Id)
-                    .ToListAsync();
+                var courseClassIds = _courseClassRepository.FindByCondition(cc => cc.CourseId == enrollment.CourseId)
+                    .Select(cc => cc.Id);
 
                 var isEnrolled = await _enrollmentRepository.FindByCondition(e => e.StudentId == enrollment.StudentId && courseClassIds.Contains(e.CourseClassId))
                     .AnyAsync();
