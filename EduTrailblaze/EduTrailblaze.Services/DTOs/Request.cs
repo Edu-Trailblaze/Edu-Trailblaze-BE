@@ -19,7 +19,7 @@ namespace EduTrailblaze.Services.DTOs
         public int? MinDuration { get; set; } = null;
         public int? MaxDuration { get; set; } = null;
         public bool? HasQuizzes { get; set; } = null;
-        public string? UserId { get; set; } = null;
+        public string? StudentId { get; set; } = null;
         public string? DifficultyLevel { get; set; } = null;
         public bool? IsPublished { get; set; } = null;
         public bool? IsDeleted { get; set; } = null;
@@ -73,6 +73,10 @@ namespace EduTrailblaze.Services.DTOs
             RuleFor(x => x.DifficultyLevel)
                 .MaximumLength(50).WithMessage("DifficultyLevel must be Beginner, Intermediate, Advanced")
                 .When(x => !string.IsNullOrEmpty(x.DifficultyLevel));
+
+            RuleFor(x => x.StudentId)
+                .MaximumLength(50).WithMessage("StudentId cannot be longer than 50 characters")
+                .When(x => !string.IsNullOrEmpty(x.StudentId));
         }
     }
 

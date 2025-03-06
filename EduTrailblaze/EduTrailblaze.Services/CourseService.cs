@@ -435,15 +435,16 @@ namespace EduTrailblaze.Services
                     dbSet = dbSet.Where(c => c.DifficultyLevel == request.DifficultyLevel);
                 }
 
-                if (request.UserId != null)
+                if (request.StudentId != null)
                 {
-                    // Sử dụng enrollment repository để lấy dữ liệu liên quan
-                    var enrollmentQuery = await _enrollmentRepository.GetDbSet();
-                    var classUserEnroll = enrollmentQuery.Where(e => e.StudentId == request.UserId)
-                     .Select(e => e.CourseClassId);
+                    var boughtCourseIds = await (await _orderRepository.GetDbSet())
+                        .Where(o => o.UserId == request.StudentId && o.OrderStatus == "Completed")
+                        .SelectMany(o => o.OrderDetails)
+                        .Select(od => od.CourseId)
+                        .Distinct()
+                        .ToListAsync();
 
-                    // Thêm điều kiện vào query gốc
-                    dbSet = dbSet.Where(c => classUserEnroll.Contains(c.Id));
+                    dbSet = dbSet.Where(c => !boughtCourseIds.Contains(c.Id));
                 }
 
                 if (request.IsFree == true)
@@ -1468,6 +1469,14 @@ namespace EduTrailblaze.Services
             }
         }
 
+        public async Task<bool> HasStudentBoughtCourse(string studentId, int courseId)
+        {
+            var hasBought = await (await _orderRepository.GetDbSet())
+                .Where(o => o.UserId == studentId)
+                .SelectMany(o => o.OrderDetails)
+                .AnyAsync(od => od.CourseId == courseId);
 
+            return hasBought;
+        }
     }
 }

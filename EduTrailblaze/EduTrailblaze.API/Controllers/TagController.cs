@@ -15,6 +15,20 @@ namespace EduTrailblaze.API.Controllers
             _tagService = tagService;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetTags()
+        {
+            try
+            {
+                var tags = await _tagService.GetTags();
+                return Ok(tags);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
         [HttpGet("{tagId}")]
         public async Task<IActionResult> GetTag(int tagId)
         {
