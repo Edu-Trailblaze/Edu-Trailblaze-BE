@@ -28,7 +28,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the coupon.", ex);
+                throw new Exception("An error occurred while getting the coupon: " + ex.Message);
             }
         }
 
@@ -40,7 +40,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the coupon.", ex);
+                throw new Exception("An error occurred while getting the coupon: " + ex.Message);
             }
         }
 
@@ -52,7 +52,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the coupon.", ex);
+                throw new Exception("An error occurred while adding the coupon: " + ex.Message);
             }
         }
 
@@ -64,7 +64,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the coupon.", ex);
+                throw new Exception("An error occurred while updating the coupon: " + ex.Message);
             }
         }
 
@@ -83,7 +83,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the coupon.", ex);
+                throw new Exception("An error occurred while adding the coupon: " + ex.Message);
             }
         }
 
@@ -106,7 +106,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the coupon.", ex);
+                throw new Exception("An error occurred while updating the coupon: " + ex.Message);
             }
         }
 
@@ -118,7 +118,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the coupon.", ex);
+                throw new Exception("An error occurred while deleting the coupon: " + ex.Message);
             }
         }
 
@@ -139,7 +139,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the coupon.", ex);
+                throw new Exception("An error occurred while getting the coupon: " + ex.Message);
             }
         }
 
@@ -152,7 +152,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the coupon.", ex);
+                throw new Exception("An error occurred while getting the coupon: " + ex.Message);
             }
         }
 

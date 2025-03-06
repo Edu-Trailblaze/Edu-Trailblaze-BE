@@ -22,7 +22,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the language.", ex);
+                throw new Exception("An error occurred while getting the language: " + ex.Message);
             }
         }
 
@@ -34,7 +34,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the language.", ex);
+                throw new Exception("An error occurred while getting the language: " + ex.Message);
             }
         }
 
@@ -46,7 +46,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the language.", ex);
+                throw new Exception("An error occurred while adding the language: " + ex.Message);
             }
         }
 
@@ -58,7 +58,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the language.", ex);
+                throw new Exception("An error occurred while updating the language: " + ex.Message);
             }
         }
 
@@ -76,7 +76,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the language.", ex);
+                throw new Exception("An error occurred while adding the language: " + ex.Message);
             }
         }
 
@@ -95,7 +95,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the language.", ex);
+                throw new Exception("An error occurred while updating the language: " + ex.Message);
             }
         }
 
@@ -107,7 +107,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the language.", ex);
+                throw new Exception("An error occurred while deleting the language: " + ex.Message);
             }
         }
     }

@@ -26,7 +26,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the user.", ex);
+                throw new Exception("An error occurred while getting the user: " + ex.Message);
             }
         }
 
@@ -38,7 +38,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the users.", ex);
+                throw new Exception("An error occurred while getting the users: " + ex.Message);
             }
         }
 
@@ -50,7 +50,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the user.", ex);
+                throw new Exception("An error occurred while getting the user: " + ex.Message);
             }
         }
 

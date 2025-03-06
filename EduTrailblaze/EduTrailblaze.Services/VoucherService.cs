@@ -27,7 +27,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the voucher.", ex);
+                throw new Exception("An error occurred while getting the voucher: " + ex.Message);
             }
         }
 
@@ -39,7 +39,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the voucher.", ex);
+                throw new Exception("An error occurred while getting the voucher: " + ex.Message);
             }
         }
 
@@ -51,7 +51,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the voucher.", ex);
+                throw new Exception("An error occurred while adding the voucher: " + ex.Message);
             }
         }
 
@@ -63,7 +63,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the voucher.", ex);
+                throw new Exception("An error occurred while updating the voucher: " + ex.Message);
             }
         }
 
@@ -82,7 +82,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the voucher.", ex);
+                throw new Exception("An error occurred while adding the voucher: " + ex.Message);
             }
         }
 
@@ -105,7 +105,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the voucher.", ex);
+                throw new Exception("An error occurred while updating the voucher: " + ex.Message);
             }
         }
 
@@ -117,7 +117,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the voucher.", ex);
+                throw new Exception("An error occurred while deleting the voucher: " + ex.Message);
             }
         }
 
@@ -144,7 +144,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while checking the voucher validity.", ex);
+                throw new Exception("An error occurred while checking the voucher validity: " + ex.Message);
             }
         }
 

@@ -22,7 +22,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the orderDetail.", ex);
+                throw new Exception("An error occurred while getting the orderDetail: " + ex.Message);
             }
         }
 
@@ -34,7 +34,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the orderDetail.", ex);
+                throw new Exception("An error occurred while getting the orderDetail: " + ex.Message);
             }
         }
 
@@ -46,7 +46,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the orderDetail.", ex);
+                throw new Exception("An error occurred while adding the orderDetail: " + ex.Message);
             }
         }
 
@@ -64,7 +64,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the orderDetail.", ex);
+                throw new Exception("An error occurred while adding the orderDetail: " + ex.Message);
             }
         }
 
@@ -76,7 +76,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the orderDetail.", ex);
+                throw new Exception("An error occurred while updating the orderDetail: " + ex.Message);
             }
         }
 
@@ -88,7 +88,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the orderDetail.", ex);
+                throw new Exception("An error occurred while deleting the orderDetail: " + ex.Message);
             }
         }
     }

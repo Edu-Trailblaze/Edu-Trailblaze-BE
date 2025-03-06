@@ -22,7 +22,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the discount.", ex);
+                throw new Exception("An error occurred while getting the discount: " + ex.Message);
             }
         }
 
@@ -34,7 +34,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the discount.", ex);
+                throw new Exception("An error occurred while getting the discount: " + ex.Message);
             }
         }
 
@@ -46,7 +46,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the discount.", ex);
+                throw new Exception("An error occurred while adding the discount: " + ex.Message);
             }
         }
 
@@ -69,7 +69,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the discount.", ex);
+                throw new Exception("An error occurred while updating the discount: " + ex.Message);
             }
         }
 
@@ -88,7 +88,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the discount.", ex);
+                throw new Exception("An error occurred while adding the discount: " + ex.Message);
             }
         }
 
@@ -100,7 +100,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the discount.", ex);
+                throw new Exception("An error occurred while updating the discount: " + ex.Message);
             }
         }
 
@@ -112,7 +112,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the discount.", ex);
+                throw new Exception("An error occurred while deleting the discount: " + ex.Message);
             }
         }
     }

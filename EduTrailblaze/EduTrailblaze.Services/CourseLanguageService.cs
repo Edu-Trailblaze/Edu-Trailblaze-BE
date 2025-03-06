@@ -21,7 +21,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the courseLanguage.", ex);
+                throw new Exception("An error occurred while getting the courseLanguage: " + ex.Message);
             }
         }
 
@@ -33,7 +33,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the courseLanguage.", ex);
+                throw new Exception("An error occurred while getting the courseLanguage: " + ex.Message);
             }
         }
 
@@ -45,7 +45,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the courseLanguage.", ex);
+                throw new Exception("An error occurred while adding the courseLanguage: " + ex.Message);
             }
         }
 
@@ -57,7 +57,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the courseLanguage.", ex);
+                throw new Exception("An error occurred while updating the courseLanguage: " + ex.Message);
             }
         }
 
@@ -69,7 +69,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the courseLanguage.", ex);
+                throw new Exception("An error occurred while deleting the courseLanguage: " + ex.Message);
             }
         }
     }

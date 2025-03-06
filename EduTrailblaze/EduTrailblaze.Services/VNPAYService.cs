@@ -53,7 +53,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while creating the payment URL.", ex);
+                throw new Exception("An error occurred while creating the payment URL: " + ex.Message);
             }
         }
 

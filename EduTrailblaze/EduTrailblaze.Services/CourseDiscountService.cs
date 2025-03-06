@@ -21,7 +21,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the courseDiscount.", ex);
+                throw new Exception("An error occurred while getting the courseDiscount: " + ex.Message);
             }
         }
 
@@ -33,7 +33,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the courseDiscount.", ex);
+                throw new Exception("An error occurred while getting the courseDiscount: " + ex.Message);
             }
         }
 
@@ -45,7 +45,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the courseDiscount.", ex);
+                throw new Exception("An error occurred while adding the courseDiscount: " + ex.Message);
             }
         }
 
@@ -57,7 +57,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the courseDiscount.", ex);
+                throw new Exception("An error occurred while updating the courseDiscount: " + ex.Message);
             }
         }
 
@@ -69,7 +69,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the courseDiscount.", ex);
+                throw new Exception("An error occurred while deleting the courseDiscount: " + ex.Message);
             }
         }
     }

@@ -22,7 +22,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the courseTag.", ex);
+                throw new Exception("An error occurred while getting the courseTag: " + ex.Message);
             }
         }
 
@@ -34,7 +34,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the courseTag.", ex);
+                throw new Exception("An error occurred while getting the courseTag: " + ex.Message);
             }
         }
 
@@ -46,7 +46,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the courseTag.", ex);
+                throw new Exception("An error occurred while adding the courseTag: " + ex.Message);
             }
         }
 
@@ -63,7 +63,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the courseTag.", ex);
+                throw new Exception("An error occurred while adding the courseTag: " + ex.Message);
             }
         }
 
@@ -75,7 +75,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the courseTag.", ex);
+                throw new Exception("An error occurred while updating the courseTag: " + ex.Message);
             }
         }
 
@@ -87,7 +87,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the courseTag.", ex);
+                throw new Exception("An error occurred while deleting the courseTag: " + ex.Message);
             }
         }
     }

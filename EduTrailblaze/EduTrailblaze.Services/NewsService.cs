@@ -23,7 +23,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the news.", ex);
+                throw new Exception("An error occurred while getting the news: " + ex.Message);
             }
         }
 
@@ -35,7 +35,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the news.", ex);
+                throw new Exception("An error occurred while getting the news: " + ex.Message);
             }
         }
 
@@ -47,7 +47,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the news.", ex);
+                throw new Exception("An error occurred while adding the news: " + ex.Message);
             }
         }
 
@@ -59,7 +59,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the news.", ex);
+                throw new Exception("An error occurred while updating the news: " + ex.Message);
             }
         }
 
@@ -71,7 +71,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the news.", ex);
+                throw new Exception("An error occurred while deleting the news: " + ex.Message);
             }
         }
 
@@ -89,7 +89,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the news.", ex);
+                throw new Exception("An error occurred while adding the news: " + ex.Message);
             }
         }
 
@@ -110,7 +110,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the news.", ex);
+                throw new Exception("An error occurred while updating the news: " + ex.Message);
             }
         }
 
@@ -129,7 +129,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the news.", ex);
+                throw new Exception("An error occurred while deleting the news: " + ex.Message);
             }
         }
     }

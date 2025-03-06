@@ -21,7 +21,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the userNotification.", ex);
+                throw new Exception("An error occurred while getting the userNotification: " + ex.Message);
             }
         }
 
@@ -33,7 +33,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the userNotification.", ex);
+                throw new Exception("An error occurred while getting the userNotification: " + ex.Message);
             }
         }
 
@@ -45,7 +45,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the userNotification.", ex);
+                throw new Exception("An error occurred while adding the userNotification: " + ex.Message);
             }
         }
 
@@ -57,7 +57,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the userNotification.", ex);
+                throw new Exception("An error occurred while updating the userNotification: " + ex.Message);
             }
         }
 
@@ -69,7 +69,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the userNotification.", ex);
+                throw new Exception("An error occurred while deleting the userNotification: " + ex.Message);
             }
         }
     }

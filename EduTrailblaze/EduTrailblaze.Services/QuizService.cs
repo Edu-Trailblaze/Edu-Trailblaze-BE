@@ -31,7 +31,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the quiz.", ex);
+                throw new Exception("An error occurred while getting the quiz: " + ex.Message);
             }
         }
 
@@ -76,7 +76,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the quiz.", ex);
+                throw new Exception("An error occurred while getting the quiz: " + ex.Message);
             }
         }
 
@@ -134,7 +134,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the quiz.", ex);
+                throw new Exception("An error occurred while getting the quiz: " + ex.Message);
             }
         }
 
@@ -146,7 +146,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the quiz.", ex);
+                throw new Exception("An error occurred while adding the quiz: " + ex.Message);
             }
         }
 
@@ -158,7 +158,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the quiz.", ex);
+                throw new Exception("An error occurred while updating the quiz: " + ex.Message);
             }
         }
 
@@ -170,7 +170,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the quiz.", ex);
+                throw new Exception("An error occurred while deleting the quiz: " + ex.Message);
             }
         }
 
@@ -190,7 +190,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the quiz.", ex);
+                throw new Exception("An error occurred while adding the quiz: " + ex.Message);
             }
         }
 
@@ -210,7 +210,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the quiz.", ex);
+                throw new Exception("An error occurred while updating the quiz: " + ex.Message);
             }
         }
 
@@ -227,7 +227,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the quiz.", ex);
+                throw new Exception("An error occurred while deleting the quiz: " + ex.Message);
             }
         }
     }

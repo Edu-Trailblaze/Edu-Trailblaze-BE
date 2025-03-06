@@ -27,7 +27,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the review.", ex);
+                throw new Exception("An error occurred while getting the review: " + ex.Message);
             }
         }
 
@@ -39,7 +39,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the review.", ex);
+                throw new Exception("An error occurred while getting the review: " + ex.Message);
             }
         }
 
@@ -51,7 +51,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the review.", ex);
+                throw new Exception("An error occurred while getting the review: " + ex.Message);
             }
         }
 
@@ -63,7 +63,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the review.", ex);
+                throw new Exception("An error occurred while adding the review: " + ex.Message);
             }
         }
 
@@ -75,7 +75,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the review.", ex);
+                throw new Exception("An error occurred while updating the review: " + ex.Message);
             }
         }
 
@@ -87,7 +87,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the review.", ex);
+                throw new Exception("An error occurred while deleting the review: " + ex.Message);
             }
         }
 
@@ -106,7 +106,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the review.", ex);
+                throw new Exception("An error occurred while adding the review: " + ex.Message);
             }
         }
 
@@ -126,7 +126,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the review.", ex);
+                throw new Exception("An error occurred while updating the review: " + ex.Message);
             }
         }
 
@@ -145,7 +145,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the review.", ex);
+                throw new Exception("An error occurred while deleting the review: " + ex.Message);
             }
         }
 

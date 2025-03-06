@@ -22,7 +22,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the courseCoupon.", ex);
+                throw new Exception("An error occurred while getting the courseCoupon: " + ex.Message);
             }
         }
 
@@ -36,7 +36,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the courseCoupon.", ex);
+                throw new Exception("An error occurred while getting the courseCoupon: " + ex.Message);
             }
         }
 
@@ -48,7 +48,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the courseCoupon.", ex);
+                throw new Exception("An error occurred while getting the courseCoupon: " + ex.Message);
             }
         }
 
@@ -60,7 +60,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the courseCoupon.", ex);
+                throw new Exception("An error occurred while adding the courseCoupon: " + ex.Message);
             }
         }
 
@@ -72,7 +72,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the courseCoupon.", ex);
+                throw new Exception("An error occurred while updating the courseCoupon: " + ex.Message);
             }
         }
 
@@ -84,7 +84,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the courseCoupon.", ex);
+                throw new Exception("An error occurred while deleting the courseCoupon: " + ex.Message);
             }
         }
     }

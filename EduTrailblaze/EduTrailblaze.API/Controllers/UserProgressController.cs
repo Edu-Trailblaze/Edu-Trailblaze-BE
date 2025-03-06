@@ -35,6 +35,10 @@ namespace EduTrailblaze.API.Controllers
             try
             {
                 var userProgress = await _userProgressService.GetUserProgress(userId, sectionId, lectureId, quizId);
+                if (userProgress == null)
+                {
+                    return NotFound();
+                }
                 return Ok(userProgress);
             }
             catch (Exception ex)

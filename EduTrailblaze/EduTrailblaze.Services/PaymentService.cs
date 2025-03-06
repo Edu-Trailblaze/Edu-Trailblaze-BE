@@ -26,7 +26,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the payment.", ex);
+                throw new Exception("An error occurred while getting the payment: " + ex.Message);
             }
         }
 
@@ -38,7 +38,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the payment.", ex);
+                throw new Exception("An error occurred while getting the payment: " + ex.Message);
             }
         }
 
@@ -89,7 +89,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the payment.", ex);
+                throw new Exception("An error occurred while getting the payment: " + ex.Message);
             }
         }
 
@@ -101,7 +101,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the payment.", ex);
+                throw new Exception("An error occurred while adding the payment: " + ex.Message);
             }
         }
 
@@ -120,7 +120,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the payment.", ex);
+                throw new Exception("An error occurred while adding the payment: " + ex.Message);
             }
         }
 
@@ -132,7 +132,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the payment.", ex);
+                throw new Exception("An error occurred while updating the payment: " + ex.Message);
             }
         }
 
@@ -150,7 +150,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the payment.", ex);
+                throw new Exception("An error occurred while updating the payment: " + ex.Message);
             }
         }
 
@@ -162,7 +162,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the payment.", ex);
+                throw new Exception("An error occurred while deleting the payment: " + ex.Message);
             }
         }
     }

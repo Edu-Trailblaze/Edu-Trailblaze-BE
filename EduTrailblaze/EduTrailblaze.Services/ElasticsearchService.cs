@@ -162,7 +162,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while indexing courses.", ex);
+                throw new Exception("An error occurred while indexing courses: " + ex.Message);
             }
         }
 

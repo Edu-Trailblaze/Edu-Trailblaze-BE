@@ -26,7 +26,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the userProfile.", ex);
+                throw new Exception("An error occurred while getting the userProfile: " + ex.Message);
             }
         }
 
@@ -38,7 +38,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the userProfile.", ex);
+                throw new Exception("An error occurred while getting the userProfile: " + ex.Message);
             }
         }
 
@@ -50,7 +50,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the userProfile.", ex);
+                throw new Exception("An error occurred while adding the userProfile: " + ex.Message);
             }
         }
 
@@ -68,7 +68,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the userProfile.", ex);
+                throw new Exception("An error occurred while updating the userProfile: " + ex.Message);
             }
         }
 
@@ -86,7 +86,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the userProfile.", ex);
+                throw new Exception("An error occurred while adding the userProfile: " + ex.Message);
             }
         }
 
@@ -137,7 +137,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the userProfile.", ex);
+                throw new Exception("An error occurred while updating the userProfile: " + ex.Message);
             }
         }
 
@@ -149,7 +149,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the userProfile.", ex);
+                throw new Exception("An error occurred while deleting the userProfile: " + ex.Message);
             }
         }
     }

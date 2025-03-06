@@ -34,7 +34,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the Cart.", ex);
+                throw new Exception("An error occurred while getting the Cart: " + ex.Message);
             }
         }
 
@@ -46,7 +46,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the Cart.", ex);
+                throw new Exception("An error occurred while getting the Cart: " + ex.Message);
             }
         }
 
@@ -58,7 +58,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the Cart.", ex);
+                throw new Exception("An error occurred while adding the Cart: " + ex.Message);
             }
         }
 
@@ -70,7 +70,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the Cart.", ex);
+                throw new Exception("An error occurred while updating the Cart: " + ex.Message);
             }
         }
 
@@ -89,7 +89,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the Cart.", ex);
+                throw new Exception("An error occurred while updating the Cart: " + ex.Message);
             }
         }
 
@@ -101,7 +101,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the Cart.", ex);
+                throw new Exception("An error occurred while deleting the Cart: " + ex.Message);
             }
         }
 
@@ -124,7 +124,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while removing the item from the cart.", ex);
+                throw new Exception("An error occurred while removing the item from the cart: " + ex.Message);
             }
         }
 
@@ -136,7 +136,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the cart.", ex);
+                throw new Exception("An error occurred while deleting the cart: " + ex.Message);
             }
         }
 

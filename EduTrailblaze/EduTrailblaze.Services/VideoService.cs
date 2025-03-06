@@ -43,7 +43,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the video.", ex);
+                throw new Exception("An error occurred while getting the video: " + ex.Message);
             }
         }
 
@@ -55,7 +55,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the video.", ex);
+                throw new Exception("An error occurred while getting the video: " + ex.Message);
             }
         }
 
@@ -67,7 +67,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the video.", ex);
+                throw new Exception("An error occurred while adding the video: " + ex.Message);
             }
         }
 
@@ -79,7 +79,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the video.", ex);
+                throw new Exception("An error occurred while updating the video: " + ex.Message);
             }
         }
 
@@ -91,7 +91,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the video.", ex);
+                throw new Exception("An error occurred while deleting the video: " + ex.Message);
             }
         }
 
@@ -110,7 +110,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the video.", ex);
+                throw new Exception("An error occurred while adding the video: " + ex.Message);
             }
         }
 
@@ -131,7 +131,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the video.", ex);
+                throw new Exception("An error occurred while updating the video: " + ex.Message);
             }
         }
 
@@ -149,7 +149,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the video.", ex);
+                throw new Exception("An error occurred while deleting the video: " + ex.Message);
             }
         }
 

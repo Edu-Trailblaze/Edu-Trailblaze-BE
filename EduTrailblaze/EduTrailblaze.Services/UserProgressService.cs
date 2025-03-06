@@ -28,7 +28,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the userProgress.", ex);
+                throw new Exception("An error occurred while getting the userProgress: " + ex.Message);
             }
         }
 
@@ -40,7 +40,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the userProgress.", ex);
+                throw new Exception("An error occurred while getting the userProgress: " + ex.Message);
             }
         }
 
@@ -52,7 +52,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the userProgress.", ex);
+                throw new Exception("An error occurred while adding the userProgress: " + ex.Message);
             }
         }
 
@@ -117,7 +117,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the userProgress.", ex);
+                throw new Exception("An error occurred while adding the userProgress: " + ex.Message);
             }
         }
 
@@ -166,6 +166,7 @@ namespace EduTrailblaze.Services
                         var sectionProgress = new UserProgress
                         {
                             UserId = userProgressRequest.UserId,
+                            CourseClassId = courseClassId,
                             SectionId = sectionId,
                             ProgressType = "Section",
                             ProgressPercentage = 100,
@@ -208,7 +209,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the userProgress.", ex);
+                throw new Exception("An error occurred while adding the userProgress: " + ex.Message);
             }
         }
 
@@ -220,7 +221,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the userProgress.", ex);
+                throw new Exception("An error occurred while updating the userProgress: " + ex.Message);
             }
         }
 
@@ -240,7 +241,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the userProgress.", ex);
+                throw new Exception("An error occurred while updating the userProgress: " + ex.Message);
             }
         }
 
@@ -252,7 +253,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the userProgress.", ex);
+                throw new Exception("An error occurred while deleting the userProgress: " + ex.Message);
             }
         }
 
@@ -268,7 +269,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the userProgress.", ex);
+                throw new Exception("An error occurred while getting the userProgress: " + ex.Message);
             }
         }
     }

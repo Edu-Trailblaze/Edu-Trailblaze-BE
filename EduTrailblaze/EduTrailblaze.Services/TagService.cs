@@ -23,7 +23,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the tag.", ex);
+                throw new Exception("An error occurred while getting the tag: " + ex.Message);
             }
         }
 
@@ -35,7 +35,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the tag.", ex);
+                throw new Exception("An error occurred while getting the tag: " + ex.Message);
             }
         }
 
@@ -47,7 +47,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the tag.", ex);
+                throw new Exception("An error occurred while adding the tag: " + ex.Message);
             }
         }
 
@@ -59,7 +59,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the tag.", ex);
+                throw new Exception("An error occurred while updating the tag: " + ex.Message);
             }
         }
 
@@ -71,7 +71,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the tag.", ex);
+                throw new Exception("An error occurred while deleting the tag: " + ex.Message);
             }
         }
 
@@ -88,7 +88,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the tag.", ex);
+                throw new Exception("An error occurred while adding the tag: " + ex.Message);
             }
         }
 
@@ -108,7 +108,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the tag.", ex);
+                throw new Exception("An error occurred while updating the tag: " + ex.Message);
             }
         }
 
@@ -125,7 +125,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the tag.", ex);
+                throw new Exception("An error occurred while deleting the tag: " + ex.Message);
             }
         }
     }

@@ -39,7 +39,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the order.", ex);
+                throw new Exception("An error occurred while getting the order: " + ex.Message);
             }
         }
 
@@ -51,7 +51,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the order.", ex);
+                throw new Exception("An error occurred while getting the order: " + ex.Message);
             }
         }
 
@@ -63,7 +63,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the order.", ex);
+                throw new Exception("An error occurred while adding the order: " + ex.Message);
             }
         }
 
@@ -80,7 +80,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the order.", ex);
+                throw new Exception("An error occurred while adding the order: " + ex.Message);
             }
         }
 
@@ -92,7 +92,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the order.", ex);
+                throw new Exception("An error occurred while updating the order: " + ex.Message);
             }
         }
 
@@ -110,7 +110,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the order.", ex);
+                throw new Exception("An error occurred while updating the order: " + ex.Message);
             }
         }
 
@@ -122,7 +122,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the order.", ex);
+                throw new Exception("An error occurred while deleting the order: " + ex.Message);
             }
         }
 
@@ -246,7 +246,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while automatically failing the order.", ex);
+                throw new Exception("An error occurred while automatically failing the order: " + ex.Message);
             }
         }
 
@@ -266,7 +266,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while canceling the order.", ex);
+                throw new Exception("An error occurred while canceling the order: " + ex.Message);
             }
         }
 
@@ -310,7 +310,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the orders.", ex);
+                throw new Exception("An error occurred while getting the orders: " + ex.Message);
             }
         }
 
@@ -323,7 +323,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the orders.", ex);
+                throw new Exception("An error occurred while getting the orders: " + ex.Message);
             }
         }
 
@@ -367,7 +367,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the orders.", ex);
+                throw new Exception("An error occurred while getting the orders: " + ex.Message);
             }
         }
     }

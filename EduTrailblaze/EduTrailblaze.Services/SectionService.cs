@@ -28,7 +28,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the section.", ex);
+                throw new Exception("An error occurred while getting the section: " + ex.Message);
             }
         }
 
@@ -40,7 +40,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the section.", ex);
+                throw new Exception("An error occurred while getting the section: " + ex.Message);
             }
         }
 
@@ -52,7 +52,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the section.", ex);
+                throw new Exception("An error occurred while adding the section: " + ex.Message);
             }
         }
 
@@ -64,7 +64,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the section.", ex);
+                throw new Exception("An error occurred while updating the section: " + ex.Message);
             }
         }
 
@@ -76,7 +76,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the section.", ex);
+                throw new Exception("An error occurred while deleting the section: " + ex.Message);
             }
         }
 
@@ -94,7 +94,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the section.", ex);
+                throw new Exception("An error occurred while adding the section: " + ex.Message);
             }
         }
 
@@ -113,7 +113,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the section.", ex);
+                throw new Exception("An error occurred while updating the section: " + ex.Message);
             }
         }
 
@@ -130,7 +130,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the section.", ex);
+                throw new Exception("An error occurred while deleting the section: " + ex.Message);
             }
         }
 
@@ -163,7 +163,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the section duration.", ex);
+                throw new Exception("An error occurred while updating the section duration: " + ex.Message);
             }
         }
 
@@ -184,7 +184,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the number of lectures.", ex);
+                throw new Exception("An error occurred while updating the number of lectures: " + ex.Message);
             }
         }
 

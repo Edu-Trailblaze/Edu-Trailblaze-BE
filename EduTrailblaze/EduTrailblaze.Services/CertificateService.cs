@@ -23,7 +23,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the Certificate.", ex);
+                throw new Exception("An error occurred while getting the Certificate: " + ex.Message);
             }
         }
 
@@ -35,7 +35,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the Certificate.", ex);
+                throw new Exception("An error occurred while getting the Certificate: " + ex.Message);
             }
         }
 
@@ -47,7 +47,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the Certificate.", ex);
+                throw new Exception("An error occurred while adding the Certificate: " + ex.Message);
             }
         }
 
@@ -64,7 +64,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the Certificate.", ex);
+                throw new Exception("An error occurred while adding the Certificate: " + ex.Message);
             }
         }
 
@@ -76,7 +76,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the Certificate.", ex);
+                throw new Exception("An error occurred while updating the Certificate: " + ex.Message);
             }
         }
 
@@ -97,7 +97,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the Certificate.", ex);
+                throw new Exception("An error occurred while updating the Certificate: " + ex.Message);
             }
         }
 
@@ -109,7 +109,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the Certificate.", ex);
+                throw new Exception("An error occurred while deleting the Certificate: " + ex.Message);
             }
         }
 
@@ -130,7 +130,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the Certificate.", ex);
+                throw new Exception("An error occurred while deleting the Certificate: " + ex.Message);
             }
         }
     }

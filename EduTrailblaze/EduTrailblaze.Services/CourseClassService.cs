@@ -24,7 +24,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the CourseClass.", ex);
+                throw new Exception("An error occurred while getting the CourseClass: " + ex.Message);
             }
         }
 
@@ -36,7 +36,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the CourseClass.", ex);
+                throw new Exception("An error occurred while getting the CourseClass: " + ex.Message);
             }
         }
 
@@ -48,7 +48,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the CourseClass.", ex);
+                throw new Exception("An error occurred while adding the CourseClass: " + ex.Message);
             }
         }
 
@@ -60,7 +60,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the CourseClass.", ex);
+                throw new Exception("An error occurred while updating the CourseClass: " + ex.Message);
             }
         }
 
@@ -120,7 +120,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the CourseClass.", ex);
+                throw new Exception("An error occurred while updating the CourseClass: " + ex.Message);
             }
         }
 
@@ -132,7 +132,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the CourseClass.", ex);
+                throw new Exception("An error occurred while deleting the CourseClass: " + ex.Message);
             }
         }
 
@@ -149,7 +149,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the CourseClass.", ex);
+                throw new Exception("An error occurred while deleting the CourseClass: " + ex.Message);
             }
         }
 
@@ -161,7 +161,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the newest CourseClass.", ex);
+                throw new Exception("An error occurred while getting the newest CourseClass: " + ex.Message);
             }
         }
     }

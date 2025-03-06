@@ -23,7 +23,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the courseInstructor.", ex);
+                throw new Exception("An error occurred while getting the courseInstructor: " + ex.Message);
             }
         }
 
@@ -37,7 +37,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the courseInstructor.", ex);
+                throw new Exception("An error occurred while getting the courseInstructor: " + ex.Message);
             }
         }
 
@@ -49,7 +49,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while getting the courseInstructor.", ex);
+                throw new Exception("An error occurred while getting the courseInstructor: " + ex.Message);
             }
         }
 
@@ -61,7 +61,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the courseInstructor.", ex);
+                throw new Exception("An error occurred while adding the courseInstructor: " + ex.Message);
             }
         }
 
@@ -79,7 +79,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the courseInstructor.", ex);
+                throw new Exception("An error occurred while adding the courseInstructor: " + ex.Message);
             }
         }
 
@@ -97,7 +97,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the courseInstructor.", ex);
+                throw new Exception("An error occurred while adding the courseInstructor: " + ex.Message);
             }
         }
 
@@ -114,7 +114,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the courseInstructor.", ex);
+                throw new Exception("An error occurred while adding the courseInstructor: " + ex.Message);
             }
         }
 
@@ -126,7 +126,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the courseInstructor.", ex);
+                throw new Exception("An error occurred while updating the courseInstructor: " + ex.Message);
             }
         }
 
@@ -138,7 +138,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the courseInstructor.", ex);
+                throw new Exception("An error occurred while deleting the courseInstructor: " + ex.Message);
             }
         }
     }
