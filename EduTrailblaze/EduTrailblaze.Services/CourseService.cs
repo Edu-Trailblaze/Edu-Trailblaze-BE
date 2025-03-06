@@ -437,15 +437,15 @@ namespace EduTrailblaze.Services
 
                 if (request.StudentId != null)
                 {
-                    var boughtCourseIds = await (await _orderRepository.GetDbSet())
+                    var boughtCourseQuery = (await _orderRepository.GetDbSet())
                         .Where(o => o.UserId == request.StudentId && o.OrderStatus == "Completed")
                         .SelectMany(o => o.OrderDetails)
                         .Select(od => od.CourseId)
-                        .Distinct()
-                        .ToListAsync();
+                        .Distinct();
 
-                    dbSet = dbSet.Where(c => !boughtCourseIds.Contains(c.Id));
+                    dbSet = dbSet.Where(c => !boughtCourseQuery.Contains(c.Id));
                 }
+
 
                 if (request.IsFree == true)
                 {
