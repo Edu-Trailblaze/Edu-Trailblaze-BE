@@ -18,6 +18,8 @@
 
         public string Prerequisites { get; set; }
 
+        public List<string> LearningOutcomes { get; set; }
+
         public decimal EstimatedCompletionTime { get; set; }
 
         public DateTimeOffset CreatedAt { get; set; }
