@@ -2121,10 +2121,6 @@ namespace EduTrailblaze.Services.DTOs
     {
         public UpdateUserProgressValidator()
         {
-            RuleFor(x => x.UserId)
-                .NotEmpty().WithMessage("UserId is required");
-            RuleFor(x => x.CourseClassId)
-                .NotEmpty().WithMessage("CourseClassId is required");
             RuleFor(x => x)
                 .Must(x => x.SectionId.HasValue || x.LectureId.HasValue || x.QuizId.HasValue)
                 .WithMessage("Must have at least one of SectionId, LectureId, QuizId");
