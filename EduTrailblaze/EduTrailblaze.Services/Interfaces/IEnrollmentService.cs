@@ -18,5 +18,7 @@ namespace EduTrailblaze.Services.Interfaces
         Task<int> GetNumberOfStudentsEnrolledInCourse(int courseId);
 
         Task<List<StudentCourseResponse>> GetStudentCourses(GetStudentCourses request);
+
+        Task<int> GetStudentCourseClass(string userId, int courseId);
     }
 }

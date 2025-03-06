@@ -10,10 +10,14 @@ namespace EduTrailblaze.Services
     public class UserProgressService : IUserProgressService
     {
         private readonly IRepository<UserProgress, int> _userProgressRepository;
+        private readonly IRepository<Lecture, int> _lectureRepository;
+        private readonly IEnrollmentService _enrollmentService;
 
-        public UserProgressService(IRepository<UserProgress, int> userProgressRepository)
+        public UserProgressService(IRepository<UserProgress, int> userProgressRepository, IEnrollmentService enrollmentService, IRepository<Lecture, int> lectureRepository)
         {
             _userProgressRepository = userProgressRepository;
+            _enrollmentService = enrollmentService;
+            _lectureRepository = lectureRepository;
         }
 
         public async Task<UserProgress?> GetUserProgress(int userProgressId)
@@ -56,9 +60,19 @@ namespace EduTrailblaze.Services
         {
             try
             {
+                var lectureDbSet = await _lectureRepository.GetDbSet();
+
+                var courseId = await lectureDbSet
+                    .Where(l => l.Id == userProgressRequest.LectureId)
+                    .Select(l => l.Section.CourseId)
+                    .FirstOrDefaultAsync();
+
+                var courseClassId = await _enrollmentService.GetStudentCourseClass(userProgressRequest.UserId, courseId);
+
                 var userProgress = new UserProgress
                 {
                     UserId = userProgressRequest.UserId,
+                    CourseClassId = courseClassId,
                     LectureId = userProgressRequest.LectureId,
                     ProgressType = "Lecture",
                     ProgressPercentage = 100,
@@ -103,7 +117,6 @@ namespace EduTrailblaze.Services
 
                         if (section != null)
                         {
-                            var courseClassId = section.CourseId;
                             var allSectionsInCourse = await (await _userProgressRepository.GetDbSet())
                                 .Where(up => up.CourseClassId == courseClassId && up.UserId == userProgressRequest.UserId)
                                 .ToListAsync();

@@ -151,5 +151,27 @@ namespace EduTrailblaze.Services
                 throw new Exception("An error occurred while getting the number of courses enrolled by the student.", ex);
             }
         }
+
+        public async Task<int> GetStudentCourseClass(string userId, int courseId)
+        {
+            try
+            {
+                var courseClassIds = await _courseClassRepository.FindByCondition(cc => cc.CourseId == courseId)
+                    .Select(cc => cc.Id)
+                    .ToListAsync();
+                var enrollment = await _enrollmentRepository.FindByCondition(e => e.StudentId == userId && courseClassIds.Contains(e.CourseClassId))
+                    .FirstOrDefaultAsync();
+                if (enrollment == null)
+                {
+                    throw new Exception("Student is not enrolled in the CourseClass.");
+                }
+
+                return enrollment.CourseClassId;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the student's CourseClass.", ex);
+            }
+        }
     }
 }

@@ -153,7 +153,6 @@ namespace EduTrailblaze.Services
             }
         }
 
-
         public async Task<CourseClass?> GetNewestCourseClass(int courseId)
         {
             try

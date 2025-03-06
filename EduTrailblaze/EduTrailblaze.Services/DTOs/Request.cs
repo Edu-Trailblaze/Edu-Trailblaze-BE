@@ -2,6 +2,7 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EduTrailblaze.Services.DTOs
 {
@@ -2079,5 +2080,15 @@ namespace EduTrailblaze.Services.DTOs
             RuleFor(x => x.StudentId)
                 .NotEmpty().WithMessage("UserId is required");
         }
+    }
+
+    public class ProgressRequest
+    {
+        public string UserId { get; set; }
+        public int CourseClassId { get; set; }
+        public int? SectionId { get; set; }
+        public int? LectureId { get; set; }
+        public int? QuizId { get; set; }
+        public string ProgressType { get; set; }
     }
 }
