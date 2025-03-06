@@ -16,5 +16,7 @@ namespace EduTrailblaze.Services.Interfaces
         Task DeleteUserProgress(UserProgress userProgress);
 
         Task SaveUserProgress(SaveUserProgressRequest userProgressRequest);
+
+        Task<UserProgress?> GetUserProgress(string userId, int? sectionId, int? lectureId, int? quizId);
     }
 }

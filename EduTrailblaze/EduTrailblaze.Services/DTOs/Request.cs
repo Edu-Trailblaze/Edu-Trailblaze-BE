@@ -2089,6 +2089,51 @@ namespace EduTrailblaze.Services.DTOs
         public int? SectionId { get; set; }
         public int? LectureId { get; set; }
         public int? QuizId { get; set; }
-        public string ProgressType { get; set; }
+        public string? ProgressType { get; set; }
+    }
+
+    public class ProgressRequestValidator : AbstractValidator<ProgressRequest>
+    {
+        public ProgressRequestValidator()
+        {
+            RuleFor(x => x.UserId)
+                .NotEmpty().WithMessage("UserId is required");
+            RuleFor(x => x.CourseClassId)
+                .NotEmpty().WithMessage("CourseClassId is required");
+            RuleFor(x => x)
+                .Must(x => x.SectionId.HasValue || x.LectureId.HasValue || x.QuizId.HasValue)
+                .WithMessage("Must have at least one of SectionId, LectureId, QuizId");
+        }
+    }
+
+    public class UpdateUserProgress
+    {
+        public int Id { get; set; }
+        public int? SectionId { get; set; }
+        public int? LectureId { get; set; }
+        public int? QuizId { get; set; }
+        public decimal ProgressPercentage { get; set; }
+        public bool IsCompleted { get; set; }
+        public DateTimeOffset LastAccessed { get; set; }
+    }
+
+    public class UpdateUserProgressValidator : AbstractValidator<UpdateUserProgress>
+    {
+        public UpdateUserProgressValidator()
+        {
+            RuleFor(x => x.UserId)
+                .NotEmpty().WithMessage("UserId is required");
+            RuleFor(x => x.CourseClassId)
+                .NotEmpty().WithMessage("CourseClassId is required");
+            RuleFor(x => x)
+                .Must(x => x.SectionId.HasValue || x.LectureId.HasValue || x.QuizId.HasValue)
+                .WithMessage("Must have at least one of SectionId, LectureId, QuizId");
+            RuleFor(x => x.ProgressPercentage)
+                .NotEmpty().WithMessage("ProgressPercentage is required")
+                .GreaterThanOrEqualTo(0).WithMessage("ProgressPercentage must be greater than or equal to 0")
+                .LessThanOrEqualTo(100).WithMessage("ProgressPercentage must be less than or equal to 100");
+            RuleFor(x => x.LastAccessed)
+                .NotEmpty().WithMessage("LastAccessed is required");
+        }
     }
 }

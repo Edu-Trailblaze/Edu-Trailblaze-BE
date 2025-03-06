@@ -56,6 +56,71 @@ namespace EduTrailblaze.Services
             }
         }
 
+        public async Task AddUserProgress(ProgressRequest request)
+        {
+            try
+            {
+                if (request.SectionId != null)
+                {
+                    var userProgressDb = await (await _userProgressRepository.GetDbSet())
+                        .Where(up => up.UserId == request.UserId && up.SectionId == request.SectionId)
+                        .FirstOrDefaultAsync();
+                    if (userProgressDb == null)
+                    {
+                        var userProgress = new UserProgress
+                        {
+                            UserId = request.UserId,
+                            CourseClassId = request.CourseClassId,
+                            SectionId = request.SectionId,
+                            ProgressType = "Section",
+                            LastAccessed = DateTimeHelper.GetVietnamTime()
+                        };
+                        await _userProgressRepository.AddAsync(userProgress);
+                    }
+                }
+                else if (request.LectureId != null)
+                {
+                    var userProgressDb = await (await _userProgressRepository.GetDbSet())
+                        .Where(up => up.UserId == request.UserId && up.LectureId == request.LectureId)
+                        .FirstOrDefaultAsync();
+                    if (userProgressDb == null)
+                    {
+                        var userProgress = new UserProgress
+                        {
+                            UserId = request.UserId,
+                            CourseClassId = request.CourseClassId,
+                            LectureId = request.LectureId,
+                            ProgressType = "Lecture",
+                            LastAccessed = DateTimeHelper.GetVietnamTime()
+                        };
+                        await _userProgressRepository.AddAsync(userProgress);
+                    }
+                }
+                else if (request.QuizId != null)
+                {
+                    var userProgressDb = await (await _userProgressRepository.GetDbSet())
+                        .Where(up => up.UserId == request.UserId && up.QuizId == request.QuizId)
+                        .FirstOrDefaultAsync();
+                    if (userProgressDb == null)
+                    {
+                        var userProgress = new UserProgress
+                        {
+                            UserId = request.UserId,
+                            CourseClassId = request.CourseClassId,
+                            QuizId = request.QuizId,
+                            ProgressType = "Quiz",
+                            LastAccessed = DateTimeHelper.GetVietnamTime()
+                        };
+                        await _userProgressRepository.AddAsync(userProgress);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while adding the userProgress.", ex);
+            }
+        }
+
         public async Task SaveUserProgress(SaveUserProgressRequest userProgressRequest)
         {
             try
@@ -159,6 +224,26 @@ namespace EduTrailblaze.Services
             }
         }
 
+        public async Task UpdateUserProgress(UpdateUserProgress userProgress)
+        {
+            try
+            {
+                var userProgressDb = await _userProgressRepository.GetByIdAsync(userProgress.Id);
+                if (userProgressDb == null)
+                {
+                    throw new Exception("UserProgress not found.");
+                }
+                userProgressDb.ProgressPercentage = userProgress.ProgressPercentage;
+                userProgressDb.IsCompleted = userProgress.IsCompleted;
+                userProgressDb.LastAccessed = DateTimeHelper.GetVietnamTime();
+                await _userProgressRepository.UpdateAsync(userProgressDb);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while updating the userProgress.", ex);
+            }
+        }
+
         public async Task DeleteUserProgress(UserProgress userProgress)
         {
             try
@@ -168,6 +253,22 @@ namespace EduTrailblaze.Services
             catch (Exception ex)
             {
                 throw new Exception("An error occurred while deleting the userProgress.", ex);
+            }
+        }
+
+        public async Task<UserProgress?> GetUserProgress(string userId, int? sectionId, int? lectureId, int? quizId)
+        {
+            try
+            {
+                var userProgress = await (await _userProgressRepository.GetDbSet())
+                    .Where(up => up.UserId == userId)
+                    .Where(up => up.SectionId == sectionId || up.LectureId == lectureId || up.QuizId == quizId)
+                    .FirstOrDefaultAsync();
+                return userProgress;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the userProgress.", ex);
             }
         }
     }
