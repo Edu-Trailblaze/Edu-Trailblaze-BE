@@ -13,6 +13,7 @@ namespace EduTrailblaze.API.Controllers
         {
             _enrollmentService = enrollmentService;
         }
+
         [HttpGet]
         public async Task<IActionResult> GetEnrollment()
         {
@@ -27,12 +28,12 @@ namespace EduTrailblaze.API.Controllers
             }
         }
 
-        [HttpGet("{newsId}")]
-        public async Task<IActionResult> GetNews(int newsId)
+        [HttpGet("{enrollmentId}")]
+        public async Task<IActionResult> GetEnrollment(int enrollmentId)
         {
             try
             {
-                var news = await _enrollmentService.GetEnrollment(newsId);
+                var news = await _enrollmentService.GetEnrollment(enrollmentId);
 
                 if (news == null)
                 {
@@ -48,7 +49,7 @@ namespace EduTrailblaze.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddNews([FromBody] CreateEnrollRequest enrollRequest)
+        public async Task<IActionResult> AddEnrollment([FromBody] CreateEnrollRequest enrollRequest)
         {
             try
             {
@@ -61,32 +62,18 @@ namespace EduTrailblaze.API.Controllers
             }
         }
 
-        //[HttpPut]
-        //public async Task<IActionResult> UpdateNews([FromBody] UpdateNewsRequest news)
-        //{
-        //    try
-        //    {
-        //        await _enrollmentService.UpdateEnrollment(news);
-        //        return Ok();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //    }
-        //}
-
-        //[HttpDelete("{newsId}")]
-        //public async Task<IActionResult> DeleteNews(int newsId)
-        //{
-        //    try
-        //    {
-        //        await _enrollmentService.DeleteEnrollment(newsId);
-        //        return Ok();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //    }
-        //}
+        [HttpGet("get-student-courses")]
+        public async Task<IActionResult> GetStudentCourses([FromQuery] GetStudentCourses request)
+        {
+            try
+            {
+                var studentCourses = await _enrollmentService.GetStudentCourses(request);
+                return Ok(studentCourses);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }

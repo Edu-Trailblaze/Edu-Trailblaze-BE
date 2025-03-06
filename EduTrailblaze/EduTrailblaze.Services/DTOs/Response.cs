@@ -267,4 +267,11 @@
         public decimal Revenue { get; set; }
         public decimal Rating { get; set; }
     }
+
+    public class StudentCourseResponse
+    {
+        public string StudentId { get; set; }
+        public string CourseId { get; set; }
+        public bool IsEnrolled { get; set; }
+    }
 }

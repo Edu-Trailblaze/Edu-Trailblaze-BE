@@ -16,5 +16,7 @@ namespace EduTrailblaze.Services.Interfaces
         Task DeleteEnrollment(Enrollment enrollment);
 
         Task<int> GetNumberOfStudentsEnrolledInCourse(int courseId);
+
+        Task<List<StudentCourseResponse>> GetStudentCourses(GetStudentCourses request);
     }
 }

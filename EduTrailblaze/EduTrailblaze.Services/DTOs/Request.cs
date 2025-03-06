@@ -2056,4 +2056,19 @@ namespace EduTrailblaze.Services.DTOs
                 .NotEmpty().WithMessage("LectureId is required");
         }
     }
+
+    public class GetStudentCourses
+    {
+        public string StudentId { get; set; }
+        public bool? IsEnrolled { get; set; }
+    }
+
+    public class GetStudentCoursesValidator : AbstractValidator<GetStudentCourses>
+    {
+        public GetStudentCoursesValidator()
+        {
+            RuleFor(x => x.StudentId)
+                .NotEmpty().WithMessage("UserId is required");
+        }
+    }
 }

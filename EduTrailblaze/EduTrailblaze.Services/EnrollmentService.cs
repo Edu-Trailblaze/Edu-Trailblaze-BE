@@ -9,10 +9,12 @@ namespace EduTrailblaze.Services
     public class EnrollmentService : IEnrollmentService
     {
         private readonly IRepository<Enrollment, int> _enrollmentRepository;
+        private readonly IRepository<Order, int> _orderRepository;
 
-        public EnrollmentService(IRepository<Enrollment, int> enrollmentRepository)
+        public EnrollmentService(IRepository<Enrollment, int> enrollmentRepository, IRepository<Order, int> orderRepository)
         {
             _enrollmentRepository = enrollmentRepository;
+            _orderRepository = orderRepository;
         }
 
         public async Task<Enrollment?> GetEnrollment(int enrollmentId)
@@ -97,6 +99,39 @@ namespace EduTrailblaze.Services
             catch (Exception ex)
             {
                 throw new Exception("An error occurred while getting the number of students enrolled in the course.", ex);
+            }
+        }
+
+        public async Task<List<StudentCourseResponse>> GetStudentCourses(GetStudentCourses request)
+        {
+            try
+            {
+                var boughtCourseIds = await (await _orderRepository.GetDbSet())
+                    .Where(o => o.UserId == request.StudentId && o.OrderStatus == "Completed")
+                    .SelectMany(o => o.OrderDetails)
+                    .Select(od => od.CourseId)
+                    .Distinct()
+                    .ToListAsync();
+
+                var enrollments = await _enrollmentRepository.FindByCondition(e => e.StudentId == request.StudentId).ToListAsync();
+
+                var response = boughtCourseIds.Select(courseId => new StudentCourseResponse
+                {
+                    StudentId = request.StudentId,
+                    CourseId = courseId.ToString(),
+                    IsEnrolled = enrollments.Any(e => e.CourseClassId == courseId)
+                }).ToList();
+
+                if (request.IsEnrolled.HasValue)
+                {
+                    response = response.Where(r => r.IsEnrolled == request.IsEnrolled.Value).ToList();
+                }
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the number of courses enrolled by the student.", ex);
             }
         }
     }
