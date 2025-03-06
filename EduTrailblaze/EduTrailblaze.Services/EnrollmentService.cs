@@ -10,11 +10,13 @@ namespace EduTrailblaze.Services
     {
         private readonly IRepository<Enrollment, int> _enrollmentRepository;
         private readonly IRepository<Order, int> _orderRepository;
+        private readonly IRepository<CourseClass, int> _courseClassRepository;
 
-        public EnrollmentService(IRepository<Enrollment, int> enrollmentRepository, IRepository<Order, int> orderRepository)
+        public EnrollmentService(IRepository<Enrollment, int> enrollmentRepository, IRepository<Order, int> orderRepository, IRepository<CourseClass, int> courseClassRepository)
         {
             _enrollmentRepository = enrollmentRepository;
             _orderRepository = orderRepository;
+            _courseClassRepository = courseClassRepository;
         }
 
         public async Task<Enrollment?> GetEnrollment(int enrollmentId)
@@ -41,20 +43,35 @@ namespace EduTrailblaze.Services
             }
         }
 
-        public async Task AddEnrollment(CreateEnrollRequest enrollment)
+        public async Task EnrollCourse(CreateEnrollRequest enrollment)
         {
             try
             {
-                var isEnrollmentExists = await _enrollmentRepository.FindByCondition(e => e.StudentId == enrollment.StudentId && e.CourseClassId == enrollment.CourseClassId).AnyAsync();
+                var courseClassIds = await _courseClassRepository.FindByCondition(cc => cc.CourseId == enrollment.CourseId)
+                    .Select(cc => cc.Id)
+                    .ToListAsync();
 
-                if (isEnrollmentExists)
+                var isEnrolled = await _enrollmentRepository.FindByCondition(e => e.StudentId == enrollment.StudentId && courseClassIds.Contains(e.CourseClassId))
+                    .AnyAsync();
+
+                if (isEnrolled)
                 {
-                    throw new Exception("User Is Already Enroll");
+                    throw new Exception("User is already enrolled in a CourseClass of this Course.");
                 }
+
+                var newestCourseClass = await _courseClassRepository.FindByCondition(cc => cc.CourseId == enrollment.CourseId)
+                    .OrderByDescending(cc => cc.CreatedAt)
+                    .FirstOrDefaultAsync();
+
+                if (newestCourseClass == null)
+                {
+                    throw new Exception("No CourseClass found for the given Course.");
+                }
+
                 var newEnrollment = new Enrollment
                 {
                     StudentId = enrollment.StudentId,
-                    CourseClassId = enrollment.CourseClassId
+                    CourseClassId = newestCourseClass.Id
                 };
 
                 await _enrollmentRepository.AddAsync(newEnrollment);

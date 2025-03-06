@@ -809,14 +809,23 @@ namespace EduTrailblaze.Services.DTOs
                 .GreaterThanOrEqualTo(0).WithMessage("Duration must be greater than or equal to 0");
         }
     }
+
     public class CreateEnrollRequest
     {
-        [Required(AllowEmptyStrings = false, ErrorMessage = "CourseClassId is required")]
-        public int CourseClassId { get; set; }
-        [Required(AllowEmptyStrings = false, ErrorMessage = "StudentId is required")]
+        public int CourseId { get; set; }
         public string StudentId { get; set; }
     }
 
+    public class CreateEnrollRequestValidator : AbstractValidator<CreateEnrollRequest>
+    {
+        public CreateEnrollRequestValidator()
+        {
+            RuleFor(x => x.CourseId)
+                .NotEmpty().WithMessage("CourseId is required");
+            RuleFor(x => x.StudentId)
+                .NotEmpty().WithMessage("StudentId is required");
+        }
+    }
 
     public class CreateNewsRequest
     {

@@ -53,7 +53,7 @@ namespace EduTrailblaze.API.Controllers
         {
             try
             {
-                await _enrollmentService.AddEnrollment(enrollRequest);
+                await _enrollmentService.EnrollCourse(enrollRequest);
                 return Ok();
             }
             catch (Exception ex)

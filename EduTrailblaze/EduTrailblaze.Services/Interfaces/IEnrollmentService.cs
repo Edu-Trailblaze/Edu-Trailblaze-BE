@@ -9,7 +9,7 @@ namespace EduTrailblaze.Services.Interfaces
 
         Task<IEnumerable<Enrollment>> GetEnrollments();
 
-        Task AddEnrollment(CreateEnrollRequest enrollment);
+        Task EnrollCourse(CreateEnrollRequest enrollment);
 
         Task UpdateEnrollment(Enrollment enrollment);
 
