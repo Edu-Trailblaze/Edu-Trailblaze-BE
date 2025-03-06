@@ -215,10 +215,10 @@ namespace EduTrailblaze.API.Controllers
             var scheme = Request.Scheme ?? "https";
             var redirectUrl1 = $"{scheme}://{Request.Host}/authentication/google-response";
 
-          
+
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(GoogleDefaults.AuthenticationScheme, redirectUrl);
-            return Challenge( properties, GoogleDefaults.AuthenticationScheme);
-          
+            return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+
 
             //if (redirectUrl == null)
             //{

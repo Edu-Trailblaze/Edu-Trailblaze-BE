@@ -57,6 +57,6 @@ namespace EduTrailblaze.Services.Interfaces
         Task UpdateCourseDuration(int courseId);
 
         Task<List<TagResponse>> GetTagInformation(int courseId);
-        
+
     }
 }

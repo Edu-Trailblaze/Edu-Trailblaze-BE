@@ -439,8 +439,8 @@ namespace EduTrailblaze.Services
                 {
                     // Sử dụng enrollment repository để lấy dữ liệu liên quan
                     var enrollmentQuery = await _enrollmentRepository.GetDbSet();
-                       var classUserEnroll = enrollmentQuery .Where(e => e.StudentId == request.UserId)
-                        .Select(e => e.CourseClassId);
+                    var classUserEnroll = enrollmentQuery.Where(e => e.StudentId == request.UserId)
+                     .Select(e => e.CourseClassId);
 
                     // Thêm điều kiện vào query gốc
                     dbSet = dbSet.Where(c => classUserEnroll.Contains(c.Id));
@@ -1468,6 +1468,6 @@ namespace EduTrailblaze.Services
             }
         }
 
-        
+
     }
 }

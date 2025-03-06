@@ -39,7 +39,7 @@ namespace EduTrailblaze.Services
             }
         }
 
-        public async Task AddEnrollment(CreateEnrollRequest  enrollment)
+        public async Task AddEnrollment(CreateEnrollRequest enrollment)
         {
             try
             {
@@ -59,7 +59,7 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
-                throw;
+                throw new Exception("An error occurred while adding the enrollment.", ex);
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using EduTrailblaze.Entities;
+using EduTrailblaze.Services.DTOs;
 
 namespace EduTrailblaze.Services.Interfaces
 {
@@ -13,5 +14,7 @@ namespace EduTrailblaze.Services.Interfaces
         Task UpdateUserProgress(UserProgress userProgress);
 
         Task DeleteUserProgress(UserProgress userProgress);
+
+        Task SaveUserProgress(SaveUserProgressRequest userProgressRequest);
     }
 }

@@ -813,7 +813,7 @@ namespace EduTrailblaze.Services.DTOs
         public string StudentId { get; set; }
     }
 
-    
+
     public class CreateNewsRequest
     {
         public string Title { get; set; }
@@ -2033,6 +2033,23 @@ namespace EduTrailblaze.Services.DTOs
                 .NotEmpty().WithMessage("Time is required")
                 .Must(x => new[] { "week", "month", "year" }.Contains(x))
                 .WithMessage("Time must be week, month, or year");
+        }
+    }
+
+    public class SaveUserProgressRequest
+    {
+        public string UserId { get; set; }
+        public int LectureId { get; set; }
+    }
+
+    public class SaveUserProgressRequestValidator : AbstractValidator<SaveUserProgressRequest>
+    {
+        public SaveUserProgressRequestValidator()
+        {
+            RuleFor(x => x.UserId)
+                .NotEmpty().WithMessage("UserId is required");
+            RuleFor(x => x.LectureId)
+                .NotEmpty().WithMessage("LectureId is required");
         }
     }
 }
