@@ -296,6 +296,7 @@
     {
         public DateTimeOffset LastAccessed { get; set; }
         public decimal ProgressPercentage { get; set; }
+        public int RemainingDurationInMins { get; set; }
     }
 
     public class CourseStatus

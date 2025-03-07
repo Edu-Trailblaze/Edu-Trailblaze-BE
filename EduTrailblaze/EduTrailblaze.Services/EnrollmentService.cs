@@ -12,10 +12,11 @@ namespace EduTrailblaze.Services
         private readonly IRepository<Order, int> _orderRepository;
         private readonly IRepository<CourseClass, int> _courseClassRepository;
         private readonly IRepository<UserProgress, int> _userProgressRepository;
+        private readonly IRepository<Lecture, int> _lectureRepository;
         private readonly ICourseService _courseService;
         private readonly IReviewService _reviewService;
 
-        public EnrollmentService(IRepository<Enrollment, int> enrollmentRepository, IRepository<Order, int> orderRepository, IRepository<CourseClass, int> courseClassRepository, ICourseService courseService, IReviewService reviewService, IRepository<UserProgress, int> userProgressRepository)
+        public EnrollmentService(IRepository<Enrollment, int> enrollmentRepository, IRepository<Order, int> orderRepository, IRepository<CourseClass, int> courseClassRepository, ICourseService courseService, IReviewService reviewService, IRepository<UserProgress, int> userProgressRepository, IRepository<Lecture, int> lectureRepository)
         {
             _enrollmentRepository = enrollmentRepository;
             _orderRepository = orderRepository;
@@ -23,6 +24,7 @@ namespace EduTrailblaze.Services
             _courseService = courseService;
             _reviewService = reviewService;
             _userProgressRepository = userProgressRepository;
+            _lectureRepository = lectureRepository;
         }
 
         public async Task<Enrollment?> GetEnrollment(int enrollmentId)
@@ -239,7 +241,8 @@ namespace EduTrailblaze.Services
                         Progress = new StudentCourseProgressResponse
                         {
                             LastAccessed = enrollment.UpdatedAt ?? DateTimeOffset.Now,
-                            ProgressPercentage = enrollment.ProgressPercentage
+                            ProgressPercentage = enrollment.ProgressPercentage,
+                            RemainingDurationInMins = await GetRemainingDuration(request.StudentId, course.Id)
                         },
                         CourseStatus = courseStatus
                     });
@@ -336,6 +339,33 @@ namespace EduTrailblaze.Services
             catch (Exception ex)
             {
                 throw new Exception("An error occurred while getting the enrollment: " + ex.Message);
+            }
+        }
+
+        public async Task<int> GetRemainingDuration(string userId, int courseId)
+        {
+            try
+            {
+                var courseClassId = await GetStudentCourseClass(userId, courseId);
+
+                var allLectures = await (await _lectureRepository.GetDbSet())
+                    .Where(l => l.Section.CourseId == courseId)
+                    .ToListAsync();
+
+                var userProgress = await (await _userProgressRepository.GetDbSet())
+                    .Where(up => up.UserId == userId && up.CourseClassId == courseClassId && up.ProgressType == "Lecture")
+                    .ToListAsync();
+
+                var completedLectureIds = userProgress.Where(up => up.IsCompleted).Select(up => up.LectureId).ToHashSet();
+                var uncompletedLectures = allLectures.Where(l => !completedLectureIds.Contains(l.Id));
+
+                var remainingDuration = uncompletedLectures.Sum(l => l.Duration);
+
+                return remainingDuration;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the remaining duration: " + ex.Message);
             }
         }
     }
