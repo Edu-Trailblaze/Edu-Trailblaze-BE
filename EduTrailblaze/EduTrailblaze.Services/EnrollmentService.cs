@@ -204,6 +204,53 @@ namespace EduTrailblaze.Services
             }
         }
 
-        //public async Task
+        public async Task<CourseStatus> CheckCourseStatus(string studentId, string courseId)
+        {
+            try
+            {
+               var orderDbSet = await _orderRepository.GetDbSet();
+                var hasBoughtCourse = await orderDbSet
+                    .Include(o => o.OrderDetails)
+                    .AnyAsync(o => o.UserId == studentId && o.OrderStatus == "Completed" && o.OrderDetails.Any(od => od.CourseId.ToString() == courseId));
+
+                if (!hasBoughtCourse)
+                {
+                    return new CourseStatus
+                    {
+                        StudentId = studentId,
+                        CourseId = courseId,
+                        Status = "Not bought"
+                    };
+                }
+
+                // Step 2: Check if the student is enrolled in the course
+                var courseClassIds = _courseClassRepository.FindByCondition(cc => cc.CourseId.ToString() == courseId)
+                    .Select(cc => cc.Id);
+
+                var isEnrolled = await _enrollmentRepository.FindByCondition(e => e.StudentId == studentId && courseClassIds.Contains(e.CourseClassId))
+                    .AnyAsync();
+
+                if (isEnrolled)
+                {
+                    return new CourseStatus
+                    {
+                        StudentId = studentId,
+                        CourseId = courseId,
+                        Status = "Enrolled"
+                    };
+                }
+
+                return new CourseStatus
+                {
+                    StudentId = studentId,
+                    CourseId = courseId,
+                    Status = "Not enrolled"
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while checking the course status: " + ex.Message);
+            }
+        }
     }
 }

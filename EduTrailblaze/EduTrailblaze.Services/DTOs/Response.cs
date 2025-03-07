@@ -274,4 +274,11 @@
         public string CourseId { get; set; }
         public bool IsEnrolled { get; set; }
     }
+
+    public class CourseStatus
+    {
+        public string CourseId {  get; set; }
+        public string StudentId {  get; set; }
+        public string Status {  get; set; }
+    }
 }

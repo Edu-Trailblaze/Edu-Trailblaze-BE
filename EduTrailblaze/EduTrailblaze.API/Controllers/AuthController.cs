@@ -213,8 +213,6 @@ namespace EduTrailblaze.API.Controllers
         {
             var redirectUrl = Url.Action("GoogleResponse", "Auth", null, Request.Scheme);
             var scheme = Request.Scheme ?? "https";
-            var redirectUrl1 = $"{scheme}://{Request.Host}/authentication/google-response";
-
 
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(GoogleDefaults.AuthenticationScheme, redirectUrl);
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
@@ -251,14 +249,18 @@ namespace EduTrailblaze.API.Controllers
 
                 var response = await _authService.HandleExternalLoginProviderCallBack(result);
 
-                return Ok(response);
+                if (response.StatusCode != 200 || response.Data == null)
+                {
+                    return StatusCode(response.StatusCode, response.Message);
+                }
+
+                var token = response.Data.ToString();
+                return Redirect($"https://localhost:4000/auth/callback?token={token}");
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-
-
     }
 }

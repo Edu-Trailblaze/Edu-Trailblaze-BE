@@ -2132,4 +2132,21 @@ namespace EduTrailblaze.Services.DTOs
                 .NotEmpty().WithMessage("LastAccessed is required");
         }
     }
+
+    public class CheckCourseStatusRequest
+    {
+        public string StudentId { get; set; }
+        public string CourseId { get; set; }
+    }
+
+    public class CheckCourseStatusRequestValidator : AbstractValidator<CheckCourseStatusRequest>
+    {
+        public CheckCourseStatusRequestValidator()
+        {
+            RuleFor(x => x.StudentId)
+                .NotEmpty().WithMessage("StudentId is required");
+            RuleFor(x => x.CourseId)
+                .NotEmpty().WithMessage("CourseId is required");
+        }
+    }
 }

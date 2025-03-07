@@ -20,5 +20,7 @@ namespace EduTrailblaze.Services.Interfaces
         Task<List<StudentCourseResponse>> GetStudentCourses(GetStudentCourses request);
 
         Task<int> GetStudentCourseClass(string userId, int courseId);
+
+        Task<CourseStatus> CheckCourseStatus(string studentId, string courseId);
     }
 }

@@ -75,5 +75,19 @@ namespace EduTrailblaze.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        [HttpGet("check-course-status")]
+        public async Task<IActionResult> CheckCourseStatus([FromQuery] CheckCourseStatusRequest req)
+        {
+            try
+            {
+                var courseStatus = await _enrollmentService.CheckCourseStatus(req.StudentId, req.CourseId);
+                return Ok(courseStatus);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }
