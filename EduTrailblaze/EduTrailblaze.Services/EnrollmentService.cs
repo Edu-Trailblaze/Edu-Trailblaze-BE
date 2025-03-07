@@ -11,12 +11,18 @@ namespace EduTrailblaze.Services
         private readonly IRepository<Enrollment, int> _enrollmentRepository;
         private readonly IRepository<Order, int> _orderRepository;
         private readonly IRepository<CourseClass, int> _courseClassRepository;
+        private readonly IRepository<UserProgress, int> _userProgressRepository;
+        private readonly ICourseService _courseService;
+        private readonly IReviewService _reviewService;
 
-        public EnrollmentService(IRepository<Enrollment, int> enrollmentRepository, IRepository<Order, int> orderRepository, IRepository<CourseClass, int> courseClassRepository)
+        public EnrollmentService(IRepository<Enrollment, int> enrollmentRepository, IRepository<Order, int> orderRepository, IRepository<CourseClass, int> courseClassRepository, ICourseService courseService, IReviewService reviewService, IRepository<UserProgress, int> userProgressRepository)
         {
             _enrollmentRepository = enrollmentRepository;
             _orderRepository = orderRepository;
             _courseClassRepository = courseClassRepository;
+            _courseService = courseService;
+            _reviewService = reviewService;
+            _userProgressRepository = userProgressRepository;
         }
 
         public async Task<Enrollment?> GetEnrollment(int enrollmentId)
@@ -182,6 +188,79 @@ namespace EduTrailblaze.Services
             }
         }
 
+        public async Task<StudentLearningCoursesResponse> GetStudentLearningCoursesRequest(GetStudentLearningCoursesRequest request)
+        {
+            try
+            {
+                var enrollments = (await _enrollmentRepository.GetDbSet()).Where(e => e.StudentId == request.StudentId);
+
+                var tags = enrollments
+                    .Select(e => e.CourseClass.Course.CourseTags.Select(ct => ct.Tag))
+                    .SelectMany(t => t)
+                    .Distinct()
+                    .ToList();
+
+                var tagResponse = tags.Select(t => new TagResponse
+                {
+                    Id = t.Id,
+                    Name = t.Name
+                }).ToList();
+
+                var coursesWithTag = new List<Course>();
+
+                if (request.TagId != null)
+                {
+                     coursesWithTag = enrollments
+                        .Where(e => e.CourseClass.Course.CourseTags.Any(ct => request.TagId != null && ct.TagId == request.TagId))
+                        .Select(e => e.CourseClass.Course)
+                        .ToList();
+
+                }
+                else
+                {
+                     coursesWithTag = enrollments
+                        .Select(e => e.CourseClass.Course)
+                        .ToList();
+                }
+                var courses = new List<StudentLearningCourse>();
+                foreach (var course in coursesWithTag)
+                {
+                    var enrollment = enrollments.FirstOrDefault(e => e.CourseClass.CourseId == course.Id);
+
+                    var courseStatus = await CheckCourseStatus(request.StudentId, course.Id);
+
+                    courses.Add(new StudentLearningCourse
+                    {
+                        Title = course.Title,
+                        ImageURL = course.ImageURL,
+                        Tags = await _courseService.GetTagInformation(course.Id),
+                        Review = await _reviewService.GetAverageRatingAndNumberOfRatings(course.Id),
+                        Instructors = await _courseService.InstructorInformation(course.Id),
+                        Progress = new StudentCourseProgressResponse
+                        {
+                            LastAccessed = enrollment.UpdatedAt ?? DateTimeOffset.Now,
+                            ProgressPercentage = enrollment.ProgressPercentage
+                        },
+                        CourseStatus = courseStatus
+                    });
+                }
+
+                // Step 4: Return the response with the list of courses and tags
+                var response = new StudentLearningCoursesResponse
+                {
+                    Tags = tagResponse,
+                    Courses = courses
+                };
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the number of courses enrolled by the student: " + ex.Message);
+            }
+        }
+
+
         public async Task<int> GetStudentCourseClass(string userId, int courseId)
         {
             try
@@ -204,27 +283,25 @@ namespace EduTrailblaze.Services
             }
         }
 
-        public async Task<CourseStatus> CheckCourseStatus(string studentId, string courseId)
+        public async Task<CourseStatus> CheckCourseStatus(string studentId, int courseId)
         {
             try
             {
-               var orderDbSet = await _orderRepository.GetDbSet();
+                var orderDbSet = await _orderRepository.GetDbSet();
                 var hasBoughtCourse = await orderDbSet
                     .Include(o => o.OrderDetails)
-                    .AnyAsync(o => o.UserId == studentId && o.OrderStatus == "Completed" && o.OrderDetails.Any(od => od.CourseId.ToString() == courseId));
+                    .AnyAsync(o => o.UserId == studentId && o.OrderStatus == "Completed" && o.OrderDetails.Any(od => od.CourseId == courseId));
 
                 if (!hasBoughtCourse)
                 {
                     return new CourseStatus
                     {
-                        StudentId = studentId,
-                        CourseId = courseId,
                         Status = "Not bought"
                     };
                 }
 
                 // Step 2: Check if the student is enrolled in the course
-                var courseClassIds = _courseClassRepository.FindByCondition(cc => cc.CourseId.ToString() == courseId)
+                var courseClassIds = _courseClassRepository.FindByCondition(cc => cc.CourseId == courseId)
                     .Select(cc => cc.Id);
 
                 var isEnrolled = await _enrollmentRepository.FindByCondition(e => e.StudentId == studentId && courseClassIds.Contains(e.CourseClassId))
@@ -234,22 +311,31 @@ namespace EduTrailblaze.Services
                 {
                     return new CourseStatus
                     {
-                        StudentId = studentId,
-                        CourseId = courseId,
                         Status = "Enrolled"
                     };
                 }
 
                 return new CourseStatus
                 {
-                    StudentId = studentId,
-                    CourseId = courseId,
                     Status = "Not enrolled"
                 };
             }
             catch (Exception ex)
             {
                 throw new Exception("An error occurred while checking the course status: " + ex.Message);
+            }
+        }
+
+        public async Task<Enrollment> GetByCourseClassAndStudent(int courseClassId, string studentId)
+        {
+            try
+            {
+                return await _enrollmentRepository.FindByCondition(e => e.CourseClassId == courseClassId && e.StudentId == studentId)
+                    .FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the enrollment: " + ex.Message);
             }
         }
     }

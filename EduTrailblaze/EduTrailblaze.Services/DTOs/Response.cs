@@ -274,11 +274,32 @@
         public string CourseId { get; set; }
         public bool IsEnrolled { get; set; }
     }
+    
+    public class StudentLearningCoursesResponse
+    {
+        public List<TagResponse> Tags { get; set; }
+        public List<StudentLearningCourse> Courses { get; set; }
+    }
+
+    public class StudentLearningCourse
+    {
+        public string Title { get; set; }
+        public string ImageURL { get; set; }
+        public List<TagResponse> Tags { get; set; }
+        public ReviewInformation Review { get; set; }
+        public List<InstructorInformation> Instructors { get; set; }
+        public StudentCourseProgressResponse Progress { get; set; }
+        public CourseStatus CourseStatus { get; set; }
+    }
+
+    public class StudentCourseProgressResponse
+    {
+        public DateTimeOffset LastAccessed { get; set; }
+        public decimal ProgressPercentage { get; set; }
+    }
 
     public class CourseStatus
     {
-        public string CourseId {  get; set; }
-        public string StudentId {  get; set; }
         public string Status {  get; set; }
     }
 }

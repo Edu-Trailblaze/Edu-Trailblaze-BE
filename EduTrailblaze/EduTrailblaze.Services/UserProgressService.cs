@@ -166,7 +166,6 @@ namespace EduTrailblaze.Services
                         var sectionProgress = new UserProgress
                         {
                             UserId = userProgressRequest.UserId,
-                            CourseClassId = courseClassId,
                             SectionId = sectionId,
                             ProgressType = "Section",
                             ProgressPercentage = 100,
@@ -206,10 +205,21 @@ namespace EduTrailblaze.Services
                         }
                     }
                 }
+
+                var courseProgressPercentage = await GetCourseProgress(userProgressRequest.UserId, courseId);
+                var enrollment = await _enrollmentService.GetByCourseClassAndStudent(courseClassId, userProgressRequest.UserId);
+
+                if (enrollment != null)
+                {
+                    enrollment.ProgressPercentage = courseProgressPercentage;
+                    enrollment.IsCompleted = courseProgressPercentage == 100;
+                    enrollment.UpdatedAt = DateTimeHelper.GetVietnamTime();
+                    await _enrollmentService.UpdateEnrollment(enrollment);
+                }
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while adding the userProgress: " + ex.Message);
+                throw new Exception("An error occurred while saving the user progress: " + ex.Message);
             }
         }
 
@@ -270,6 +280,28 @@ namespace EduTrailblaze.Services
             catch (Exception ex)
             {
                 throw new Exception("An error occurred while getting the userProgress: " + ex.Message);
+            }
+        }
+
+        public async Task<decimal> GetCourseProgress(string userId, int courseId)
+        {
+            try
+            {
+                var courseClassId = await _enrollmentService.GetStudentCourseClass(userId, courseId);
+                var allLecturesInSection = await (await _userProgressRepository.GetDbSet())
+                    .Where(up => up.CourseClassId == courseClassId && up.ProgressType == "Lecture")
+                    .ToListAsync();
+                var totalLectures = allLecturesInSection.Count;
+                var completedLectures = allLecturesInSection.Count(up => up.IsCompleted);
+                if (totalLectures == 0)
+                {
+                    return 0;
+                }
+                return Math.Round((decimal)completedLectures / totalLectures * 100, 2);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the course progress: " + ex.Message);
             }
         }
     }

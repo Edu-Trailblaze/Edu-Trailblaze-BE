@@ -89,5 +89,19 @@ namespace EduTrailblaze.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        [HttpGet("get-student-learning-courses")]
+        public async Task<IActionResult> GetStudentLearningCourses([FromQuery] GetStudentLearningCoursesRequest request)
+        {
+            try
+            {
+                var studentLearningCourses = await _enrollmentService.GetStudentLearningCoursesRequest(request);
+                return Ok(studentLearningCourses);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }

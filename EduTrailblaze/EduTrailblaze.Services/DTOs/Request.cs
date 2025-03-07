@@ -2136,7 +2136,7 @@ namespace EduTrailblaze.Services.DTOs
     public class CheckCourseStatusRequest
     {
         public string StudentId { get; set; }
-        public string CourseId { get; set; }
+        public int CourseId { get; set; }
     }
 
     public class CheckCourseStatusRequestValidator : AbstractValidator<CheckCourseStatusRequest>
@@ -2147,6 +2147,24 @@ namespace EduTrailblaze.Services.DTOs
                 .NotEmpty().WithMessage("StudentId is required");
             RuleFor(x => x.CourseId)
                 .NotEmpty().WithMessage("CourseId is required");
+        }
+    }
+
+    public class GetStudentLearningCoursesRequest
+    {
+        public string StudentId { get; set; }
+        public int? TagId { get; set; }
+    }
+
+    public class GetStudentLearningCoursesRequestValidator : AbstractValidator<GetStudentLearningCoursesRequest>
+    {
+        public GetStudentLearningCoursesRequestValidator()
+        {
+            RuleFor(x => x.StudentId)
+                .NotEmpty().WithMessage("StudentId is required");
+
+            RuleFor(x => x.TagId)
+                .GreaterThanOrEqualTo(0).WithMessage("TagId must be greater than or equal to 0");
         }
     }
 }
