@@ -139,14 +139,35 @@ namespace EduTrailblaze.Services
                     .Distinct()
                     .ToListAsync();
 
-                var enrollments = await _enrollmentRepository.FindByCondition(e => e.StudentId == request.StudentId).ToListAsync();
+                var enrollmentDbSet = await _enrollmentRepository.GetDbSet();
+                var enrollments = await enrollmentDbSet.Where(e => e.StudentId == request.StudentId).ToListAsync();
 
-                var response = boughtCourseIds.Select(courseId => new StudentCourseResponse
+                var response = new List<StudentCourseResponse>();
+
+                foreach (var courseId in boughtCourseIds)
                 {
-                    StudentId = request.StudentId,
-                    CourseId = courseId.ToString(),
-                    IsEnrolled = enrollments.Any(e => e.CourseClassId == courseId)
-                }).ToList();
+                    try
+                    {
+                        var courseClassId = await GetStudentCourseClass(request.StudentId, courseId);
+                        var isEnrolled = enrollments.Any(e => e.CourseClassId == courseClassId);
+
+                        response.Add(new StudentCourseResponse
+                        {
+                            StudentId = request.StudentId,
+                            CourseId = courseId.ToString(),
+                            IsEnrolled = isEnrolled
+                        });
+                    }
+                    catch (Exception)
+                    {
+                        response.Add(new StudentCourseResponse
+                        {
+                            StudentId = request.StudentId,
+                            CourseId = courseId.ToString(),
+                            IsEnrolled = false
+                        });
+                    }
+                }
 
                 if (request.IsEnrolled.HasValue)
                 {
