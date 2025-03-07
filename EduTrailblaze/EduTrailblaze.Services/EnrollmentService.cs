@@ -47,6 +47,16 @@ namespace EduTrailblaze.Services
         {
             try
             {
+                var orderDbSet = await _orderRepository.GetDbSet();
+                var order = await orderDbSet
+                    .Include(o => o.OrderDetails)
+                    .FirstOrDefaultAsync(o => o.UserId == enrollment.StudentId && o.OrderStatus == "Completed" && o.OrderDetails.Any(od => od.CourseId == enrollment.CourseId));
+
+                if (order == null)
+                {
+                    throw new Exception("User has not bought the course.");
+                }
+
                 var courseClassIds = _courseClassRepository.FindByCondition(cc => cc.CourseId == enrollment.CourseId)
                     .Select(cc => cc.Id);
 
@@ -172,5 +182,7 @@ namespace EduTrailblaze.Services
                 throw new Exception("An error occurred while getting the student's CourseClass: " + ex.Message);
             }
         }
+
+        //public async Task
     }
 }
