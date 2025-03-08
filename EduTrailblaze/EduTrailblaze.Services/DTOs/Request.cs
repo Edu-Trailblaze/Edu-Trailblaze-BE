@@ -2166,4 +2166,21 @@ namespace EduTrailblaze.Services.DTOs
                 .GreaterThanOrEqualTo(0).WithMessage("TagId must be greater than or equal to 0");
         }
     }
+
+    public class StudentCourseProgressRequest
+    {
+        public string StudentId { get; set; }
+        public int CourseId { get; set; }
+    }
+
+    public class StudentCourseProgressRequestValidator : AbstractValidator<StudentCourseProgressRequest>
+    {
+        public StudentCourseProgressRequestValidator()
+        {
+            RuleFor(x => x.StudentId)
+                .NotEmpty().WithMessage("StudentId is required");
+            RuleFor(x => x.CourseId)
+                .NotEmpty().WithMessage("CourseId is required");
+        }
+    }
 }

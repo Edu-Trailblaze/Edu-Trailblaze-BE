@@ -216,7 +216,6 @@ namespace EduTrailblaze.Services
                        .Where(e => e.CourseClass.Course.CourseTags.Any(ct => request.TagId != null && ct.TagId == request.TagId))
                        .Select(e => e.CourseClass.Course)
                        .ToList();
-
                 }
                 else
                 {
@@ -224,6 +223,28 @@ namespace EduTrailblaze.Services
                        .Select(e => e.CourseClass.Course)
                        .ToList();
                 }
+
+                var boughtCourseIds = await (await _orderRepository.GetDbSet())
+                    .Where(o => o.UserId == request.StudentId && o.OrderStatus == "Completed")
+                    .SelectMany(o => o.OrderDetails)
+                    .Select(od => od.CourseId)
+                    .Distinct()
+                    .ToListAsync();
+
+                var unenrolledCourseIds = boughtCourseIds.Except(coursesWithTag.Select(c => c.Id)).ToList();
+
+                var unenrolledCourses = new List<Course>();
+                foreach (var courseId in unenrolledCourseIds)
+                {
+                    var course = await _courseService.GetCourse(courseId);
+                    if (course != null)
+                    {
+                        unenrolledCourses.Add(course);
+                    }
+                }
+
+                coursesWithTag.AddRange(unenrolledCourses);
+
                 var courses = new List<StudentLearningCourse>();
                 foreach (var course in coursesWithTag)
                 {
@@ -238,17 +259,17 @@ namespace EduTrailblaze.Services
                         Tags = await _courseService.GetTagInformation(course.Id),
                         Review = await _reviewService.GetAverageRatingAndNumberOfRatings(course.Id),
                         Instructors = await _courseService.InstructorInformation(course.Id),
-                        Progress = new StudentCourseProgressResponse
+                        Progress = enrollment != null ? new StudentCourseProgressResponse
                         {
                             LastAccessed = enrollment.UpdatedAt ?? DateTimeOffset.Now,
                             ProgressPercentage = enrollment.ProgressPercentage,
                             RemainingDurationInMins = await GetRemainingDuration(request.StudentId, course.Id)
-                        },
+                        } : null,
                         CourseStatus = courseStatus
                     });
                 }
 
-                // Step 4: Return the response with the list of courses and tags
+                // Return the response with the list of courses and tags
                 var response = new StudentLearningCoursesResponse
                 {
                     Tags = tagResponse,
@@ -366,6 +387,25 @@ namespace EduTrailblaze.Services
             catch (Exception ex)
             {
                 throw new Exception("An error occurred while getting the remaining duration: " + ex.Message);
+            }
+        }
+
+        public async Task<StudentCourseProgressResponse> StudentCourseProgress(string userId, int courseId)
+        {
+            try
+            {
+                var enrollment = await GetByCourseClassAndStudent(courseId, userId);
+                var remainingDuration = await GetRemainingDuration(userId, courseId);
+                return new StudentCourseProgressResponse
+                {
+                    LastAccessed = enrollment.UpdatedAt ?? DateTimeOffset.Now,
+                    ProgressPercentage = enrollment.ProgressPercentage,
+                    RemainingDurationInMins = remainingDuration
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the student's course progress: " + ex.Message);
             }
         }
     }

@@ -103,5 +103,19 @@ namespace EduTrailblaze.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        [HttpGet("student-course-progress")]
+        public async Task<IActionResult> StudentCourseProgress([FromQuery] StudentCourseProgressRequest req)
+        {
+            try
+            {
+                var studentCourseProgress = await _enrollmentService.StudentCourseProgress(req.StudentId, req.CourseId);
+                return Ok(studentCourseProgress);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }
