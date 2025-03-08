@@ -210,7 +210,7 @@ namespace EduTrailblaze.Services
 
                 var coursesWithTag = new List<Course>();
 
-                if (request.TagId != null)
+                if (request.TagId != null || request.TagId != 0)
                 {
                     coursesWithTag = enrollments
                        .Where(e => e.CourseClass.Course.CourseTags.Any(ct => request.TagId != null && ct.TagId == request.TagId))
