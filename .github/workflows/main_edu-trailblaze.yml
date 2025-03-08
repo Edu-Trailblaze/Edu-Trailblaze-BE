@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Edu-trailblaze-CD-Main
+name: Build and deploy ASP.Net Core app to Azure Web App - edu-trailblaze
 
 on:
   push:
@@ -12,6 +12,8 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    permissions:
+      contents: read #This is required for actions/checkout
 
     steps:
       - uses: actions/checkout@v4
@@ -19,52 +21,19 @@ jobs:
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
-      
-      - name: Set ASPNETCORE_ENVIRONMENT
-        run: echo "ASPNETCORE_ENVIRONMENT=Production" >> $GITHUB_ENV
-
-      - name: Add appsettings.json
-        run: |
-          echo '${{ secrets.APPSETTINGS_JSON }}' > EduTrailblaze/EduTrailblaze.API/appsettings.json
-          try {
-            ConvertFrom-Json -InputObject '${{ secrets.APPSETTINGS_JSON }}' | Out-Null
-            Write-Host "JSON is valid."
-          } catch {
-            Write-Error "Invalid JSON format in appsettings.json"
-            exit 1
-          }
-        shell: pwsh
+          dotnet-version: '8.x'
 
       - name: Build with dotnet
         run: dotnet build --configuration Release
-        working-directory: EduTrailblaze/
 
-      # - name: dotnet publish
-      #   run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+      - name: dotnet publish
+        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
 
-      - name: Publish API project
-        run: dotnet publish EduTrailblaze/EduTrailblaze.API/EduTrailblaze.API.csproj -c Release -o output
-      
-      - name: Debug Environment
-        run: printenv
-
-      # - name: Check .NET version
-      #   run: |
-      #     dotnet --info
-      #     dotnet workload list
-
-      - name: Upload artifact for deployment
+      - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-            name: .net-app
-            path: output
-      
-      - name: Clean deployment directory
-        run: |
-            echo "Cleaning output directory..."
-            rm -rf ./output/*
-        shell: bash
+          name: .net-app
+          path: ${{env.DOTNET_ROOT}}/myapp
 
   deploy:
     runs-on: windows-latest
@@ -74,7 +43,8 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
       id-token: write #This is required for requesting the JWT
-    
+      contents: read #This is required for actions/checkout
+
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
@@ -84,17 +54,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_8C3517BD2B7D49F5842D283DF9F61615 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_81CDB63281EC42F985D9B32D87A775D1 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_F5CE5E217B534D01AFE00C975D532C16 }}
-
-      - name: Clean Azure Web App Deployment
-        run: |
-            echo "Cleaning up old deployment files..."
-            az webapp deployment source config-zip --resource-group 'Edu-Trailblaze' --name 'edu-trailblaze' --src ./output.zip
-            echo "Cleaning cache..."
-            az webapp restart --name 'edu-trailblaze' --resource-group 'Edu-Trailblaze'
-        shell: pwsh
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_D2E5F7FE286945A9B7B36C73E1A76756 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_34750C436C434C249FA2709C028923D7 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_73420B2CB3934FA786A1CEAFF052063A }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
