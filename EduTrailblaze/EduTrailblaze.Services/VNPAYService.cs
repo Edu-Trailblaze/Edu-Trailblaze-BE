@@ -70,7 +70,7 @@ namespace EduTrailblaze.Services
                     return new PaymentResponse
                     {
                         IsSuccessful = false,
-                        RedirectUrl = "LINK_INVALID"
+                        RedirectUrl = _configuration["FE:Url"] + "/payment/paymentFailed"
                     };
                 }
 
@@ -88,7 +88,7 @@ namespace EduTrailblaze.Services
                     return new PaymentResponse
                     {
                         IsSuccessful = false,
-                        RedirectUrl = "LINK_INVALID"
+                        RedirectUrl = _configuration["FE:Url"] + "/payment/paymentFailed"
                     };
                 }
 
@@ -140,7 +140,7 @@ namespace EduTrailblaze.Services
                     return new PaymentResponse
                     {
                         IsSuccessful = false,
-                        RedirectUrl = "LINK_INVALID"
+                        RedirectUrl = _configuration["FE:Url"] + "/payment/paymentFailed"
                     };
                 }
             }
@@ -149,7 +149,7 @@ namespace EduTrailblaze.Services
                 return new PaymentResponse
                 {
                     IsSuccessful = false,
-                    RedirectUrl = "LINK_ERROR"
+                    RedirectUrl = _configuration["FE:Url"] + "/payment/paymentFailed"
                 };
             }
         }
