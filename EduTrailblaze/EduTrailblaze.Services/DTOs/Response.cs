@@ -16,6 +16,8 @@
 
         public string DifficultyLevel { get; set; }
 
+        public string Prerequisites { get; set; }
+
         public List<string> LearningOutcomes { get; set; }
 
         public string CreatedBy { get; set; }
