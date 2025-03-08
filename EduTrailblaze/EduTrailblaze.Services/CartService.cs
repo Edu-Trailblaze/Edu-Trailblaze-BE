@@ -12,18 +12,20 @@ namespace EduTrailblaze.Services
     public class CartService : ICartService
     {
         private readonly IRepository<Cart, int> _cartRepository;
+        private readonly IRepository<Order, int> _orderRepository;
         private readonly UserManager<User> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ICourseService _courseService;
         private readonly IReviewService _reviewService;
 
-        public CartService(IRepository<Cart, int> cartRepository, IHttpContextAccessor httpContextAccessor, ICourseService courseService, UserManager<User> userManager, IReviewService reviewService)
+        public CartService(IRepository<Cart, int> cartRepository, IHttpContextAccessor httpContextAccessor, ICourseService courseService, UserManager<User> userManager, IReviewService reviewService, IRepository<Order, int> orderRepository)
         {
             _cartRepository = cartRepository;
             _httpContextAccessor = httpContextAccessor;
             _courseService = courseService;
             _userManager = userManager;
             _reviewService = reviewService;
+            _orderRepository = orderRepository;
         }
 
         public async Task<Cart?> GetCart(int cartId)
@@ -462,6 +464,17 @@ namespace EduTrailblaze.Services
         {
             try
             {
+                var orderDbSet = await _orderRepository.GetDbSet();
+
+                var hasBoughtCourse = await orderDbSet
+                    .Include(o => o.OrderDetails)
+                    .AnyAsync(o => o.UserId == userId && o.OrderStatus == "Completed" && o.OrderDetails.Any(od => od.CourseId == courseId));
+
+                if (hasBoughtCourse)
+                {
+                    throw new Exception("Course has already been bought.");
+                }
+
                 var cart = await GetCart(userId);
 
                 if (cart.Any(ci => ci.ItemId == courseId))
@@ -485,6 +498,17 @@ namespace EduTrailblaze.Services
         {
             try
             {
+                var orderDbSet = await _orderRepository.GetDbSet();
+
+                var hasBoughtCourse = await orderDbSet
+                    .Include(o => o.OrderDetails)
+                    .AnyAsync(o => o.UserId == userId && o.OrderStatus == "Completed" && o.OrderDetails.Any(od => od.CourseId == courseId));
+
+                if (hasBoughtCourse)
+                {
+                    throw new Exception("Course has already been bought.");
+                }
+
                 var cart = await GetCart(userId);
 
                 if (cart.Any(ci => ci.ItemId == courseId))
