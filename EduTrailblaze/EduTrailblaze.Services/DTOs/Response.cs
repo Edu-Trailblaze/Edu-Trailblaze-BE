@@ -16,6 +16,8 @@
 
         public string DifficultyLevel { get; set; }
 
+        public List<string> LearningOutcomes { get; set; }
+
         public string CreatedBy { get; set; }
 
         public DateTimeOffset CreatedAt { get; set; }
@@ -274,7 +276,7 @@
         public string CourseId { get; set; }
         public bool IsEnrolled { get; set; }
     }
-    
+
     public class StudentLearningCoursesResponse
     {
         public List<TagResponse> Tags { get; set; }
@@ -301,6 +303,6 @@
 
     public class CourseStatus
     {
-        public string Status {  get; set; }
+        public string Status { get; set; }
     }
 }

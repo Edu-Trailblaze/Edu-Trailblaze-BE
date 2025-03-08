@@ -3,19 +3,23 @@ using EduTrailblaze.Entities;
 using EduTrailblaze.Repositories.Interfaces;
 using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Interfaces;
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 
 namespace EduTrailblaze.Services
 {
     public class PaymentService : IPaymentService
     {
         private readonly IRepository<Payment, int> _paymentRepository;
+        private readonly IBackgroundJobClient _backgroundJobClient;
         private readonly IMapper _mapper;
 
-        public PaymentService(IRepository<Payment, int> paymentRepository, IMapper mapper)
+        public PaymentService(IRepository<Payment, int> paymentRepository, IMapper mapper, IBackgroundJobClient backgroundJobClient)
         {
             _paymentRepository = paymentRepository;
             _mapper = mapper;
+            _backgroundJobClient = backgroundJobClient;
         }
 
         public async Task<Payment?> GetPayment(int paymentId)
@@ -116,11 +120,37 @@ namespace EduTrailblaze.Services
                     PaymentMethod = payment.PaymentMethod
                 };
                 await _paymentRepository.AddAsync(newPayment);
+
+                _backgroundJobClient.Schedule(() => AutomaticFailedPayment(newPayment.Id), TimeSpan.FromMinutes(15));
+
                 return newPayment;
             }
             catch (Exception ex)
             {
                 throw new Exception("An error occurred while adding the payment: " + ex.Message);
+            }
+        }
+
+        public async Task AutomaticFailedPayment(int paymentId)
+        {
+            try
+            {
+                var payment = await GetPayment(paymentId);
+
+                if (payment == null)
+                {
+                    throw new Exception("Order not found.");
+                }
+
+                if (payment.PaymentStatus == "Processing")
+                {
+                    payment.PaymentStatus = "Failed";
+                    await UpdatePayment(payment);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while automatically failing the payment: " + ex.Message);
             }
         }
 

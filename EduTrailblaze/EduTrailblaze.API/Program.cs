@@ -1,8 +1,9 @@
 using Common.Logging;
 using EduTrailblaze.API.Extensions;
 using EduTrailblaze.Repositories;
+using Hangfire;
+using Hangfire.SqlServer;
 using Serilog;
-
 
 namespace EduTrailblaze.API
 {
@@ -29,6 +30,21 @@ namespace EduTrailblaze.API
                 builder.Host.AddAppConfiguration();
                 builder.Services.AddInfrastructor(builder.Configuration);
 
+                builder.Services.AddHangfire(configuration => configuration
+                    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                    .UseSimpleAssemblyNameTypeSerializer()
+                    .UseRecommendedSerializerSettings()
+                    .UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection"), new SqlServerStorageOptions
+                    {
+                        CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                        QueuePollInterval = TimeSpan.Zero,
+                        UseRecommendedIsolationLevel = true,
+                        DisableGlobalLocks = true
+                    }));
+
+                builder.Services.AddHangfireServer();
+
                 // Kestrel Config (hide in Header Request)
                 builder.WebHost.ConfigureKestrel(options =>
                 {
@@ -42,6 +58,9 @@ namespace EduTrailblaze.API
                 // Configure the HTTP request pipeline.
                 //if (app.Environment.IsDevelopment())
                 //{}
+
+                app.UseHangfireDashboard();
+
                 app.MapControllers();
                 app.MapGet("/env", () => app.Environment.EnvironmentName);
                 app.MigrateDatabase<EduTrailblazeDbContext>().Run();

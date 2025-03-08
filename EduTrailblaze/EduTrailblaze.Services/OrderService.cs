@@ -3,6 +3,7 @@ using EduTrailblaze.Entities;
 using EduTrailblaze.Repositories.Interfaces;
 using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Interfaces;
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 
 namespace EduTrailblaze.Services
@@ -18,8 +19,9 @@ namespace EduTrailblaze.Services
         private readonly IVNPAYService _vNPAYService;
         private readonly IMapper _mapper;
         private readonly IPayPalService _payPalService;
+        private readonly IBackgroundJobClient _backgroundJobClient;
 
-        public OrderService(IRepository<Order, int> orderRepository, IPaymentService paymentService, ICartService cartService, IOrderDetailService orderDetailService, IMoMoService moMoService, IVNPAYService vNPAYService, IMapper mapper, IPayPalService payPalService)
+        public OrderService(IRepository<Order, int> orderRepository, IPaymentService paymentService, ICartService cartService, IOrderDetailService orderDetailService, IMoMoService moMoService, IVNPAYService vNPAYService, IMapper mapper, IPayPalService payPalService, IBackgroundJobClient backgroundJobClient)
         {
             _orderRepository = orderRepository;
             _paymentService = paymentService;
@@ -29,6 +31,7 @@ namespace EduTrailblaze.Services
             _vNPAYService = vNPAYService;
             _mapper = mapper;
             _payPalService = payPalService;
+            _backgroundJobClient = backgroundJobClient;
         }
 
         public async Task<Order?> GetOrder(int orderId)
@@ -156,6 +159,8 @@ namespace EduTrailblaze.Services
 
                     await _orderDetailService.AddOrderDetail(orderDetail);
                 }
+
+                _backgroundJobClient.Schedule(() => AutomaticFailedOrder(order.Id), TimeSpan.FromMinutes(15));
 
                 return order;
             }

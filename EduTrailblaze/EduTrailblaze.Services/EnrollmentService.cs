@@ -212,17 +212,17 @@ namespace EduTrailblaze.Services
 
                 if (request.TagId != null)
                 {
-                     coursesWithTag = enrollments
-                        .Where(e => e.CourseClass.Course.CourseTags.Any(ct => request.TagId != null && ct.TagId == request.TagId))
-                        .Select(e => e.CourseClass.Course)
-                        .ToList();
+                    coursesWithTag = enrollments
+                       .Where(e => e.CourseClass.Course.CourseTags.Any(ct => request.TagId != null && ct.TagId == request.TagId))
+                       .Select(e => e.CourseClass.Course)
+                       .ToList();
 
                 }
                 else
                 {
-                     coursesWithTag = enrollments
-                        .Select(e => e.CourseClass.Course)
-                        .ToList();
+                    coursesWithTag = enrollments
+                       .Select(e => e.CourseClass.Course)
+                       .ToList();
                 }
                 var courses = new List<StudentLearningCourse>();
                 foreach (var course in coursesWithTag)
