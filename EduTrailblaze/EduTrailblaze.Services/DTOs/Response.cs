@@ -292,7 +292,7 @@
         public List<TagResponse> Tags { get; set; }
         public ReviewInformation Review { get; set; }
         public List<InstructorInformation> Instructors { get; set; }
-        public StudentCourseProgressResponse Progress { get; set; }
+        public StudentCourseProgressResponse? Progress { get; set; }
         public CourseStatus CourseStatus { get; set; }
     }
 
