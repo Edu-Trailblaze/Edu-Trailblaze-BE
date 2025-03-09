@@ -177,7 +177,7 @@ namespace EduTrailblaze.Services
                     var lectureItemProgress = await userProgressDbSet
                         .FirstOrDefaultAsync(up => up.LectureId == lectureItem.Id && up.UserId == userProgressRequest.UserId);
 
-                    if (userProgress == null || !userProgress.IsCompleted)
+                    if (lectureItemProgress == null || !lectureItemProgress.IsCompleted)
                     {
                         allLecturesCompleted = false;
                         break;
