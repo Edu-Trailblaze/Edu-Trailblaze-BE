@@ -48,11 +48,19 @@ namespace EduTrailblaze.Services
             }
         }
 
-        public async Task AddUserCertificate(UserCertificate userCertificate)
+        public async Task AddUserCertificate(CreateCourseCertificates userCertificate)
         {
             try
             {
-                await _userCertificateRepository.AddAsync(userCertificate);
+                var certificate = new UserCertificate()
+                {
+                    CertificateId = userCertificate.CertificateId,
+                    UserId = userCertificate.UserId,
+                    CertificateUrl = userCertificate.CertificateUrl,
+                    IssuedAt = DateTimeHelper.GetVietnamTime(),
+                };
+
+                await _userCertificateRepository.AddAsync(certificate);
             }
             catch (Exception ex)
             {

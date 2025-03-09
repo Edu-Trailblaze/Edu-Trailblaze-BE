@@ -9,7 +9,7 @@ namespace EduTrailblaze.Services.Interfaces
 
         Task<IEnumerable<UserCertificate>> GetUserCertificates();
 
-        Task AddUserCertificate(UserCertificate userCertificate);
+        Task AddUserCertificate(CreateCourseCertificates userCertificate);
 
         Task UpdateUserCertificate(UserCertificate userCertificate);
 

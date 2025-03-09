@@ -2,6 +2,7 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EduTrailblaze.Services.DTOs
 {
@@ -2223,6 +2224,26 @@ namespace EduTrailblaze.Services.DTOs
             RuleFor(x => x.ToDate)
                 .GreaterThanOrEqualTo(x => x.FromDate).WithMessage("ToDate must be greater than or equal to FromDate")
                 .When(x => x.FromDate.HasValue && x.ToDate.HasValue);
+        }
+    }
+
+    public class CreateCourseCertificates
+    {
+        public string UserId { get; set; }
+        public int CertificateId { get; set; }
+        public string CertificateUrl { get; set; }
+    }
+
+    public class GetCourseCertificatesValidator : AbstractValidator<CreateCourseCertificates>
+    {
+        public GetCourseCertificatesValidator()
+        {
+            RuleFor(x => x.UserId)
+                .NotEmpty().WithMessage("UserId is required");
+            RuleFor(x => x.CertificateId)
+                .NotEmpty().WithMessage("CertificateId is required");
+            RuleFor(x => x.CertificateUrl)
+                .NotEmpty().WithMessage("CertificateUrl is required");
         }
     }
 }
