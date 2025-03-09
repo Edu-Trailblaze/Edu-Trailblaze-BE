@@ -405,7 +405,17 @@ namespace EduTrailblaze.Services
         {
             try
             {
-                var enrollment = await GetByCourseClassAndStudent(courseId, userId);
+                var courseClass = await GetStudentCourseClass(userId, courseId);
+                if (courseClass == 0)
+                {
+                    throw new Exception("Student is not enrolled in the course.");
+                }
+
+                var enrollment = await GetByCourseClassAndStudent(courseClass, userId);
+                if (enrollment == null)
+                {
+                    throw new Exception("Student is not enrolled in the course.");
+                }
                 var remainingDuration = await GetRemainingDuration(userId, courseId);
                 return new StudentCourseProgressResponse
                 {
