@@ -2214,10 +2214,6 @@ namespace EduTrailblaze.Services.DTOs
     {
         public GetCourseCertificatesRequestValidator()
         {
-            RuleFor(x => x.CourseId)
-                .NotEmpty().WithMessage("CourseId is required");
-            RuleFor(x => x.UserId)
-                .NotEmpty().WithMessage("UserId is required");
             RuleFor(x => x.FromDate)
                 .LessThanOrEqualTo(x => x.ToDate).WithMessage("FromDate must be less than or equal to ToDate")
                 .When(x => x.FromDate.HasValue && x.ToDate.HasValue);
