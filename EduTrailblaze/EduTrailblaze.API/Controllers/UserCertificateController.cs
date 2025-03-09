@@ -48,13 +48,27 @@ namespace EduTrailblaze.API.Controllers
             }
         }
 
-        [HttpPost("get-user-certificates-by-conditions")]
+        [HttpGet("get-user-certificates-by-conditions")]
         public async Task<IActionResult> GetUserCertificatesByConditions(GetCourseCertificatesRequest request)
         {
             try
             {
                 var userCertificates = await _userCertificateService.GetUserCertificatesByConditions(request);
                 return Ok(userCertificates);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddUserCertificate(CreateUserCertificateRequest userCertificate)
+        {
+            try
+            {
+                await _userCertificateService.AddUserCertificate(userCertificate);
+                return Ok();
             }
             catch (Exception ex)
             {
