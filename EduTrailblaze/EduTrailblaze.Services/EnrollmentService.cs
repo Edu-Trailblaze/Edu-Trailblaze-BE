@@ -222,13 +222,15 @@ namespace EduTrailblaze.Services
                 var tags = new HashSet<Tag>();
                 foreach (var course in allCourses)
                 {
-                    foreach (var courseTag in course.CourseTags)
+                    var courseTags = await _courseService.GetTagInformation(course.Id);
+                    tags.UnionWith(courseTags.Select(t => new Tag
                     {
-                        tags.Add(courseTag.Tag);
-                    }
+                        Id = t.Id,
+                        Name = t.Name
+                    }));
                 }
 
-                var tagResponse = tags.Select(t => new TagResponse
+                var tagResponse = tags.GroupBy(t => t.Id).Select(g => g.First()).Select(t => new TagResponse
                 {
                     Id = t.Id,
                     Name = t.Name
