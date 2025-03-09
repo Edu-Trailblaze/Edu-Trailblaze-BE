@@ -183,8 +183,7 @@ namespace EduTrailblaze.Services
                     userCertificatesQuery = userCertificatesQuery.Where(uc => uc.IssuedAt <= request.ToDate.Value);
                 }
 
-                var userCertificates = await userCertificatesQuery.ToListAsync();
-                var certificateResponses = userCertificates.Select(uc => new CourseCertificatesResponse
+                var certificateResponses = userCertificatesQuery.Select(uc => new CourseCertificatesResponse
                 {
                     CertificateUrl = uc.CertificateUrl,
                     UserId = uc.UserId,
