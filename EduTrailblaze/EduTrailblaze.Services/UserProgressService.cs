@@ -327,15 +327,20 @@ namespace EduTrailblaze.Services
             try
             {
                 var courseClassId = await _enrollmentService.GetStudentCourseClass(userId, courseId);
-                var allLecturesInSection = await (await _userProgressRepository.GetDbSet())
-                    .Where(up => up.CourseClassId == courseClassId && up.ProgressType == "Lecture")
-                    .ToListAsync();
-                var totalLectures = allLecturesInSection.Count;
-                var completedLectures = allLecturesInSection.Count(up => up.IsCompleted);
+
+                var totalLectures = await (await _lectureRepository.GetDbSet())
+                    .Where(l => l.Section.CourseId == courseId)
+                    .CountAsync();
+
+                var completedLectures = await (await _userProgressRepository.GetDbSet())
+                    .Where(up => up.CourseClassId == courseClassId && up.ProgressType == "Lecture" && up.IsCompleted)
+                    .CountAsync();
+
                 if (totalLectures == 0)
                 {
                     return 0;
                 }
+
                 return Math.Round((decimal)completedLectures / totalLectures * 100, 2);
             }
             catch (Exception ex)
