@@ -327,16 +327,24 @@ namespace EduTrailblaze.Services
         {
             try
             {
-                var userProgressQuery = await _userProgressRepository.GetDbSet();
+                var userProgressQuery = (await _userProgressRepository.GetDbSet()).Where(up => up.UserId == userId);
 
-                var userProgress = await userProgressQuery
-                    .Where(up => up.UserId == userId)
-                    .Where(up =>
-                        (sectionId != null && sectionId != 0 && up.SectionId == sectionId) ||
-                        (lectureId != null && lectureId != 0 && up.LectureId == lectureId) ||
-                        (quizId != null && quizId != 0 && up.QuizId == quizId))
-                    .ToListAsync();
+                if (sectionId.HasValue)
+                {
+                    userProgressQuery = userProgressQuery.Where(up => up.SectionId == sectionId.Value);
+                }
 
+                if (lectureId.HasValue)
+                {
+                    userProgressQuery = userProgressQuery.Where(up => up.LectureId == lectureId.Value);
+                }
+
+                if (quizId.HasValue)
+                {
+                    userProgressQuery = userProgressQuery.Where(up => up.QuizId == quizId.Value);
+                }
+
+                var userProgress = await userProgressQuery.ToListAsync();
                 return userProgress;
             }
             catch (Exception ex)
