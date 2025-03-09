@@ -196,9 +196,31 @@ namespace EduTrailblaze.Services
             {
                 var enrollments = (await _enrollmentRepository.GetDbSet()).Where(e => e.StudentId == request.StudentId);
 
-                var tags = enrollments
-                    .Select(e => e.CourseClass.Course.CourseTags.Select(ct => ct.Tag))
-                    .SelectMany(t => t)
+                var boughtCourseIds = await (await _orderRepository.GetDbSet())
+                    .Where(o => o.UserId == request.StudentId && o.OrderStatus == "Completed")
+                    .SelectMany(o => o.OrderDetails)
+                    .Select(od => od.CourseId)
+                    .Distinct()
+                    .ToListAsync();
+
+                var enrolledCourseIds = enrollments.Select(e => e.CourseClass.CourseId).Distinct().ToList();
+                var unenrolledCourseIds = boughtCourseIds.Except(enrolledCourseIds).ToList();
+
+                var unenrolledCourses = new List<Course>();
+                foreach (var courseId in unenrolledCourseIds)
+                {
+                    var course = await _courseService.GetCourse(courseId);
+                    if (course != null)
+                    {
+                        unenrolledCourses.Add(course);
+                    }
+                }
+
+                var allCourses = enrollments.Select(e => e.CourseClass.Course).ToList();
+                allCourses.AddRange(unenrolledCourses);
+
+                var tags = allCourses
+                    .SelectMany(c => c.CourseTags.Select(ct => ct.Tag))
                     .Distinct()
                     .ToList();
 
@@ -212,38 +234,14 @@ namespace EduTrailblaze.Services
 
                 if (request.TagId != null && request.TagId != 0)
                 {
-                    coursesWithTag = enrollments
-                       .Where(e => e.CourseClass.Course.CourseTags.Any(ct => request.TagId != null && ct.TagId == request.TagId))
-                       .Select(e => e.CourseClass.Course)
+                    coursesWithTag = allCourses
+                       .Where(c => c.CourseTags.Any(ct => ct.TagId == request.TagId))
                        .ToList();
                 }
                 else
                 {
-                    coursesWithTag = enrollments
-                       .Select(e => e.CourseClass.Course)
-                       .ToList();
+                    coursesWithTag = allCourses;
                 }
-
-                var boughtCourseIds = await (await _orderRepository.GetDbSet())
-                    .Where(o => o.UserId == request.StudentId && o.OrderStatus == "Completed")
-                    .SelectMany(o => o.OrderDetails)
-                    .Select(od => od.CourseId)
-                    .Distinct()
-                    .ToListAsync();
-
-                var unenrolledCourseIds = boughtCourseIds.Except(coursesWithTag.Select(c => c.Id)).ToList();
-
-                var unenrolledCourses = new List<Course>();
-                foreach (var courseId in unenrolledCourseIds)
-                {
-                    var course = await _courseService.GetCourse(courseId);
-                    if (course != null)
-                    {
-                        unenrolledCourses.Add(course);
-                    }
-                }
-
-                coursesWithTag.AddRange(unenrolledCourses);
 
                 var courses = new List<StudentLearningCourse>();
                 foreach (var course in coursesWithTag)
@@ -269,7 +267,6 @@ namespace EduTrailblaze.Services
                     });
                 }
 
-                // Return the response with the list of courses and tags
                 var response = new StudentLearningCoursesResponse
                 {
                     Tags = tagResponse,
@@ -283,7 +280,6 @@ namespace EduTrailblaze.Services
                 throw new Exception("An error occurred while getting the number of courses enrolled by the student: " + ex.Message);
             }
         }
-
 
         public async Task<int> GetStudentCourseClass(string userId, int courseId)
         {
