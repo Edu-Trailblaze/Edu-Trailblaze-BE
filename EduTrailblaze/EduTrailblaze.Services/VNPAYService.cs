@@ -70,7 +70,7 @@ namespace EduTrailblaze.Services
                     return new PaymentResponse
                     {
                         IsSuccessful = false,
-                        RedirectUrl = _configuration["FE:Url"] + "/payment/paymentFailed"
+                        RedirectUrl = _configuration["FE:Url"] + "student/payment/paymentFailed"
                     };
                 }
 
@@ -88,7 +88,7 @@ namespace EduTrailblaze.Services
                     return new PaymentResponse
                     {
                         IsSuccessful = false,
-                        RedirectUrl = _configuration["FE:Url"] + "/payment/paymentFailed"
+                        RedirectUrl = _configuration["FE:Url"] + "student/payment/paymentFailed"
                     };
                 }
 
@@ -111,8 +111,8 @@ namespace EduTrailblaze.Services
                         return new PaymentResponse
                         {
                             IsSuccessful = true,
-                            //RedirectUrl = _configuration["FE:Url"] + $"/payment/paymentSuccess?orderId={json["vnp_TxnRef"].ToString()}"
-                            RedirectUrl = _configuration["FE:Url"] + $"/payment/paymentSuccess?paymentId={paymentId}"
+                            //RedirectUrl = _configuration["FE:Url"] + $"student/payment/paymentSuccess?orderId={json["vnp_TxnRef"].ToString()}"
+                            RedirectUrl = _configuration["FE:Url"] + $"student/payment/paymentSuccess?paymentId={paymentId}"
                         };
                     }
                     else
@@ -130,8 +130,8 @@ namespace EduTrailblaze.Services
                         return new PaymentResponse
                         {
                             IsSuccessful = false,
-                            //RedirectUrl = _configuration["FE:Url"] + $"/payment/paymentFailed?orderId={json["vnp_TxnRef"].ToString()}"
-                            RedirectUrl = _configuration["FE:Url"] + $"/payment/paymentFailed?paymentId={paymentId}"
+                            //RedirectUrl = _configuration["FE:Url"] + $"student/payment/paymentFailed?orderId={json["vnp_TxnRef"].ToString()}"
+                            RedirectUrl = _configuration["FE:Url"] + $"student/payment/paymentFailed?paymentId={paymentId}"
                         };
                     }
                 }
@@ -140,7 +140,7 @@ namespace EduTrailblaze.Services
                     return new PaymentResponse
                     {
                         IsSuccessful = false,
-                        RedirectUrl = _configuration["FE:Url"] + "/payment/paymentFailed"
+                        RedirectUrl = _configuration["FE:Url"] + "student/payment/paymentFailed"
                     };
                 }
             }
@@ -149,7 +149,7 @@ namespace EduTrailblaze.Services
                 return new PaymentResponse
                 {
                     IsSuccessful = false,
-                    RedirectUrl = _configuration["FE:Url"] + "/payment/paymentFailed"
+                    RedirectUrl = _configuration["FE:Url"] + "student/payment/paymentFailed"
                 };
             }
         }
