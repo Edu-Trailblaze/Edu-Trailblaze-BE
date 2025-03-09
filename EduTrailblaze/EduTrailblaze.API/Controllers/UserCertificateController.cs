@@ -77,7 +77,7 @@ namespace EduTrailblaze.API.Controllers
         }
 
         [HttpPost("AddUserCertificate")]
-        public async Task<IActionResult> AddUserCertificate(UserCertificate userCertificate)
+        public async Task<IActionResult> AddUserCertificate(CreateCourseCertificates userCertificate)
         {
             try
             {
