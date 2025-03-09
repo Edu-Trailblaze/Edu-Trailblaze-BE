@@ -2183,4 +2183,21 @@ namespace EduTrailblaze.Services.DTOs
                 .NotEmpty().WithMessage("CourseId is required");
         }
     }
+
+    public class CreateUserCertificateRequest
+    {
+        public string UserId { get; set; }
+        public int CourseId { get; set; }
+    }
+
+    public class CreateUserCertificateRequestValidator : AbstractValidator<CreateUserCertificateRequest>
+    {
+        public CreateUserCertificateRequestValidator()
+        {
+            RuleFor(x => x.UserId)
+                .NotEmpty().WithMessage("UserId is required");
+            RuleFor(x => x.CourseId)
+                .NotEmpty().WithMessage("CourseId is required");
+        }
+    }
 }

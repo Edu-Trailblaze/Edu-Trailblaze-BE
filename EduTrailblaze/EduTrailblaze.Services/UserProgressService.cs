@@ -13,13 +13,15 @@ namespace EduTrailblaze.Services
         private readonly IRepository<Lecture, int> _lectureRepository;
         private readonly IRepository<Section, int> _sectionRepository;
         private readonly IEnrollmentService _enrollmentService;
+        private readonly IUserCertificateService _userCertificateService;
 
-        public UserProgressService(IRepository<UserProgress, int> userProgressRepository, IEnrollmentService enrollmentService, IRepository<Lecture, int> lectureRepository, IRepository<Section, int> sectionRepository)
+        public UserProgressService(IRepository<UserProgress, int> userProgressRepository, IEnrollmentService enrollmentService, IRepository<Lecture, int> lectureRepository, IRepository<Section, int> sectionRepository, IUserCertificateService userCertificateService)
         {
             _userProgressRepository = userProgressRepository;
             _enrollmentService = enrollmentService;
             _lectureRepository = lectureRepository;
             _sectionRepository = sectionRepository;
+            _userCertificateService = userCertificateService;
         }
 
         public async Task<UserProgress?> GetUserProgress(int userProgressId)
@@ -254,7 +256,18 @@ namespace EduTrailblaze.Services
                     enrollment.IsCompleted = courseProgressPercentage == 100;
                     enrollment.UpdatedAt = DateTimeHelper.GetVietnamTime();
                     await _enrollmentService.UpdateEnrollment(enrollment);
+
+                    if (courseProgressPercentage == 100 && enrollment.IsCompleted)
+                    {
+                        var userCertificate = new CreateUserCertificateRequest
+                        {
+                            UserId = userProgressRequest.UserId,
+                            CourseId = courseId
+                        };
+                        await _userCertificateService.AddUserCertificate(userCertificate);
+                    }
                 }
+
             }
             catch (Exception ex)
             {
