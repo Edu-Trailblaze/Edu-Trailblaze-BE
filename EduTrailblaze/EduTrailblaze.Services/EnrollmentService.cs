@@ -219,10 +219,14 @@ namespace EduTrailblaze.Services
                 var allCourses = enrollments.Select(e => e.CourseClass.Course).ToList();
                 allCourses.AddRange(unenrolledCourses);
 
-                var tags = allCourses
-                    .SelectMany(c => c.CourseTags.Select(ct => ct.Tag))
-                    .Distinct()
-                    .ToList();
+                var tags = new HashSet<Tag>();
+                foreach (var course in allCourses)
+                {
+                    foreach (var courseTag in course.CourseTags)
+                    {
+                        tags.Add(courseTag.Tag);
+                    }
+                }
 
                 var tagResponse = tags.Select(t => new TagResponse
                 {
