@@ -240,9 +240,18 @@ namespace EduTrailblaze.Services
 
                 if (request.TagId != null && request.TagId != 0)
                 {
-                    coursesWithTag = allCourses
-                       .Where(c => c.CourseTags.Any(ct => ct.TagId == request.TagId))
-                       .ToList();
+                    foreach (var course in allCourses)
+                    {
+                        var courseTags = await _courseService.GetTagInformation(course.Id);
+                        foreach (var tag in courseTags)
+                        {
+                            if (tag.Id == request.TagId)
+                            {
+                                coursesWithTag.Add(course);
+                                break; // Exit the inner loop once a matching tag is found
+                            }
+                        }
+                    }
                 }
                 else
                 {
