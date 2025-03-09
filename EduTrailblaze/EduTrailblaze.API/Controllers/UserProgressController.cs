@@ -64,5 +64,19 @@ namespace EduTrailblaze.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        [HttpDelete("{userProgressId}")]
+        public async Task<IActionResult> DeleteUserProgress(int userProgressId)
+        {
+            try
+            {
+                await _userProgressService.DeleteUserProgress(userProgressId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }

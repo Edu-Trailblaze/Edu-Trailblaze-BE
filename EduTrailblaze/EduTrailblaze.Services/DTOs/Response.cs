@@ -287,6 +287,7 @@
 
     public class StudentLearningCourse
     {
+        public int Id { get; set; }
         public string Title { get; set; }
         public string ImageURL { get; set; }
         public List<TagResponse> Tags { get; set; }

@@ -305,6 +305,23 @@ namespace EduTrailblaze.Services
                 throw new Exception("An error occurred while deleting the userProgress: " + ex.Message);
             }
         }
+        
+        public async Task DeleteUserProgress(int userProgressId)
+        {
+            try
+            {
+                var userProgress = await _userProgressRepository.GetByIdAsync(userProgressId);
+                if (userProgress == null)
+                {
+                    throw new Exception("UserProgress not found.");
+                }
+                await _userProgressRepository.DeleteAsync(userProgress);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while deleting the userProgress: " + ex.Message);
+            }
+        }
 
         public async Task<UserProgress?> GetUserProgress(string userId, int? sectionId, int? lectureId, int? quizId)
         {
@@ -312,7 +329,7 @@ namespace EduTrailblaze.Services
             {
                 var userProgress = await (await _userProgressRepository.GetDbSet())
                     .Where(up => up.UserId == userId)
-                    .Where(up => up.SectionId == sectionId || up.LectureId == lectureId || up.QuizId == quizId)
+                    .Where(up => (up.SectionId != null && up.SectionId != 0 && up.SectionId == sectionId) || (up.LectureId != null && up.LectureId != 0 && up.LectureId == lectureId) || up.QuizId == quizId)
                     .FirstOrDefaultAsync();
                 return userProgress;
             }

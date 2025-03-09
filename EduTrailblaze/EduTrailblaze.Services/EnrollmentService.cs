@@ -267,6 +267,7 @@ namespace EduTrailblaze.Services
 
                     courses.Add(new StudentLearningCourse
                     {
+                        Id = course.Id,
                         Title = course.Title,
                         ImageURL = course.ImageURL,
                         Tags = await _courseService.GetTagInformation(course.Id),
