@@ -193,6 +193,7 @@ namespace EduTrailblaze.Services
                         var sectionProgress = new UserProgress
                         {
                             UserId = userProgressRequest.UserId,
+                            CourseClassId = courseClassId,
                             SectionId = sectionId,
                             ProgressType = "Section",
                             ProgressPercentage = 100,
