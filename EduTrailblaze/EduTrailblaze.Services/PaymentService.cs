@@ -5,7 +5,6 @@ using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Interfaces;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
-using StackExchange.Redis;
 
 namespace EduTrailblaze.Services
 {

@@ -1,6 +1,6 @@
-﻿using EduTrailblaze.Services.DTOs;
+﻿using EduTrailblaze.Entities;
+using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EduTrailblaze.API.Controllers
@@ -64,6 +64,20 @@ namespace EduTrailblaze.API.Controllers
 
         [HttpPost]
         public async Task<IActionResult> AddUserCertificate(CreateUserCertificateRequest userCertificate)
+        {
+            try
+            {
+                await _userCertificateService.AddUserCertificate(userCertificate);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddUserCertificate(UserCertificate userCertificate)
         {
             try
             {
