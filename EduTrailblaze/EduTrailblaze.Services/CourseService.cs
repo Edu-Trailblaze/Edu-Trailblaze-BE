@@ -30,8 +30,9 @@ namespace EduTrailblaze.Services
         private readonly IDiscountService _discountService;
         private readonly IMapper _mapper;
         private readonly ICloudinaryService _cloudinaryService;
+        private readonly ICertificateService _certificateService;
 
-        public CourseService(IRepository<Course, int> courseRepository, IReviewService reviewService, IElasticsearchService elasticsearchService, IMapper mapper, IDiscountService discountService, IRepository<CourseInstructor, int> courseInstructorRepository, IRepository<Enrollment, int> enrollment, UserManager<User> userManager, IRepository<CourseLanguage, int> courseLanguageRepository, IRepository<CourseTag, int> courseTagRepository, ICourseClassService courseClassService, IRepository<UserProfile, string> userProfileRepository, IRepository<Coupon, int> couponRepository, IRepository<Order, int> orderRepository, IRepository<OrderDetail, int> orderDetailRepository, ICloudinaryService cloudinaryService)
+        public CourseService(IRepository<Course, int> courseRepository, IReviewService reviewService, IElasticsearchService elasticsearchService, IMapper mapper, IDiscountService discountService, IRepository<CourseInstructor, int> courseInstructorRepository, IRepository<Enrollment, int> enrollment, UserManager<User> userManager, IRepository<CourseLanguage, int> courseLanguageRepository, IRepository<CourseTag, int> courseTagRepository, ICourseClassService courseClassService, IRepository<UserProfile, string> userProfileRepository, IRepository<Coupon, int> couponRepository, IRepository<Order, int> orderRepository, IRepository<OrderDetail, int> orderDetailRepository, ICloudinaryService cloudinaryService, ICertificateService certificateService)
         {
             _courseRepository = courseRepository;
             _reviewService = reviewService;
@@ -49,7 +50,7 @@ namespace EduTrailblaze.Services
             _orderDetailRepository = orderDetailRepository;
             _orderRepository = orderRepository;
             _cloudinaryService = cloudinaryService;
-
+            _certificateService = certificateService;
         }
 
         public async Task<Course?> GetCourse(int courseId)
@@ -157,6 +158,11 @@ namespace EduTrailblaze.Services
                 };
 
                 await _courseClassService.AddCourseClass(createCourseClassRequest);
+
+                await _certificateService.AddCertificate(new CreateCertificateRequest
+                {
+                    CourseId = newCourse.Id,
+                });
                 return new ApiResponse
                 {
                     Data = new { CourseId = newCourse.Id },

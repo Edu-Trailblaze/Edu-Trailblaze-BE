@@ -424,7 +424,7 @@ namespace EduTrailblaze.Services.DTOs
     public class CreateCertificateRequest
     {
         public int CourseId { get; set; }
-        public string CertificateTemplateUrl { get; set; }
+        public string CertificateTemplateUrl { get; set; } = "https://firebasestorage.googleapis.com/v0/b/court-callers.appspot.com/o/EduTrailblaze%2FCertificate%20Template.jpg?alt=media&token=be334afc-7ff4-4d71-b013-e1be98dac73d";
     }
 
     public class CreateCertificateRequestValidator : AbstractValidator<CreateCertificateRequest>
