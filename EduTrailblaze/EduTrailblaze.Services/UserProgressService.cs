@@ -305,7 +305,7 @@ namespace EduTrailblaze.Services
                 throw new Exception("An error occurred while deleting the userProgress: " + ex.Message);
             }
         }
-        
+
         public async Task DeleteUserProgress(int userProgressId)
         {
             try
@@ -323,14 +323,20 @@ namespace EduTrailblaze.Services
             }
         }
 
-        public async Task<UserProgress?> GetUserProgress(string userId, int? sectionId, int? lectureId, int? quizId)
+        public async Task<List<UserProgress>?> GetUserProgress(string userId, int? sectionId, int? lectureId, int? quizId)
         {
             try
             {
-                var userProgress = await (await _userProgressRepository.GetDbSet())
+                var userProgressQuery = await _userProgressRepository.GetDbSet();
+
+                var userProgress = await userProgressQuery
                     .Where(up => up.UserId == userId)
-                    .Where(up => (up.SectionId != null && up.SectionId != 0 && up.SectionId == sectionId) || (up.LectureId != null && up.LectureId != 0 && up.LectureId == lectureId) || up.QuizId == quizId)
-                    .FirstOrDefaultAsync();
+                    .Where(up =>
+                        (sectionId != null && sectionId != 0 && up.SectionId == sectionId) ||
+                        (lectureId != null && lectureId != 0 && up.LectureId == lectureId) ||
+                        (quizId != null && quizId != 0 && up.QuizId == quizId))
+                    .ToListAsync();
+
                 return userProgress;
             }
             catch (Exception ex)
