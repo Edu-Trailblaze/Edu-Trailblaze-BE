@@ -11,13 +11,15 @@ namespace EduTrailblaze.Services
     {
         private readonly IRepository<UserProgress, int> _userProgressRepository;
         private readonly IRepository<Lecture, int> _lectureRepository;
+        private readonly IRepository<Section, int> _sectionRepository;
         private readonly IEnrollmentService _enrollmentService;
 
-        public UserProgressService(IRepository<UserProgress, int> userProgressRepository, IEnrollmentService enrollmentService, IRepository<Lecture, int> lectureRepository)
+        public UserProgressService(IRepository<UserProgress, int> userProgressRepository, IEnrollmentService enrollmentService, IRepository<Lecture, int> lectureRepository, IRepository<Section, int> sectionRepository)
         {
             _userProgressRepository = userProgressRepository;
             _enrollmentService = enrollmentService;
             _lectureRepository = lectureRepository;
+            _sectionRepository = sectionRepository;
         }
 
         public async Task<UserProgress?> GetUserProgress(int userProgressId)
@@ -125,6 +127,12 @@ namespace EduTrailblaze.Services
         {
             try
             {
+                var lecture = await _lectureRepository.GetByIdAsync(userProgressRequest.LectureId);
+                if (lecture == null)
+                {
+                    throw new Exception("Lecture not found.");
+                }
+
                 var lectureDbSet = await _lectureRepository.GetDbSet();
 
                 var courseId = await lectureDbSet
@@ -133,6 +141,15 @@ namespace EduTrailblaze.Services
                     .FirstOrDefaultAsync();
 
                 var courseClassId = await _enrollmentService.GetStudentCourseClass(userProgressRequest.UserId, courseId);
+
+                var checkLectureProgress = await (await _userProgressRepository.GetDbSet())
+                    .Where(up => up.LectureId == userProgressRequest.LectureId && up.UserId == userProgressRequest.UserId)
+                    .FirstOrDefaultAsync();
+
+                if (checkLectureProgress != null)
+                {
+                    return;
+                }
 
                 var userProgress = new UserProgress
                 {
@@ -147,73 +164,82 @@ namespace EduTrailblaze.Services
 
                 await _userProgressRepository.AddAsync(userProgress);
 
-                var lecture = await (await _userProgressRepository.GetDbSet())
-                    .Where(up => up.LectureId == userProgressRequest.LectureId && up.UserId == userProgressRequest.UserId)
-                    .Select(up => up.Lecture)
-                    .FirstOrDefaultAsync();
+                var sectionId = lecture.SectionId;
+                var allLecturesInSection = await lectureDbSet
+                    .Where(l => l.SectionId == sectionId)
+                    .ToListAsync();
 
-                if (lecture != null)
+                var userProgressDbSet = await _userProgressRepository.GetDbSet();
+                var allLecturesCompleted = true;
+
+                foreach (var lectureItem in allLecturesInSection)
                 {
-                    var sectionId = lecture.SectionId;
-                    var allLecturesInSection = await (await _userProgressRepository.GetDbSet())
-                        .Where(up => up.SectionId == sectionId && up.UserId == userProgressRequest.UserId)
+                    var lectureItemProgress = await userProgressDbSet
+                        .FirstOrDefaultAsync(up => up.LectureId == lectureItem.Id && up.UserId == userProgressRequest.UserId);
+
+                    if (userProgress == null || !userProgress.IsCompleted)
+                    {
+                        allLecturesCompleted = false;
+                        break;
+                    }
+                }
+
+                if (allLecturesCompleted)
+                {
+                    var checkSectionProgress = await userProgressDbSet
+                        .FirstOrDefaultAsync(up => up.SectionId == sectionId && up.UserId == userProgressRequest.UserId);
+                    if (checkSectionProgress == null)
+                    {
+                        var sectionProgress = new UserProgress
+                        {
+                            UserId = userProgressRequest.UserId,
+                            SectionId = sectionId,
+                            ProgressType = "Section",
+                            ProgressPercentage = 100,
+                            IsCompleted = true,
+                            LastAccessed = DateTimeHelper.GetVietnamTime()
+                        };
+
+                        await _userProgressRepository.AddAsync(sectionProgress);
+                    }
+
+                    var section = await _sectionRepository.GetByIdAsync(sectionId);
+
+                    var allSectionsInCourse = await (await _sectionRepository.GetDbSet())
+                        .Where(s => s.CourseId == courseId)
                         .ToListAsync();
 
-                    var allLecturesCompleted = allLecturesInSection.All(up => up.IsCompleted);
+                    var allSectionsCompleted = true;
 
-                    if (allLecturesCompleted)
+                    foreach (var sectionItem in allSectionsInCourse)
                     {
-                        var checkSectionProgress = await (await _userProgressRepository.GetDbSet())
-                            .Where(up => up.SectionId == sectionId && up.UserId == userProgressRequest.UserId)
-                            .FirstOrDefaultAsync();
-                        if (checkSectionProgress != null)
+                        var sectionProgress = await userProgressDbSet
+                            .FirstOrDefaultAsync(up => up.SectionId == sectionItem.Id && up.UserId == userProgressRequest.UserId && up.ProgressType == "Section");
+
+                        if (sectionProgress == null || !sectionProgress.IsCompleted)
                         {
-                            var sectionProgress = new UserProgress
+                            allSectionsCompleted = false;
+                            break;
+                        }
+                    }
+
+                    if (allSectionsCompleted)
+                    {
+                        var checkCourseProgress = await userProgressDbSet
+                            .FirstOrDefaultAsync(up => up.CourseClassId == courseClassId && up.UserId == userProgressRequest.UserId && up.ProgressType == "Course");
+                        if (checkCourseProgress == null)
+                        {
+                            var courseProgress = new UserProgress
                             {
                                 UserId = userProgressRequest.UserId,
-                                SectionId = sectionId,
-                                ProgressType = "Section",
+                                CourseClassId = courseClassId,
+                                ProgressType = "Course",
                                 ProgressPercentage = 100,
                                 IsCompleted = true,
                                 LastAccessed = DateTimeHelper.GetVietnamTime()
                             };
 
-                            await _userProgressRepository.AddAsync(sectionProgress);
-                        }
-
-                        var section = await (await _userProgressRepository.GetDbSet())
-                            .Where(up => up.SectionId == sectionId && up.UserId == userProgressRequest.UserId)
-                            .Select(up => up.Section)
-                            .FirstOrDefaultAsync();
-
-                        if (section != null)
-                        {
-                            var allSectionsInCourse = await (await _userProgressRepository.GetDbSet())
-                                .Where(up => up.CourseClassId == courseClassId && up.UserId == userProgressRequest.UserId)
-                                .ToListAsync();
-
-                            var allSectionsCompleted = allSectionsInCourse.All(up => up.IsCompleted);
-
-                            if (allSectionsCompleted)
-                            {
-                                var checkCourseProgress = await (await _userProgressRepository.GetDbSet())
-                                    .Where(up => up.CourseClassId == courseClassId && up.UserId == userProgressRequest.UserId)
-                                    .FirstOrDefaultAsync();
-                                if (checkCourseProgress != null)
-                                {
-                                    var courseProgress = new UserProgress
-                                    {
-                                        UserId = userProgressRequest.UserId,
-                                        CourseClassId = courseClassId,
-                                        ProgressType = "Course",
-                                        ProgressPercentage = 100,
-                                        IsCompleted = true,
-                                        LastAccessed = DateTimeHelper.GetVietnamTime()
-                                    };
-
-                                    await _userProgressRepository.AddAsync(courseProgress);
-                                }
-                            }
+                            await _userProgressRepository.AddAsync(courseProgress);
                         }
                     }
                 }
