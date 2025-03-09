@@ -28,7 +28,7 @@ namespace EduTrailblaze.API.Controllers
             }
         }
 
-        [HttpGet("validate")]
+        [HttpPost("validate")]
         public async Task<IActionResult> ValidatePaymentResponse()
         {
             try
