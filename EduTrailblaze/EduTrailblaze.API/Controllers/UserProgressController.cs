@@ -46,5 +46,23 @@ namespace EduTrailblaze.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUserProgress()
+        {
+            try
+            {
+                var userProgress = await _userProgressService.GetUserProgresss();
+                if (userProgress == null)
+                {
+                    return NotFound();
+                }
+                return Ok(userProgress);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }
