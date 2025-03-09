@@ -2200,4 +2200,29 @@ namespace EduTrailblaze.Services.DTOs
                 .NotEmpty().WithMessage("CourseId is required");
         }
     }
+
+    public class GetCourseCertificatesRequest
+    {
+        public int? CourseId { get; set; }
+        public string? UserId { get; set; }
+        public DateTime? FromDate { get; set; }
+        public DateTime? ToDate { get; set; }
+    }
+
+    public class GetCourseCertificatesRequestValidator : AbstractValidator<GetCourseCertificatesRequest>
+    {
+        public GetCourseCertificatesRequestValidator()
+        {
+            RuleFor(x => x.CourseId)
+                .NotEmpty().WithMessage("CourseId is required");
+            RuleFor(x => x.UserId)
+                .NotEmpty().WithMessage("UserId is required");
+            RuleFor(x => x.FromDate)
+                .LessThanOrEqualTo(x => x.ToDate).WithMessage("FromDate must be less than or equal to ToDate")
+                .When(x => x.FromDate.HasValue && x.ToDate.HasValue);
+            RuleFor(x => x.ToDate)
+                .GreaterThanOrEqualTo(x => x.FromDate).WithMessage("ToDate must be greater than or equal to FromDate")
+                .When(x => x.FromDate.HasValue && x.ToDate.HasValue);
+        }
+    }
 }

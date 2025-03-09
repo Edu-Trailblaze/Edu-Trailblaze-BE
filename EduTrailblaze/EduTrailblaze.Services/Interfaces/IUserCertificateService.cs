@@ -16,5 +16,7 @@ namespace EduTrailblaze.Services.Interfaces
         Task DeleteUserCertificate(UserCertificate userCertificate);
 
         Task AddUserCertificate(CreateUserCertificateRequest userCertificate);
+
+        Task<List<CourseCertificatesResponse>> GetUserCertificatesByConditions(GetCourseCertificatesRequest request);
     }
 }

@@ -1,4 +1,5 @@
-﻿using EduTrailblaze.Services.Interfaces;
+﻿using EduTrailblaze.Services.DTOs;
+using EduTrailblaze.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -47,6 +48,18 @@ namespace EduTrailblaze.API.Controllers
             }
         }
 
-
+        [HttpPost("get-user-certificates-by-conditions")]
+        public async Task<IActionResult> GetUserCertificatesByConditions(GetCourseCertificatesRequest request)
+        {
+            try
+            {
+                var userCertificates = await _userCertificateService.GetUserCertificatesByConditions(request);
+                return Ok(userCertificates);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }

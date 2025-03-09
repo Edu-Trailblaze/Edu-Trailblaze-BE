@@ -5,6 +5,7 @@ using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Helper;
 using Firebase.Storage;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace EduTrailblaze.Services
 {
@@ -145,6 +146,49 @@ namespace EduTrailblaze.Services
             catch (Exception ex)
             {
                 throw new Exception("An error occurred while deleting the userCertificate: " + ex.Message);
+            }
+        }
+
+        public async Task<List<CourseCertificatesResponse>> GetUserCertificatesByConditions(GetCourseCertificatesRequest request)
+        {
+            try
+            {
+                var userCertificatesQuery = await _userCertificateRepository.GetDbSet();
+
+                if (request.CourseId.HasValue)
+                {
+                    userCertificatesQuery = userCertificatesQuery.Where(uc => uc.Certificate.CourseId == request.CourseId.Value);
+                }
+
+                if (request.UserId != null)
+                {
+                    userCertificatesQuery = userCertificatesQuery.Where(uc => uc.UserId == request.UserId);
+                }
+
+                if (request.FromDate.HasValue)
+                {
+                    userCertificatesQuery = userCertificatesQuery.Where(uc => uc.IssuedAt >= request.FromDate.Value);
+                }
+
+                if (request.ToDate.HasValue)
+                {
+                    userCertificatesQuery = userCertificatesQuery.Where(uc => uc.IssuedAt <= request.ToDate.Value);
+                }
+
+                var userCertificates = await userCertificatesQuery.ToListAsync();
+                var certificateResponses = userCertificates.Select(uc => new CourseCertificatesResponse
+                {
+                    CertificateUrl = uc.CertificateUrl,
+                    UserId = uc.UserId,
+                    CourseId = uc.Certificate.CourseId,
+                    IssuedAt = uc.IssuedAt
+                }).ToList();
+
+                return certificateResponses;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the userCertificates: " + ex.Message);
             }
         }
     }

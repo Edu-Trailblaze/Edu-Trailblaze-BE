@@ -308,4 +308,12 @@
     {
         public string Status { get; set; }
     }
+
+    public class CourseCertificatesResponse
+    {
+        public string CertificateUrl { get; set; }
+        public string UserId { get; set; }
+        public int CourseId { get; set; }
+        public DateTimeOffset IssuedAt { get; set; }
+    }
 }
