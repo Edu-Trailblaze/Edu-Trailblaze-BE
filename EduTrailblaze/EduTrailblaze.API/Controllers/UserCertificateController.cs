@@ -49,7 +49,7 @@ namespace EduTrailblaze.API.Controllers
         }
 
         [HttpGet("get-user-certificates-by-conditions")]
-        public async Task<IActionResult> GetUserCertificatesByConditions(GetCourseCertificatesRequest request)
+        public async Task<IActionResult> GetUserCertificatesByConditions([FromQuery] GetCourseCertificatesRequest request)
         {
             try
             {
