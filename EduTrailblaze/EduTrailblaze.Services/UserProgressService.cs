@@ -148,7 +148,7 @@ namespace EduTrailblaze.Services
                 await _userProgressRepository.AddAsync(userProgress);
 
                 var lecture = await (await _userProgressRepository.GetDbSet())
-                    .Where(up => up.LectureId == userProgressRequest.LectureId)
+                    .Where(up => up.LectureId == userProgressRequest.LectureId && up.UserId == userProgressRequest.UserId)
                     .Select(up => up.Lecture)
                     .FirstOrDefaultAsync();
 
@@ -163,20 +163,26 @@ namespace EduTrailblaze.Services
 
                     if (allLecturesCompleted)
                     {
-                        var sectionProgress = new UserProgress
+                        var checkSectionProgress = await (await _userProgressRepository.GetDbSet())
+                            .Where(up => up.SectionId == sectionId && up.UserId == userProgressRequest.UserId)
+                            .FirstOrDefaultAsync();
+                        if (checkSectionProgress != null)
                         {
-                            UserId = userProgressRequest.UserId,
-                            SectionId = sectionId,
-                            ProgressType = "Section",
-                            ProgressPercentage = 100,
-                            IsCompleted = true,
-                            LastAccessed = DateTimeHelper.GetVietnamTime()
-                        };
+                            var sectionProgress = new UserProgress
+                            {
+                                UserId = userProgressRequest.UserId,
+                                SectionId = sectionId,
+                                ProgressType = "Section",
+                                ProgressPercentage = 100,
+                                IsCompleted = true,
+                                LastAccessed = DateTimeHelper.GetVietnamTime()
+                            };
 
-                        await _userProgressRepository.AddAsync(sectionProgress);
+                            await _userProgressRepository.AddAsync(sectionProgress);
+                        }
 
                         var section = await (await _userProgressRepository.GetDbSet())
-                            .Where(up => up.SectionId == sectionId)
+                            .Where(up => up.SectionId == sectionId && up.UserId == userProgressRequest.UserId)
                             .Select(up => up.Section)
                             .FirstOrDefaultAsync();
 
@@ -190,17 +196,23 @@ namespace EduTrailblaze.Services
 
                             if (allSectionsCompleted)
                             {
-                                var courseProgress = new UserProgress
+                                var checkCourseProgress = await (await _userProgressRepository.GetDbSet())
+                                    .Where(up => up.CourseClassId == courseClassId && up.UserId == userProgressRequest.UserId)
+                                    .FirstOrDefaultAsync();
+                                if (checkCourseProgress != null)
                                 {
-                                    UserId = userProgressRequest.UserId,
-                                    CourseClassId = courseClassId,
-                                    ProgressType = "Course",
-                                    ProgressPercentage = 100,
-                                    IsCompleted = true,
-                                    LastAccessed = DateTimeHelper.GetVietnamTime()
-                                };
+                                    var courseProgress = new UserProgress
+                                    {
+                                        UserId = userProgressRequest.UserId,
+                                        CourseClassId = courseClassId,
+                                        ProgressType = "Course",
+                                        ProgressPercentage = 100,
+                                        IsCompleted = true,
+                                        LastAccessed = DateTimeHelper.GetVietnamTime()
+                                    };
 
-                                await _userProgressRepository.AddAsync(courseProgress);
+                                    await _userProgressRepository.AddAsync(courseProgress);
+                                }
                             }
                         }
                     }
