@@ -1513,9 +1513,12 @@ namespace EduTrailblaze.Services
                 foreach (var course in courses)
                 {
                     var totalLectures = await TotalLectures(course.Id);
-                    var isCompleted = course.HasVideo == true && course.HasQuiz == true && course.HasDoc == true && totalLectures > course.HasAtLeastLecture;
+                    var completionPercentage = 0;
 
-                    var completionPercentage = isCompleted ? 100 : 0;
+                    if (course.HasVideo == true) completionPercentage += 25;
+                    if (course.HasQuiz == true) completionPercentage += 25;
+                    if (course.HasDoc == true) completionPercentage += 25;
+                    if (totalLectures >= course.HasAtLeastLecture) completionPercentage += 25;
 
                     response.Add(new CourseCompletionPercentageResponse
                     {
