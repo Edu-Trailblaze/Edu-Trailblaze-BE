@@ -316,4 +316,12 @@
         public int CourseId { get; set; }
         public DateTimeOffset IssuedAt { get; set; }
     }
+
+    public class CourseCompletionPercentageResponse
+    {
+        public int CourseId { get; set; }
+        public string CourseName { get; set; }
+        public decimal CompletionPercentage { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
+    }
 }

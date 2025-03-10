@@ -1484,5 +1484,105 @@ namespace EduTrailblaze.Services
 
             return hasBought;
         }
+
+        public async Task<List<CourseCompletionPercentageResponse>> GetCourseCompletionPercentage(GetCourseCompletionPercentage request)
+        {
+            try
+            {
+                var dbSet = await _courseRepository.GetDbSet();
+                var query = dbSet.AsQueryable();
+
+                if (request.CourseId.HasValue)
+                {
+                    query = query.Where(c => c.Id == request.CourseId.Value);
+                }
+
+                if (!string.IsNullOrEmpty(request.InstructorId))
+                {
+                    query = query.Where(c => c.CourseInstructors.Any(ci => ci.InstructorId == request.InstructorId));
+                }
+
+                if (!string.IsNullOrEmpty(request.CourseName))
+                {
+                    query = query.Where(c => c.Title.Contains(request.CourseName));
+                }
+
+                var courses = await query.ToListAsync();
+                var response = new List<CourseCompletionPercentageResponse>();
+
+                foreach (var course in courses)
+                {
+                    var totalLectures = await TotalLectures(course.Id);
+                    var isCompleted = course.HasVideo == true && course.HasQuiz == true && course.HasDoc == true && totalLectures > course.HasAtLeastLecture;
+
+                    var completionPercentage = isCompleted ? 100 : 0;
+
+                    response.Add(new CourseCompletionPercentageResponse
+                    {
+                        CourseId = course.Id,
+                        CourseName = course.Title,
+                        CompletionPercentage = completionPercentage,
+                        CreatedAt = course.CreatedAt
+                    });
+                }
+
+                if (request.IsCompleted.HasValue)
+                {
+                    response = response.Where(r => r.CompletionPercentage == (request.IsCompleted.Value ? 100 : 0)).ToList();
+                }
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the course completion percentage: " + ex.Message);
+            }
+        }
+
+        public async Task<PaginatedList<CourseCompletionPercentageResponse>> GetPagingCourseCompletionPercentage(GetCourseCompletionPercentage request, Paging paging)
+        {
+            try
+            {
+                var courseCompletionPercentage = await GetCourseCompletionPercentage(request);
+
+                if (!paging.PageSize.HasValue || paging.PageSize <= 0)
+                {
+                    paging.PageSize = 10;
+                }
+                if (!paging.PageIndex.HasValue || paging.PageIndex <= 0)
+                {
+                    paging.PageIndex = 1;
+                }
+
+                var validSortOptions = new[] { "percentage", "newest" };
+                if (string.IsNullOrEmpty(paging.Sort) || !validSortOptions.Contains(paging.Sort))
+                {
+                    paging.Sort = "newest";
+                }
+
+                // Apply sorting
+                courseCompletionPercentage = paging.Sort switch
+                {
+                    "percentage" => paging.SortDirection == "desc"
+                        ? courseCompletionPercentage.OrderByDescending(c => c.CompletionPercentage).ToList()
+                        : courseCompletionPercentage.OrderBy(c => c.CompletionPercentage).ToList(),
+                    "newest" => paging.SortDirection == "desc"
+                        ? courseCompletionPercentage.OrderByDescending(c => c.CreatedAt).ToList()
+                        : courseCompletionPercentage.OrderBy(c => c.CreatedAt).ToList(),
+                    _ => courseCompletionPercentage
+                };
+
+                var totalCount = courseCompletionPercentage.Count;
+                var skip = (paging.PageIndex.Value - 1) * paging.PageSize.Value;
+                var take = paging.PageSize.Value;
+                var paginatedResponse = courseCompletionPercentage.Skip(skip).Take(take).ToList();
+
+                return new PaginatedList<CourseCompletionPercentageResponse>(paginatedResponse, totalCount, paging.PageIndex.Value, paging.PageSize.Value);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the course completion percentage: " + ex.Message);
+            }
+        }
     }
 }

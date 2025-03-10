@@ -43,6 +43,14 @@ namespace EduTrailblaze.Entities
         [Required]
         public bool IsPublished { get; set; }
 
+        public int? HasAtLeastLecture { get; set; } = 3;
+
+        public bool? HasVideo { get; set; } = false;
+
+        public bool? HasQuiz { get; set; } = false;
+
+        public bool? HasDoc { get; set; } = false;
+
         public bool IsDeleted { get; set; } = false;
 
 

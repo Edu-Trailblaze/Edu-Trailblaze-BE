@@ -58,5 +58,6 @@ namespace EduTrailblaze.Services.Interfaces
 
         Task<List<TagResponse>> GetTagInformation(int courseId);
 
+        Task<PaginatedList<CourseCompletionPercentageResponse>> GetPagingCourseCompletionPercentage(GetCourseCompletionPercentage request, Paging paging);
     }
 }

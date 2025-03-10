@@ -2242,4 +2242,23 @@ namespace EduTrailblaze.Services.DTOs
                 .NotEmpty().WithMessage("CertificateUrl is required");
         }
     }
+
+    public class GetCourseCompletionPercentage
+    {
+        public int? CourseId { get; set; }
+        public string? InstructorId { get; set; }
+        public string? CourseName { get; set; }
+        public bool? IsCompleted { get; set; }
+    }
+
+    public class GetCourseCompletionPercentageValidator : AbstractValidator<GetCourseCompletionPercentage>
+    {
+        public GetCourseCompletionPercentageValidator()
+        {
+            RuleFor(x => x.CourseName)
+                .MaximumLength(255).WithMessage("CourseName cannot be longer than 255 characters");
+            RuleFor(x => x.InstructorId)
+                .MaximumLength(450).WithMessage("InstructorId cannot be longer than 450 characters");
+        }
+    }
 }

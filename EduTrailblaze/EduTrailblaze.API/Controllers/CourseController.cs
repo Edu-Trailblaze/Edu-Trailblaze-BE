@@ -221,5 +221,19 @@ namespace EduTrailblaze.API.Controllers
             }
         }
 
+        [HttpGet("get-paging-course-completion-percentage")]
+        public async Task<IActionResult> GetPagingCourseCompletionPercentage([FromQuery] GetCourseCompletionPercentage request, [FromQuery] Paging paging)
+        {
+            try
+            {
+                var res = await _courseService.GetPagingCourseCompletionPercentage(request, paging);
+                if (res == null) return NotFound();
+                return Ok(res);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }
