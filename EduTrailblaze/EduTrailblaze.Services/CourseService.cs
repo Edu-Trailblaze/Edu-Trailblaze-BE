@@ -1524,6 +1524,7 @@ namespace EduTrailblaze.Services
                     {
                         CourseId = course.Id,
                         CourseName = course.Title,
+                        CourseImage = course.ImageURL,
                         CompletionPercentage = completionPercentage,
                         CreatedAt = course.CreatedAt
                     });

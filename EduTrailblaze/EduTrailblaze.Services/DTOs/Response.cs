@@ -321,6 +321,7 @@
     {
         public int CourseId { get; set; }
         public string CourseName { get; set; }
+        public string CourseImage { get; set; }
         public decimal CompletionPercentage { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
     }
