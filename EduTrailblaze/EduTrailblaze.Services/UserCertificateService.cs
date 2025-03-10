@@ -5,7 +5,6 @@ using EduTrailblaze.Services.Helper;
 using EduTrailblaze.Services.Interfaces;
 using Firebase.Storage;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace EduTrailblaze.Services
 {

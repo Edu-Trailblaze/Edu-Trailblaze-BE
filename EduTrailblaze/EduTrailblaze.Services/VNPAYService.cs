@@ -33,7 +33,7 @@ namespace EduTrailblaze.Services
                 string hostName = Dns.GetHostName();
                 string clientIPAddress = Dns.GetHostAddresses(hostName).GetValue(0).ToString();
                 PayLib pay = new PayLib();
-                var vnp_Amount = amount * 100000;
+                var vnp_Amount = amount * 100;
                 pay.AddRequestData("vnp_Version", PayLib.VERSION);
                 pay.AddRequestData("vnp_Command", "pay");
                 pay.AddRequestData("vnp_TmnCode", _VNPAYSettings.VnPayTmnCode);

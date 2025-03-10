@@ -36,7 +36,7 @@ namespace EduTrailblaze.Services
                 string customOrderId = "O-" + orderId.ToString() + "-" + Guid.NewGuid().ToString();
 
                 // Ensure the amount is formatted correctly
-                long formattedAmount = (long)(amount * 1000); // Convert to VND
+                long formattedAmount = (long)(amount); // Convert to VND
 
                 // Create raw signature string
                 string rawHash = $"accessKey={_momoSettings.MoMoAccessKey}&amount={formattedAmount}&extraData={extraData}&ipnUrl={_momoSettings.MoMoNotifyUrl}&orderId={customOrderId}&orderInfo={orderInfo}&partnerCode={_momoSettings.MoMoPartnerCode}&redirectUrl={_momoSettings.MoMoReturnUrl}&requestId={requestId}&requestType={requestType}";

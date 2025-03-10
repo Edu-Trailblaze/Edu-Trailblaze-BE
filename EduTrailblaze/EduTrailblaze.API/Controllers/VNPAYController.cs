@@ -37,7 +37,9 @@ namespace EduTrailblaze.API.Controllers
                 {
                     string queryString = Request.QueryString.Value;
                     var response = await _vnpayService.ValidatePaymentResponse(queryString);
-                    return Redirect(response.RedirectUrl);
+                    //return Redirect(response.RedirectUrl);
+
+                    return Ok(response.RedirectUrl);
                 }
                 return BadRequest();
             }
