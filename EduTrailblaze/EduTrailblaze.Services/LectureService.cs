@@ -120,7 +120,7 @@ namespace EduTrailblaze.Services
                     Duration = lecture.Duration ?? 0,
                 };
                 await _lectureRepository.AddAsync(lectureEntity);
-                await UpdateLectureDuration(lecture.SectionId);
+                await UpdateLectureDuration(lectureEntity.Id);
                 await _sectionService.UpdateNumberOfLectures(lecture.SectionId);
 
                 return _mapper.Map<LectureDTO>(lectureEntity);
