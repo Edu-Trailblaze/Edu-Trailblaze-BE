@@ -5,6 +5,7 @@ using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Interfaces;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace EduTrailblaze.Services
 {
@@ -20,8 +21,8 @@ namespace EduTrailblaze.Services
         private readonly IMapper _mapper;
         private readonly IPayPalService _payPalService;
         private readonly IBackgroundJobClient _backgroundJobClient;
-
-        public OrderService(IRepository<Order, int> orderRepository, IPaymentService paymentService, ICartService cartService, IOrderDetailService orderDetailService, IMoMoService moMoService, IVNPAYService vNPAYService, IMapper mapper, IPayPalService payPalService, IBackgroundJobClient backgroundJobClient)
+        private readonly IConfiguration _configuration;
+        public OrderService(IRepository<Order, int> orderRepository, IPaymentService paymentService, ICartService cartService, IOrderDetailService orderDetailService, IMoMoService moMoService, IVNPAYService vNPAYService, IMapper mapper, IPayPalService payPalService, IBackgroundJobClient backgroundJobClient, IConfiguration configuration)
         {
             _orderRepository = orderRepository;
             _paymentService = paymentService;
@@ -32,6 +33,7 @@ namespace EduTrailblaze.Services
             _mapper = mapper;
             _payPalService = payPalService;
             _backgroundJobClient = backgroundJobClient;
+            _configuration = configuration;
         }
 
         public async Task<Order?> GetOrder(int orderId)
@@ -189,7 +191,18 @@ namespace EduTrailblaze.Services
 
                 var payment = await _paymentService.AddPayment(createPaymentRequest);
 
-                string paymentUrl = "";
+                string paymentUrl = _configuration["FE:Url"] + $"/student/payment/paymentSuccess?paymentId={payment.Id}";
+
+                if (order.OrderAmount == 0)
+                {
+                    order.OrderStatus = "Completed";
+                    await UpdateOrder(order);
+
+                    payment.PaymentStatus = "Success";
+                    await _paymentService.UpdatePayment(payment);
+
+                    return paymentUrl;
+                }
 
                 if (paymentMethod == "MoMo")
                 {
