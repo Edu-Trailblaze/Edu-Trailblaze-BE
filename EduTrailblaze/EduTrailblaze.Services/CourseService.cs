@@ -1587,5 +1587,64 @@ namespace EduTrailblaze.Services
                 throw new Exception("An error occurred while getting the course completion percentage: " + ex.Message);
             }
         }
+
+        public async Task CheckAndUpdateCourseContent(int courseId)
+        {
+            try
+            {
+                var course = await _courseRepository.GetByIdAsync(courseId);
+                if (course == null)
+                {
+                    throw new ArgumentException("Invalid course ID");
+                }
+
+                var dbSet = await _courseRepository.GetDbSet();
+                var courseWithLectures = await dbSet
+                    .Include(c => c.Sections)
+                        .ThenInclude(s => s.Lectures)
+                    .FirstOrDefaultAsync(c => c.Id == courseId);
+
+                if (courseWithLectures == null)
+                {
+                    throw new ArgumentException("Invalid course ID");
+                }
+
+                bool hasDoc = false;
+                bool hasQuiz = false;
+                bool hasVideo = false;
+                int totalLectures = 0;
+
+                foreach (var section in courseWithLectures.Sections)
+                {
+                    foreach (var lecture in section.Lectures)
+                    {
+                        if (lecture.LectureType == "Reading")
+                        {
+                            hasDoc = true;
+                        }
+                        if (lecture.LectureType == "Quiz")
+                        {
+                            hasQuiz = true;
+                        }
+                        if (lecture.LectureType == "Video")
+                        {
+                            hasVideo = true;
+                        }
+                        totalLectures++;
+                    }
+                }
+
+                course.HasDoc = hasDoc;
+                course.HasQuiz = hasQuiz;
+                course.HasVideo = hasVideo;
+                course.HasAtLeastLecture = totalLectures;
+
+                await _courseRepository.UpdateAsync(course);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while checking and updating the course content: " + ex.Message);
+            }
+        }
     }
 }

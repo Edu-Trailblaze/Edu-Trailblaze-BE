@@ -13,13 +13,15 @@ namespace EduTrailblaze.Services
     {
         private readonly IRepository<Lecture, int> _lectureRepository;
         private readonly ISectionService _sectionService;
+        private readonly ICourseService _courseService;
         private readonly IMapper _mapper;
 
-        public LectureService(IRepository<Lecture, int> lectureRepository, ISectionService sectionService, IMapper mapper)
+        public LectureService(IRepository<Lecture, int> lectureRepository, ISectionService sectionService, IMapper mapper, ICourseService courseService)
         {
             _lectureRepository = lectureRepository;
             _sectionService = sectionService;
             _mapper = mapper;
+            _courseService = courseService;
         }
 
         public async Task<Lecture?> GetLecture(int lectureId)
@@ -145,8 +147,12 @@ namespace EduTrailblaze.Services
                     Duration = lecture.Duration ?? 0,
                 };
                 await _lectureRepository.AddAsync(lectureEntity);
-                await UpdateLectureDuration(lecture.SectionId);
-                await _sectionService.UpdateNumberOfLectures(lecture.SectionId);
+
+                var updateLectureDurationTask = UpdateLectureDuration(lecture.SectionId);
+                var updateNumberOfLecturesTask = _sectionService.UpdateNumberOfLectures(lecture.SectionId);
+                var checkAndUpdateCourseContentTask = _courseService.CheckAndUpdateCourseContent(lecture.SectionId);
+
+                await Task.WhenAll(updateLectureDurationTask, updateNumberOfLecturesTask, checkAndUpdateCourseContentTask);
 
                 return _mapper.Map<LectureDTO>(lectureEntity);
             }
