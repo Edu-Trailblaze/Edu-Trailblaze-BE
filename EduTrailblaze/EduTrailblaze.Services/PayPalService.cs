@@ -16,14 +16,16 @@ namespace EduTrailblaze.Services
         private readonly IPaymentService _paymentService;
         private readonly ICartService _cartService;
         private readonly HttpClient _httpClient;
+        private readonly ICurrencyExchangeService _currencyExchangeService;
 
-        public PayPalService(IConfiguration configuration, IRepository<Order, int> orderRepository, IPaymentService paymentService, HttpClient httpClient, ICartService cartService)
+        public PayPalService(IConfiguration configuration, IRepository<Order, int> orderRepository, IPaymentService paymentService, HttpClient httpClient, ICartService cartService, ICurrencyExchangeService currencyExchangeService)
         {
             _configuration = configuration;
             _orderRepository = orderRepository;
             _paymentService = paymentService;
             _httpClient = httpClient;
             _cartService = cartService;
+            _currencyExchangeService = currencyExchangeService;
         }
 
         private async Task<string> GetAccessTokenAsync()
@@ -65,19 +67,22 @@ namespace EduTrailblaze.Services
                 var accessToken = await GetAccessTokenAsync();
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
+                var exchangeRate = await _currencyExchangeService.GetExchangeRateAsync("USD", "VND");
+                var amountInUsd = amount / exchangeRate;
+
                 var paymentRequest = new
                 {
                     intent = "sale",
                     payer = new { payment_method = "paypal" },
                     transactions = new[]
                     {
-                        new
-                        {
-                            amount = new { total = amount.ToString("F"), currency = "USD" },
-                            description = "Edu Trailblaze",
-                            custom = $"{orderId}-{paymentId}"
-                        }
-                    },
+                new
+                {
+                    amount = new { total = amountInUsd.ToString("F"), currency = "USD" },
+                    description = "Edu Trailblaze",
+                    custom = $"{orderId}-{paymentId}"
+                }
+            },
                     redirect_urls = new
                     {
                         return_url = _configuration["PayPal:ReturnUrl"],
@@ -156,7 +161,7 @@ namespace EduTrailblaze.Services
                     {
                         IsSuccessful = true,
                         //RedirectUrl = _configuration["FE:Url"] + $"/payment/paymentSuccess?orderId={orderId}"
-                        RedirectUrl = _configuration["FE:Url"] + $"/payment/paymentSuccess?paymentId={paymentId}"
+                        RedirectUrl = _configuration["FE:Url"] + $"/student/payment/paymentSuccess?paymentId={paymentId}"
                     };
                 }
                 else
@@ -174,7 +179,7 @@ namespace EduTrailblaze.Services
                     {
                         IsSuccessful = false,
                         //RedirectUrl = _configuration["FE:Url"] + $"/payment/paymentFailed?orderId={orderId}"
-                        RedirectUrl = _configuration["FE:Url"] + $"/payment/paymentFailed?paymentId={paymentId}"
+                        RedirectUrl = _configuration["FE:Url"] + $"/student/payment/paymentFailed?paymentId={paymentId}"
                     };
                 }
             }
