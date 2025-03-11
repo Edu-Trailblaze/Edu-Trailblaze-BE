@@ -131,6 +131,7 @@
         public string Description { get; set; }
         public int Duration { get; set; }
         public bool IsDeleted { get; set; }
+        public string? DocUrl { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset? UpdatedAt { get; set; }
     }
