@@ -1,4 +1,4 @@
-[![Build and deploy ASP.Net Core app to Azure Web App - edu-trailblaze](https://github.com/edu-trailbla/Edu-Trailblaze-BE/actions/workflows/main_edu-trailblaze.yml/badge.svg)](https://github.com/edu-trailbla/Edu-Trailblaze-BE/actions/workflows/main_edu-trailblaze.yml)
+[![Edu-trailblaze-CD-Main](https://github.com/Edu-Trailblazers/Edu-Trailblaze-BE/actions/workflows/main_edu-trailblaze.yml/badge.svg)](https://github.com/Edu-Trailblazers/Edu-Trailblaze-BE/actions/workflows/main_edu-trailblaze.yml)
 
 # Welcome to Edu Trailblaze Repository
 
