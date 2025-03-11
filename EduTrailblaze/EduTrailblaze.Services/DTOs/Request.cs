@@ -704,8 +704,8 @@ namespace EduTrailblaze.Services.DTOs
         public string LectureType { get; set; } // Reading, Video, Quiz
         public string Title { get; set; }
         public string Description { get; set; }
-        public string? Content { get; set; }
-        public IFormFile? ContentPDFFile { get; set; }
+        public string Content { get; set; }
+        public IFormFile? ContentFile { get; set; }
         public int? Duration { get; set; } = 15;
     }
 
@@ -733,12 +733,23 @@ namespace EduTrailblaze.Services.DTOs
                 .When(x => x.LectureType != "Video");
 
             RuleFor(x => x.Content)
-                .NotEmpty().WithMessage("Content is required if ContentPDFFile is not provided")
-                .When(x => x.ContentPDFFile == null);
+                .NotEmpty().WithMessage("Content is required");
 
-            RuleFor(x => x.ContentPDFFile)
-                .NotEmpty().WithMessage("ContentPDFFile is required if Content is not provided")
-                .When(x => string.IsNullOrEmpty(x.Content));
+            RuleFor(x => x.ContentFile)
+                .Must(BeAValidFileType).WithMessage("ContentFile must be a .docx or .pdf file")
+                .When(x => x.ContentFile != null);
+        }
+
+        private bool BeAValidFileType(IFormFile? file)
+        {
+            if (file == null)
+            {
+                return true;
+            }
+
+            var allowedExtensions = new[] { ".docx", ".pdf" };
+            var fileExtension = Path.GetExtension(file.FileName).ToLowerInvariant();
+            return allowedExtensions.Contains(fileExtension);
         }
     }
 

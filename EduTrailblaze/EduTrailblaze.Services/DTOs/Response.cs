@@ -22,6 +22,8 @@
 
         public string CreatedBy { get; set; }
 
+        public string ApprovalStatus { get; set; }
+
         public DateTimeOffset CreatedAt { get; set; }
 
         public DateTimeOffset? UpdatedAt { get; set; }
@@ -322,6 +324,7 @@
         public int CourseId { get; set; }
         public string CourseName { get; set; }
         public string CourseImage { get; set; }
+        public string ApprovalStatus { get; set; }
         public decimal CompletionPercentage { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
     }

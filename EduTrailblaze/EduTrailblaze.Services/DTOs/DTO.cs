@@ -34,6 +34,8 @@
         public bool? IsEnroll { get; set; }
 
         public bool IsDeleted { get; set; } = false;
+
+        public string ApprovalStatus { get; set; }
     }
 
     public class CartItemDTO

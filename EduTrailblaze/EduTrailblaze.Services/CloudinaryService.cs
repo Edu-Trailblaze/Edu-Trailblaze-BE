@@ -88,5 +88,34 @@ namespace EduTrailblaze.Services
                 return await task;
             }
         }
+
+        public async Task<string> UploadFileAsync(string filePath, string publicId)
+        {
+            try
+            {
+                string fileExtension = Path.GetExtension(filePath);
+                string publicIdWithoutExtension = Path.GetFileNameWithoutExtension(publicId);
+
+                using (var stream = File.OpenRead(filePath))
+                {
+                    var uploadParams = new RawUploadParams
+                    {
+                        File = new FileDescription(filePath),
+                        PublicId = publicIdWithoutExtension,
+                        Overwrite = true,
+                        UseFilename = true,
+                        UniqueFilename = false,
+                    };
+
+                    var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+
+                    return uploadResult.Url.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error uploading file: {ex.Message}");
+            }
+        }
     }
 }

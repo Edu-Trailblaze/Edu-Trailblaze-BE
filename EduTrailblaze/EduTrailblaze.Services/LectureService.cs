@@ -13,15 +13,17 @@ namespace EduTrailblaze.Services
     {
         private readonly IRepository<Lecture, int> _lectureRepository;
         private readonly ISectionService _sectionService;
+        private readonly ICloudinaryService _cloudinaryService;
         private readonly ICourseService _courseService;
         private readonly IMapper _mapper;
 
-        public LectureService(IRepository<Lecture, int> lectureRepository, ISectionService sectionService, IMapper mapper, ICourseService courseService)
+        public LectureService(IRepository<Lecture, int> lectureRepository, ISectionService sectionService, IMapper mapper, ICourseService courseService, ICloudinaryService cloudinaryService)
         {
             _lectureRepository = lectureRepository;
             _sectionService = sectionService;
             _mapper = mapper;
             _courseService = courseService;
+            _cloudinaryService = cloudinaryService;
         }
 
         public async Task<Lecture?> GetLecture(int lectureId)
@@ -105,25 +107,36 @@ namespace EduTrailblaze.Services
         {
             try
             {
-                string? content = null;
-
-                if (lecture.ContentPDFFile != null && lecture.ContentPDFFile.Length > 0)
-                {
-                    content = PDFReader.ExtractText(lecture.ContentPDFFile);
-                }
-
                 var lectureEntity = new Lecture
                 {
                     SectionId = lecture.SectionId,
                     LectureType = lecture.LectureType,
                     Title = lecture.Title,
-                    Content = content ?? lecture.Content,
+                    Content = lecture.Content,
                     Description = lecture.Description,
-                    Duration = lecture.Duration ?? 0,
+                    Duration = lecture.Duration ?? 0
                 };
                 await _lectureRepository.AddAsync(lectureEntity);
+
+                if (lecture.ContentFile != null && lecture.ContentFile.Length > 0)
+                {
+                    var fileExtension = Path.GetExtension(lecture.ContentFile.FileName);
+                    var tempFilePath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}{fileExtension}");
+                    using (var stream = new FileStream(tempFilePath, FileMode.Create))
+                    {
+                        await lecture.ContentFile.CopyToAsync(stream);
+                    }
+
+                    lectureEntity.DocUrl = await _cloudinaryService.UploadFileAsync(tempFilePath, lectureEntity.Id.ToString() + fileExtension);
+
+                    File.Delete(tempFilePath);
+
+                    await _lectureRepository.UpdateAsync(lectureEntity);
+                }
+
                 await UpdateLectureDuration(lectureEntity.Id);
                 await _sectionService.UpdateNumberOfLectures(lecture.SectionId);
+                await _courseService.CheckAndUpdateCourseContent(lecture.SectionId);
 
                 return _mapper.Map<LectureDTO>(lectureEntity);
             }
@@ -349,7 +362,7 @@ namespace EduTrailblaze.Services
                             SectionId = sectionEntity.Id,
                             LectureType = lecture.LectureType,
                             Title = lecture.Title,
-                            ContentPDFFile = lecture.ContentPDFFile,
+                            ContentFile = lecture.ContentFile,
                             Content = lecture.Content,
                             Description = lecture.Description,
                             Duration = lecture.Duration

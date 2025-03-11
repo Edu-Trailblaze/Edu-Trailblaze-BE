@@ -27,7 +27,7 @@ namespace EduTrailblaze.Entities
         [StringLength(25)]
         public string? LectureType { get; set; }
 
-
+        public string? DocUrl { get; set; }
 
         // Navigation properties
         public virtual Section Section { get; set; }

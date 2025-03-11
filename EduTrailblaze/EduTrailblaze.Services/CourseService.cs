@@ -1515,10 +1515,11 @@ namespace EduTrailblaze.Services
                     var totalLectures = await TotalLectures(course.Id);
                     var completionPercentage = 0;
 
-                    if (course.HasVideo == true) completionPercentage += 25;
-                    if (course.HasQuiz == true) completionPercentage += 25;
-                    if (course.HasDoc == true) completionPercentage += 25;
-                    if (totalLectures >= course.HasAtLeastLecture) completionPercentage += 25;
+                    if (course.HasVideo == true) completionPercentage += 20;
+                    if (course.HasQuiz == true) completionPercentage += 20;
+                    if (course.HasDoc == true) completionPercentage += 20;
+                    if (totalLectures >= course.HasAtLeastLecture) completionPercentage += 20;
+                    if (course.ApprovalStatus == "Approved") completionPercentage += 20;
 
                     response.Add(new CourseCompletionPercentageResponse
                     {
