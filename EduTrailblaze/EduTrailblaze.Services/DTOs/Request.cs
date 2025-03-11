@@ -2240,9 +2240,9 @@ namespace EduTrailblaze.Services.DTOs
         public string CertificateUrl { get; set; }
     }
 
-    public class GetCourseCertificatesValidator : AbstractValidator<CreateCourseCertificates>
+    public class CreateCourseCertificatesValidator : AbstractValidator<CreateCourseCertificates>
     {
-        public GetCourseCertificatesValidator()
+        public CreateCourseCertificatesValidator()
         {
             RuleFor(x => x.UserId)
                 .NotEmpty().WithMessage("UserId is required");
@@ -2257,6 +2257,7 @@ namespace EduTrailblaze.Services.DTOs
     {
         public int? CourseId { get; set; }
         public string? InstructorId { get; set; }
+        public int? TagId { get; set; }
         public string? CourseName { get; set; }
         public bool? IsCompleted { get; set; }
     }

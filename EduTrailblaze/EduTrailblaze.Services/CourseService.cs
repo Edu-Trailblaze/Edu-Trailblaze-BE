@@ -1496,6 +1496,11 @@ namespace EduTrailblaze.Services
                 {
                     query = query.Where(c => c.Id == request.CourseId.Value);
                 }
+                
+                if (request.TagId.HasValue)
+                {
+                    query = query.Where(c => c.CourseTags.Any(ct => ct.TagId == request.TagId.Value));
+                }
 
                 if (!string.IsNullOrEmpty(request.InstructorId))
                 {
