@@ -53,6 +53,8 @@ namespace EduTrailblaze.Entities
 
         public bool IsDeleted { get; set; } = false;
 
+        public string ApprovalStatus { get; set; } = "Pending";// Pending, Approved, Rejected
+
 
         // Navigation properties
         public virtual ICollection<CourseInstructor> CourseInstructors { get; set; }
