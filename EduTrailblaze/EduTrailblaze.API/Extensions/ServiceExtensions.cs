@@ -189,6 +189,7 @@ namespace EduTrailblaze.API.Extensions
             services.AddScoped<IUserProfileService, UserProfileService>();
             services.AddScoped<IUserProgressService, UserProgressService>();
             services.AddScoped<IUserCourseCouponService, UserCourseCouponService>();
+            services.AddScoped<IUserTagService, UserTagService>();
             services.AddScoped<IVideoService, VideoService>();
             services.AddScoped<IVimeoService, VimeoService>();
             services.AddScoped<IVoucherService, VoucherService>();

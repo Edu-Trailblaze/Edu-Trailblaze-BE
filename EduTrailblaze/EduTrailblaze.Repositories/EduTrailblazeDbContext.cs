@@ -60,6 +60,7 @@ namespace EduTrailblaze.Repositories
         public virtual DbSet<UserNotification> UserNotifications { get; set; }
         public virtual DbSet<UserProgress> UserProgresses { get; set; }
         public virtual DbSet<UserProfile> UserProfiles { get; set; }
+        public virtual DbSet<UserTag> UserTags { get; set; }
         public virtual DbSet<Video> Videos { get; set; }
         public virtual DbSet<Voucher> Vouchers { get; set; }
 
