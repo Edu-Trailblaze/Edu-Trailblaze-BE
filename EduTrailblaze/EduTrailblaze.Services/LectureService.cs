@@ -246,10 +246,10 @@ namespace EduTrailblaze.Services
 
                 var lecture = await lectureDbSet
                     .Include(x => x.Videos)
-                    .FirstOrDefaultAsync(x => x.Id == lectureId);
+                    .FirstOrDefaultAsync(x => x.Id == lectureId && x.LectureType == "Video");
                 if (lecture == null)
                 {
-                    throw new Exception("Lecture not found.");
+                    return;
                 }
 
                 lecture.Duration = (int)Math.Ceiling(lecture.Videos.Where(v => !v.IsDeleted)
