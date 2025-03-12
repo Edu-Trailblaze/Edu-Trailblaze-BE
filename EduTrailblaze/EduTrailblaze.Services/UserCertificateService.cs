@@ -90,7 +90,7 @@ namespace EduTrailblaze.Services
                     throw new Exception("User not found");
                 }
 
-                var templatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Templates", "Certificate.html");
+                var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "Templates", "Certificate.html");
                 var templateContent = await File.ReadAllTextAsync(templatePath);
 
                 var filledTemplate = templateContent
@@ -119,7 +119,7 @@ namespace EduTrailblaze.Services
 
                 var userCertificateEntity = new UserCertificate
                 {
-                    CertificateId = certificate.CourseId,
+                    CertificateId = certificate.Id,
                     UserId = userCertificate.UserId,
                     CertificateUrl = certificateUrl,
                     IssuedAt = DateTimeHelper.GetVietnamTime(),
