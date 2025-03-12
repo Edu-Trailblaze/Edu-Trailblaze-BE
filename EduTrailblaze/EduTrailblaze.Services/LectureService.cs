@@ -136,7 +136,9 @@ namespace EduTrailblaze.Services
 
                 await UpdateLectureDuration(lectureEntity.Id);
                 await _sectionService.UpdateNumberOfLectures(lecture.SectionId);
-                await _courseService.CheckAndUpdateCourseContent(lecture.SectionId);
+                var sec = await _sectionService.GetSection(lecture.SectionId);
+
+                if (sec != null) await _courseService.CheckAndUpdateCourseContent(sec.CourseId);
 
                 return _mapper.Map<LectureDTO>(lectureEntity);
             }
