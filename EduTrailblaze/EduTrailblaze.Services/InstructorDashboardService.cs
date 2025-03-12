@@ -102,7 +102,7 @@ namespace EduTrailblaze.Services
 
                 // Flatten the data and calculate the total revenue
                 var totalRevenue = orderDbSet
-                    .Where(o => o.OrderDetails.Any(od => od.Course.CreatedBy == request.InstructorId))
+                    .Where(o => o.OrderDetails.Any(od => od.Course.CreatedBy == request.InstructorId) && o.OrderStatus == "Completed")
                     .SelectMany(o => o.OrderDetails)
                     .Where(od => od.Course.CreatedBy == request.InstructorId)
                     .Sum(od => od.Price);
@@ -226,7 +226,7 @@ namespace EduTrailblaze.Services
                         var weekEndDate = i == 0 ? currentDate : endOfWeek.AddDays(-7 * i);
                         var orderDbSet = await _orderRepository.GetDbSet();
                         var totalRevenue = orderDbSet
-                            .Where(o => o.OrderDate >= weekStartDate && o.OrderDate <= weekEndDate && o.OrderDetails.Any(od => od.Course.CreatedBy == request.InstructorId))
+                            .Where(o => o.OrderDate >= weekStartDate && o.OrderDate <= weekEndDate && o.OrderStatus == "Completed" && o.OrderDetails.Any(od => od.Course.CreatedBy == request.InstructorId))
                             .SelectMany(o => o.OrderDetails)
                             .Where(od => od.Course.CreatedBy == request.InstructorId)
                             .Sum(od => od.Price);
@@ -248,7 +248,7 @@ namespace EduTrailblaze.Services
                         var monthEndDate = i == 0 ? currentDate : endOfMonth.AddMonths(-1 * i);
                         var orderDbSet = await _orderRepository.GetDbSet();
                         var totalRevenue = orderDbSet
-                            .Where(o => o.OrderDate >= monthStartDate && o.OrderDate <= monthEndDate && o.OrderDetails.Any(od => od.Course.CreatedBy == request.InstructorId))
+                            .Where(o => o.OrderDate >= monthStartDate && o.OrderDate <= monthEndDate && o.OrderStatus == "Completed" && o.OrderDetails.Any(od => od.Course.CreatedBy == request.InstructorId))
                             .SelectMany(o => o.OrderDetails)
                             .Where(od => od.Course.CreatedBy == request.InstructorId)
                             .Sum(od => od.Price);
@@ -270,7 +270,7 @@ namespace EduTrailblaze.Services
                         var yearEndDate = i == 0 ? currentDate : endOfYear.AddYears(-1 * i);
                         var orderDbSet = await _orderRepository.GetDbSet();
                         var totalRevenue = orderDbSet
-                            .Where(o => o.OrderDate >= yearStartDate && o.OrderDate <= yearEndDate && o.OrderDetails.Any(od => od.Course.CreatedBy == request.InstructorId))
+                            .Where(o => o.OrderDate >= yearStartDate && o.OrderDate <= yearEndDate && o.OrderStatus == "Completed" && o.OrderDetails.Any(od => od.Course.CreatedBy == request.InstructorId))
                             .SelectMany(o => o.OrderDetails)
                             .Where(od => od.Course.CreatedBy == request.InstructorId)
                             .Sum(od => od.Price);
