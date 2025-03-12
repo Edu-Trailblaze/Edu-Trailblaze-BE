@@ -179,6 +179,9 @@ namespace EduTrailblaze.Services
         {
             try
             {
+                var tempFilePath1 = Path.GetTempFileName();
+                var tempFilePath2 = Path.GetTempFileName();
+
                 var course = await _courseRepository.GetByIdAsync(req.CourseId);
                 if (course == null)
                 {
@@ -186,6 +189,25 @@ namespace EduTrailblaze.Services
                 }
 
                 var instructor = await _userManager.FindByIdAsync(req.UpdatedBy);
+
+                if (instructor == null)
+                {
+                    throw new ArgumentException("Invalid instructor ID");
+                }
+                //add image, intro to cloudinary
+                using (var stream = new FileStream(tempFilePath1, FileMode.Create))
+                {
+                    await req.ImageURL.CopyToAsync(stream);
+
+                }
+                using (var stream = new FileStream(tempFilePath2, FileMode.Create))
+                {
+
+                    await req.IntroURL.CopyToAsync(stream);
+                }
+
+                var introResponse = await _cloudinaryService.UploadVideoAsync(tempFilePath2, "vd-intro" + Guid.NewGuid());
+                var imageResponse = await _cloudinaryService.UploadImageAsync(new UploadImageRequest() { File = req.ImageURL });
 
                 // check if the instructor has permission to update the course
                 var courseInstructorDbSet = await _courseInstructorRepository.GetDbSet();
@@ -195,25 +217,13 @@ namespace EduTrailblaze.Services
                 {
                     throw new Exception("Instructor does not have permission to update the course.");
                 }
-                {
-                    course.Title = req.Title;
-                    course.ImageURL = req.ImageURL;
-                    course.IntroURL = req.IntroURL;
-                    course.Description = req.Description;
-                    course.Price = req.Price;
-                    course.DifficultyLevel = req.DifficultyLevel;
-                    course.Prerequisites = req.Prerequisites;
-                    course.UpdatedAt = DateTimeHelper.GetVietnamTime();
-                    course.UpdatedBy = req.UpdatedBy;
-                    course.IsPublished = req.IsPublished;
-                    //course.IsDeleted = req.IsDeleted;
-                }
+
                 var newCourse = new Course
                 {
                     Id = req.CourseId,
                     Title = req.Title,
-                    ImageURL = req.ImageURL,
-                    IntroURL = req.IntroURL,
+                    ImageURL = introResponse.VideoUri,
+                    IntroURL = imageResponse,
                     Description = req.Description,
                     Price = req.Price,
                     Duration = course.Duration,
@@ -224,12 +234,10 @@ namespace EduTrailblaze.Services
                     UpdatedAt = DateTimeHelper.GetVietnamTime(),
                     CreatedBy = course.CreatedBy,
                     UpdatedBy = req.UpdatedBy,
-                    IsPublished = req.IsPublished,
                     //IsDeleted = req.IsDeleted
                 };
 
                 await _courseRepository.UpdateAsync(course);
-
 
                 var courseClass = await _courseClassService.GetNewestCourseClass(course.Id);
                 if (courseClass == null)
@@ -245,8 +253,8 @@ namespace EduTrailblaze.Services
                 {
                     CourseId = course.Id,
                     Title = req.Title,
-                    ImageURL = req.ImageURL,
-                    IntroURL = req.IntroURL,
+                    ImageURL = introResponse.VideoUri,
+                    IntroURL = imageResponse,
                     Description = req.Description,
                     Price = req.Price,
                     Duration = course.Duration,
@@ -1496,7 +1504,7 @@ namespace EduTrailblaze.Services
                 {
                     query = query.Where(c => c.Id == request.CourseId.Value);
                 }
-                
+
                 if (request.TagId.HasValue)
                 {
                     query = query.Where(c => c.CourseTags.Any(ct => ct.TagId == request.TagId.Value));
