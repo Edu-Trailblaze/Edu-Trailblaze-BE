@@ -211,7 +211,7 @@ namespace EduTrailblaze.Services
 
                 // check if the instructor has permission to update the course
                 var courseInstructorDbSet = await _courseInstructorRepository.GetDbSet();
-                var isCourseInstructor = await courseInstructorDbSet.AnyAsync(ci => ci.Id == req.CourseId && ci.InstructorId == instructor.Id);
+                var isCourseInstructor = await courseInstructorDbSet.AnyAsync(ci => ci.CourseId == req.CourseId && ci.InstructorId == instructor.Id);
 
                 if (!isCourseInstructor)
                 {
