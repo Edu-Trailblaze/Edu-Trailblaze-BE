@@ -218,26 +218,17 @@ namespace EduTrailblaze.Services
                     throw new Exception("Instructor does not have permission to update the course.");
                 }
 
-                var newCourse = new Course
-                {
-                    Id = req.CourseId,
-                    Title = req.Title,
-                    ImageURL = introResponse.VideoUri,
-                    IntroURL = imageResponse,
-                    Description = req.Description,
-                    Price = req.Price,
-                    Duration = course.Duration,
-                    DifficultyLevel = req.DifficultyLevel,
-                    Prerequisites = req.Prerequisites,
-                    EstimatedCompletionTime = course.EstimatedCompletionTime,
-                    CreatedAt = course.CreatedAt,
-                    UpdatedAt = DateTimeHelper.GetVietnamTime(),
-                    CreatedBy = course.CreatedBy,
-                    UpdatedBy = req.UpdatedBy,
-                    //IsDeleted = req.IsDeleted
-                };
+                course.Title = req.Title;
+                course.ImageURL = imageResponse;
+                course.IntroURL = introResponse.VideoUri;
+                course.Description = req.Description;
+                course.Price = req.Price;
+                course.DifficultyLevel = req.DifficultyLevel;
+                course.Prerequisites = req.Prerequisites;
+                course.UpdatedAt = DateTimeHelper.GetVietnamTime();
+                course.UpdatedBy = req.UpdatedBy;
 
-                await _courseRepository.UpdateAsync(newCourse);
+                await _courseRepository.UpdateAsync(course);
 
                 var courseClass = await _courseClassService.GetNewestCourseClass(course.Id);
                 if (courseClass == null)
@@ -253,8 +244,8 @@ namespace EduTrailblaze.Services
                 {
                     CourseId = course.Id,
                     Title = req.Title,
-                    ImageURL = introResponse.VideoUri,
-                    IntroURL = imageResponse,
+                    ImageURL = imageResponse,
+                    IntroURL = introResponse.VideoUri,
                     Description = req.Description,
                     Price = req.Price,
                     Duration = course.Duration,

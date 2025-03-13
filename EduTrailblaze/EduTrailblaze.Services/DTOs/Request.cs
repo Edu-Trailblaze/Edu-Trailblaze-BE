@@ -84,9 +84,9 @@ namespace EduTrailblaze.Services.DTOs
     {
         public string Title { get; set; }
 
-        public IFormFile? ImageURL { get; set; }
+        public IFormFile ImageURL { get; set; }
 
-        public IFormFile? IntroURL { get; set; }
+        public IFormFile IntroURL { get; set; }
 
         public string Description { get; set; }
 
@@ -106,15 +106,16 @@ namespace EduTrailblaze.Services.DTOs
         public CreateCourseRequestValidator()
         {
             RuleFor(x => x.Title)
-             .NotEmpty().WithMessage("Title is required")
-             .MaximumLength(255).WithMessage("Title cannot be longer than 255 characters");
+                .NotEmpty().WithMessage("Title is required")
+                .MaximumLength(255).WithMessage("Title cannot be longer than 255 characters");
 
             RuleFor(x => x.ImageURL)
-                .NotEmpty().WithMessage("ImageURL is required");
+                .NotEmpty().WithMessage("ImageURL is required")
+                .Must(BeAValidImage).WithMessage("ImageURL must be a valid image file (jpg, jpeg, png, gif)");
 
             RuleFor(x => x.IntroURL)
-                .NotEmpty().WithMessage("IntroURL is required");
-
+                .NotEmpty().WithMessage("IntroURL is required")
+                .Must(BeAValidMp4).WithMessage("IntroURL must be a valid MP4 file");
 
             RuleFor(x => x.Description)
                 .NotEmpty().WithMessage("Description is required");
@@ -136,6 +137,27 @@ namespace EduTrailblaze.Services.DTOs
 
             RuleFor(x => x.LearningOutcomes)
                 .NotEmpty().WithMessage("LearningOutcomes is required");
+        }
+
+        private bool BeAValidImage(IFormFile? file)
+        {
+            if (file == null)
+            {
+                return true;
+            }
+
+            var allowedContentTypes = new[] { "image/jpeg", "image/png", "image/gif" };
+            return allowedContentTypes.Contains(file.ContentType);
+        }
+
+        private bool BeAValidMp4(IFormFile? file)
+        {
+            if (file == null)
+            {
+                return true;
+            }
+
+            return file.ContentType == "video/mp4";
         }
     }
 
@@ -176,6 +198,14 @@ namespace EduTrailblaze.Services.DTOs
              .NotEmpty().WithMessage("Title is required")
              .MaximumLength(255).WithMessage("Title cannot be longer than 255 characters");
 
+            RuleFor(x => x.ImageURL)
+                .NotEmpty().WithMessage("ImageURL is required")
+                .Must(BeAValidImage).WithMessage("ImageURL must be a valid image file (jpg, jpeg, png, gif)");
+
+            RuleFor(x => x.IntroURL)
+                .NotEmpty().WithMessage("IntroURL is required")
+                .Must(BeAValidMp4).WithMessage("IntroURL must be a valid MP4 file");
+
             RuleFor(x => x.Description)
                 .NotEmpty().WithMessage("Description is required");
 
@@ -196,6 +226,27 @@ namespace EduTrailblaze.Services.DTOs
 
             RuleFor(x => x.LearningOutcomes)
                 .NotEmpty().WithMessage("LearningOutcomes is required");
+        }
+
+        private bool BeAValidImage(IFormFile? file)
+        {
+            if (file == null)
+            {
+                return true;
+            }
+
+            var allowedContentTypes = new[] { "image/jpeg", "image/png", "image/gif" };
+            return allowedContentTypes.Contains(file.ContentType);
+        }
+
+        private bool BeAValidMp4(IFormFile? file)
+        {
+            if (file == null)
+            {
+                return true;
+            }
+
+            return file.ContentType == "video/mp4";
         }
     }
 
