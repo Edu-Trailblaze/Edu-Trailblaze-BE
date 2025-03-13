@@ -237,7 +237,7 @@ namespace EduTrailblaze.Services
                     //IsDeleted = req.IsDeleted
                 };
 
-                await _courseRepository.UpdateAsync(course);
+                await _courseRepository.UpdateAsync(newCourse);
 
                 var courseClass = await _courseClassService.GetNewestCourseClass(course.Id);
                 if (courseClass == null)
