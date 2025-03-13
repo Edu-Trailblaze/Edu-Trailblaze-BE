@@ -225,6 +225,7 @@ namespace EduTrailblaze.Services
                 course.Price = req.Price;
                 course.DifficultyLevel = req.DifficultyLevel;
                 course.Prerequisites = req.Prerequisites;
+                course.LearningOutcomes = req.LearningOutcomes;
                 course.UpdatedAt = DateTimeHelper.GetVietnamTime();
                 course.UpdatedBy = req.UpdatedBy;
 
