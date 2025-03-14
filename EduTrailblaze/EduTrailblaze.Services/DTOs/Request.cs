@@ -167,9 +167,9 @@ namespace EduTrailblaze.Services.DTOs
 
         public string Title { get; set; }
 
-        public IFormFile ImageURL { get; set; }
+        public IFormFile? ImageURL { get; set; }
 
-        public IFormFile IntroURL { get; set; }
+        public IFormFile? IntroURL { get; set; }
 
         public string Description { get; set; }
 
@@ -199,11 +199,9 @@ namespace EduTrailblaze.Services.DTOs
              .MaximumLength(255).WithMessage("Title cannot be longer than 255 characters");
 
             RuleFor(x => x.ImageURL)
-                .NotEmpty().WithMessage("ImageURL is required")
                 .Must(BeAValidImage).WithMessage("ImageURL must be a valid image file (jpg, jpeg, png, gif)");
 
             RuleFor(x => x.IntroURL)
-                .NotEmpty().WithMessage("IntroURL is required")
                 .Must(BeAValidMp4).WithMessage("IntroURL must be a valid MP4 file");
 
             RuleFor(x => x.Description)

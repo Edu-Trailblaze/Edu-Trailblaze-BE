@@ -179,35 +179,45 @@ namespace EduTrailblaze.Services
         {
             try
             {
-                var tempFilePath1 = Path.GetTempFileName();
-                var tempFilePath2 = Path.GetTempFileName();
-
                 var course = await _courseRepository.GetByIdAsync(req.CourseId);
                 if (course == null)
                 {
                     throw new ArgumentException("Invalid course ID");
                 }
-
                 var instructor = await _userManager.FindByIdAsync(req.UpdatedBy);
 
                 if (instructor == null)
                 {
                     throw new ArgumentException("Invalid instructor ID");
                 }
-                //add image, intro to cloudinary
-                using (var stream = new FileStream(tempFilePath1, FileMode.Create))
+                var imageURI = course.ImageURL;
+
+                if (req.ImageURL != null)
                 {
-                    await req.ImageURL.CopyToAsync(stream);
+                    var tempFilePath1 = Path.GetTempFileName();
+                    using (var stream = new FileStream(tempFilePath1, FileMode.Create))
+                    {
+                        await req.ImageURL.CopyToAsync(stream);
 
+                    }
+                     imageURI = await _cloudinaryService.UploadImageAsync(new UploadImageRequest() { File = req.ImageURL });
                 }
-                using (var stream = new FileStream(tempFilePath2, FileMode.Create))
+
+                var introURI = course.IntroURL;
+
+                if (req.IntroURL != null)
                 {
+                    var tempFilePath2 = Path.GetTempFileName();
 
-                    await req.IntroURL.CopyToAsync(stream);
+                    using (var stream = new FileStream(tempFilePath2, FileMode.Create))
+                    {
+
+                        await req.IntroURL.CopyToAsync(stream);
+                    }
+
+                    var introResponse = await _cloudinaryService.UploadVideoAsync(tempFilePath2, "vd-intro" + Guid.NewGuid());
+                    introURI = introResponse.VideoUri;
                 }
-
-                var introResponse = await _cloudinaryService.UploadVideoAsync(tempFilePath2, "vd-intro" + Guid.NewGuid());
-                var imageResponse = await _cloudinaryService.UploadImageAsync(new UploadImageRequest() { File = req.ImageURL });
 
                 // check if the instructor has permission to update the course
                 var courseInstructorDbSet = await _courseInstructorRepository.GetDbSet();
@@ -219,8 +229,8 @@ namespace EduTrailblaze.Services
                 }
 
                 course.Title = req.Title;
-                course.ImageURL = imageResponse;
-                course.IntroURL = introResponse.VideoUri;
+                course.ImageURL = imageURI;
+                course.IntroURL = introURI;
                 course.Description = req.Description;
                 course.Price = req.Price;
                 course.DifficultyLevel = req.DifficultyLevel;
@@ -245,8 +255,8 @@ namespace EduTrailblaze.Services
                 {
                     CourseId = course.Id,
                     Title = req.Title,
-                    ImageURL = imageResponse,
-                    IntroURL = introResponse.VideoUri,
+                    ImageURL = imageURI,
+                    IntroURL = introURI,
                     Description = req.Description,
                     Price = req.Price,
                     Duration = course.Duration,
