@@ -169,6 +169,8 @@
 
         public string DifficultyLevel { get; set; }
 
+        public string Prerequisites { get; set; }
+
         public List<string> LearningOutcomes { get; set; }
 
         public List<string> Tags { get; set; }
