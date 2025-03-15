@@ -129,13 +129,13 @@ namespace EduTrailblaze.Services
 
                 if (video.VideoFile != null)
                 {
-                    var uploadVideoRequest = new UploadVideoRequest
+                    var tempFilePath = Path.GetTempFileName();
+
+                    using (var stream = new FileStream(tempFilePath, FileMode.Create))
                     {
-                        File = video.VideoFile,
-                        Title = video.Title,
-                        LectureId = existingVideo.LectureId
-                    };
-                    var videoResponse = await UploadVideoAsync(uploadVideoRequest);
+                        await video.VideoFile.CopyToAsync(stream);
+                    }
+                    var videoResponse = await _cloudinaryService.UploadVideoAsync(tempFilePath, "vd-" + video.VideoId);
 
                     videoUrl = videoResponse.VideoUri;
                     duration = videoResponse.Duration;

@@ -76,7 +76,7 @@ namespace EduTrailblaze.API.Controllers
         //}
 
         [HttpPut]
-        public async Task<IActionResult> UpdateVideo([FromBody] UpdateVideoRequest video)
+        public async Task<IActionResult> UpdateVideo([FromForm] UpdateVideoRequest video)
         {
             try
             {
