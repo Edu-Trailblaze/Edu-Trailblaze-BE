@@ -123,9 +123,28 @@ namespace EduTrailblaze.Services
                 {
                     throw new Exception("Video not found.");
                 }
+
+                var videoUrl = existingVideo.VideoUrl;
+                var duration = existingVideo.Duration;
+
+                if (video.VideoFile != null)
+                {
+                    var uploadVideoRequest = new UploadVideoRequest
+                    {
+                        File = video.VideoFile,
+                        Title = video.Title,
+                        LectureId = existingVideo.LectureId
+                    };
+                    var videoResponse = await UploadVideoAsync(uploadVideoRequest);
+
+                    videoUrl = videoResponse.VideoUri;
+                    duration = videoResponse.Duration;
+                }
+
                 existingVideo.Title = video.Title;
-                existingVideo.VideoUrl = video.VideoUrl;
+                existingVideo.VideoUrl = videoUrl;
                 existingVideo.Transcript = video.Transcript;
+                existingVideo.Duration = duration;
                 existingVideo.UpdatedAt = DateTimeHelper.GetVietnamTime();
                 await _videoRepository.UpdateAsync(existingVideo);
             }

@@ -1439,7 +1439,7 @@ namespace EduTrailblaze.Services.DTOs
     {
         public int VideoId { get; set; }
         public string Title { get; set; }
-        public string VideoUrl { get; set; }
+        public IFormFile? VideoFile { get; set; }
         public string Transcript { get; set; }
     }
 
@@ -1452,10 +1452,20 @@ namespace EduTrailblaze.Services.DTOs
             RuleFor(x => x.Title)
                 .NotEmpty().WithMessage("Title is required")
                 .MaximumLength(50).WithMessage("Title cannot be longer than 50 characters");
-            RuleFor(x => x.VideoUrl)
-                .NotEmpty().WithMessage("VideoUrl is required");
+            RuleFor(x => x.VideoFile)
+                .Must(BeAValidMp4).WithMessage("VideoFile must be a valid MP4 file");
             RuleFor(x => x.Transcript)
                 .NotEmpty().WithMessage("Transcript is required");
+        }
+
+        private bool BeAValidMp4(IFormFile? file)
+        {
+            if (file == null)
+            {
+                return true;
+            }
+
+            return file.ContentType == "video/mp4";
         }
     }
 
