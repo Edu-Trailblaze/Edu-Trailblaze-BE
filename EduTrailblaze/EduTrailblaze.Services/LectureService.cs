@@ -186,7 +186,31 @@ namespace EduTrailblaze.Services
                 {
                     throw new Exception("Lecture not found.");
                 }
-                lectureEntity.SectionId = lecture.SectionId;
+
+                if (lecture.ContentFile == null && string.IsNullOrEmpty(lecture.DocUrl))
+                {
+                    lectureEntity.DocUrl = null;
+                }
+
+                if (lecture.ContentFile != null && lecture.ContentFile.Length > 0)
+                {
+                    var fileExtension = Path.GetExtension(lecture.ContentFile.FileName);
+                    var tempFilePath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}{fileExtension}");
+                    try
+                    {
+                        using (var stream = new FileStream(tempFilePath, FileMode.Create))
+                        {
+                            await lecture.ContentFile.CopyToAsync(stream);
+                        }
+
+                        lectureEntity.DocUrl = await _cloudinaryService.UploadFileAsync(tempFilePath, lectureEntity.Id.ToString() + fileExtension);
+                    }
+                    finally
+                    {
+                        File.Delete(tempFilePath);
+                    }
+                }
+
                 lectureEntity.LectureType = lecture.LectureType;
                 lectureEntity.Title = lecture.Title;
                 lectureEntity.Content = lecture.Content;
@@ -196,7 +220,7 @@ namespace EduTrailblaze.Services
 
                 await _lectureRepository.UpdateAsync(lectureEntity);
 
-                await UpdateLectureDuration(lecture.SectionId);
+                await UpdateLectureDuration(lectureEntity.SectionId);
             }
             catch (Exception ex)
             {

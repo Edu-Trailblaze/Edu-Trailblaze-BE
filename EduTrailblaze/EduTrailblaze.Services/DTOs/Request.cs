@@ -825,11 +825,13 @@ namespace EduTrailblaze.Services.DTOs
     public class UpdateLectureRequest
     {
         public int LectureId { get; set; }
-        public int SectionId { get; set; }
+        //public int SectionId { get; set; }
         public string LectureType { get; set; } // Reading, Video, Quiz
         public string Title { get; set; }
-        public string Content { get; set; }
         public string Description { get; set; }
+        public string Content { get; set; }
+        public string? DocUrl { get; set; }
+        public IFormFile? ContentFile { get; set; }
         public int Duration { get; set; }
     }
 
@@ -839,8 +841,8 @@ namespace EduTrailblaze.Services.DTOs
         {
             RuleFor(x => x.LectureId)
                 .NotEmpty().WithMessage("LectureId is required");
-            RuleFor(x => x.SectionId)
-                .NotEmpty().WithMessage("SectionId is required");
+            //RuleFor(x => x.SectionId)
+            //    .NotEmpty().WithMessage("SectionId is required");
             RuleFor(x => x.LectureType)
                 .NotEmpty().WithMessage("LectureType is required")
                 .Must(type => new[] { "Reading", "Video", "Quiz" }.Contains(type))

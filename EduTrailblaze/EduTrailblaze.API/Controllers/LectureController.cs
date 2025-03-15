@@ -90,7 +90,7 @@ namespace EduTrailblaze.API.Controllers
         //}
 
         [HttpPut]
-        public async Task<IActionResult> UpdateLecture([FromBody] UpdateLectureRequest lecture)
+        public async Task<IActionResult> UpdateLecture([FromForm] UpdateLectureRequest lecture)
         {
             try
             {
