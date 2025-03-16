@@ -962,7 +962,7 @@ namespace EduTrailblaze.Services
                 {
                     return null;
                 }
-                var courseIds = courseRecommendationV2.OrderByDescending(c => c.Frequency).Take(10).Select(c => c.CourseId);
+                var courseIds = courseRecommendationV2.OrderByDescending(c => c.Frequency).Take(10).Select(c => c.CourseId).AsQueryable();
 
                 var courses = await (await _courseRepository.GetDbSet())
                     .Where(c => courseIds.Contains(c.Id))
