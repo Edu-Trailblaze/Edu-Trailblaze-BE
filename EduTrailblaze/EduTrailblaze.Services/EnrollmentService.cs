@@ -301,7 +301,7 @@ namespace EduTrailblaze.Services
         {
             try
             {
-                var courseClassIds = _courseClassRepository.FindByCondition(cc => cc.CourseId == courseId && !cc.IsDeleted)
+                var courseClassIds = _courseClassRepository.FindByCondition(cc => cc.CourseId == courseId)
                     .Select(cc => cc.Id);
 
                 var enrollment = await _enrollmentRepository.FindByCondition(e => e.StudentId == userId && courseClassIds.Contains(e.CourseClassId))

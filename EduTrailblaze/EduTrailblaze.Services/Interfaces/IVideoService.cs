@@ -21,7 +21,7 @@ namespace EduTrailblaze.Services.Interfaces
 
         Task DeleteVideo(int video);
 
-        Task<UploadVideoResponse> UploadVideoAsync(UploadVideoRequest video);
+        //Task<UploadVideoResponse> UploadVideoAsync(UploadVideoRequest video);
 
         Task<VideoDTO> UploadVideoWithCloudinaryAsync(UploadVideoRequest video);
 

@@ -191,7 +191,6 @@ namespace EduTrailblaze.API.Extensions
             services.AddScoped<IUserCourseCouponService, UserCourseCouponService>();
             services.AddScoped<IUserTagService, UserTagService>();
             services.AddScoped<IVideoService, VideoService>();
-            services.AddScoped<IVimeoService, VimeoService>();
             services.AddScoped<IVoucherService, VoucherService>();
             services.AddScoped<IVNPAYService, VNPAYService>();
             services.AddScoped<IMoMoService, MoMoService>();
@@ -201,7 +200,6 @@ namespace EduTrailblaze.API.Extensions
             services.AddScoped<IRedisService, RedisService>();
             services.AddScoped<ISendMail, SendMail>();
             services.AddScoped<IPayPalService, PayPalService>();
-            services.AddScoped<IVoskService, VoskService>();
             services.AddScoped<IInstructorDashboardService, InstructorDashboardService>();
 
             services.AddHttpClient<ICurrencyExchangeService, CurrencyExchangeService>();
