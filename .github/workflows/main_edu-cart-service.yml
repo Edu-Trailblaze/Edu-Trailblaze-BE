@@ -1,82 +1,82 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
+# # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy ASP.Net Core app to Azure Web App - edu-cart-service
+# name: Build and deploy ASP.Net Core app to Azure Web App - edu-cart-service
 
-on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
+# on:
+#   push:
+#     branches:
+#       - main
+#   workflow_dispatch:
 
-jobs:
-  build:
-    runs-on: windows-latest
-    permissions:
-      contents: read #This is required for actions/checkout
+# jobs:
+#   build:
+#     runs-on: windows-latest
+#     permissions:
+#       contents: read #This is required for actions/checkout
 
-    steps:
-      - uses: actions/checkout@v4
+#     steps:
+#       - uses: actions/checkout@v4
 
-      - name: Set up .NET Core
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.x.x'
+#       - name: Set up .NET Core
+#         uses: actions/setup-dotnet@v4
+#         with:
+#           dotnet-version: '8.x.x'
 
-      - name: Add appsettings.json
-        run: |
-            echo '${{ secrets.APPSETTINGS_JSON_CART }}' > src/Services/Cart/Cart.API/appsettings.json
-              try {
-                ConvertFrom-Json -InputObject '${{ secrets.APPSETTINGS_JSON_CART }}' | Out-Null
-                Write-Host "JSON is valid."
-              } catch {
-                Write-Error "Invalid JSON format in appsettings.json"
-                exit 1
-              }
-        shell: pwsh    
+#       - name: Add appsettings.json
+#         run: |
+#             echo '${{ secrets.APPSETTINGS_JSON_CART }}' > src/Services/Cart/Cart.API/appsettings.json
+#               try {
+#                 ConvertFrom-Json -InputObject '${{ secrets.APPSETTINGS_JSON_CART }}' | Out-Null
+#                 Write-Host "JSON is valid."
+#               } catch {
+#                 Write-Error "Invalid JSON format in appsettings.json"
+#                 exit 1
+#               }
+#         shell: pwsh    
   
-      - name: Build with dotnet
-        run: dotnet build --configuration Release
-        working-directory: EduTrailblaze/
+#       - name: Build with dotnet
+#         run: dotnet build --configuration Release
+#         working-directory: EduTrailblaze/
   
-      - name: dotnet publish
-        run: dotnet publish src/Services/Cart/Cart.API/Cart.API.csproj -c Release -o output
+#       - name: dotnet publish
+#         run: dotnet publish src/Services/Cart/Cart.API/Cart.API.csproj -c Release -o output
   
 
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v4
-        with:
-          name: .net-app
-          path: output
+#       - name: Upload artifact for deployment job
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: .net-app
+#           path: output
 
-  deploy:
-    runs-on: windows-latest
-    needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
+#   deploy:
+#     runs-on: windows-latest
+#     needs: build
+#     environment:
+#       name: 'Production'
+#       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+#     permissions:
+#       id-token: write #This is required for requesting the JWT
+#       contents: read #This is required for actions/checkout
 
-    steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v4
-        with:
-          name: .net-app
+#     steps:
+#       - name: Download artifact from build job
+#         uses: actions/download-artifact@v4
+#         with:
+#           name: .net-app
       
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_781B66A116EF41E4A65958FCFFBD3D09  }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_D20BA6685F8A4E6C8F253E09F8252327 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_59315FBCA189408887F3029010C81EB5 }}
+#       - name: Login to Azure
+#         uses: azure/login@v2
+#         with:
+#           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_781B66A116EF41E4A65958FCFFBD3D09  }}
+#           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_D20BA6685F8A4E6C8F253E09F8252327 }}
+#           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_59315FBCA189408887F3029010C81EB5 }}
 
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: 'edu-cart-service'
-          slot-name: 'Production'
-          package: .
+#       - name: Deploy to Azure Web App
+#         id: deploy-to-webapp
+#         uses: azure/webapps-deploy@v3
+#         with:
+#           app-name: 'edu-cart-service'
+#           slot-name: 'Production'
+#           package: .
           
