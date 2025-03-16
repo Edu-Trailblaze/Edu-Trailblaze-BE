@@ -253,18 +253,18 @@ namespace EduTrailblaze.Services
                 if (enrollment != null)
                 {
                     enrollment.ProgressPercentage = courseProgressPercentage;
-                    enrollment.IsCompleted = courseProgressPercentage == 100;
+                    enrollment.IsCompleted = courseProgressPercentage >= 100;
                     enrollment.UpdatedAt = DateTimeHelper.GetVietnamTime();
                     await _enrollmentService.UpdateEnrollment(enrollment);
 
-                    if (courseProgressPercentage == 100 && enrollment.IsCompleted)
+                    if (courseProgressPercentage >= 100 && enrollment.IsCompleted)
                     {
                         var userCertificate = new CreateUserCertificateRequest
                         {
                             UserId = userProgressRequest.UserId,
                             CourseId = courseId
                         };
-                        await Task.Run(async () => await _userCertificateService.AddUserCertificate(userCertificate));
+                        //await Task.Run(async () => await _userCertificateService.AddUserCertificate(userCertificate));
                     }
                 }
 
@@ -373,7 +373,7 @@ namespace EduTrailblaze.Services
                 var courseClassId = await _enrollmentService.GetStudentCourseClass(userId, courseId);
 
                 var totalLectures = await (await _lectureRepository.GetDbSet())
-                    .Where(l => l.Section.CourseId == courseId)
+                    .Where(l => l.Section.CourseId == courseId && !l.IsDeleted)
                     .CountAsync();
 
                 var completedLectures = await (await _userProgressRepository.GetDbSet())
