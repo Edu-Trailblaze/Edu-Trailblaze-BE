@@ -264,7 +264,8 @@ namespace EduTrailblaze.Services
                             UserId = userProgressRequest.UserId,
                             CourseId = courseId
                         };
-                        //await Task.Run(async () => await _userCertificateService.AddUserCertificate(userCertificate));
+
+                        await Task.Run(async () => await _userCertificateService.AddUserCertificate(userCertificate));
                     }
                 }
 
