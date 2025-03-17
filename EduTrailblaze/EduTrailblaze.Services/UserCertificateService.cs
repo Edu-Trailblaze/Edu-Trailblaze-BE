@@ -4,6 +4,7 @@ using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Helper;
 using EduTrailblaze.Services.Interfaces;
 using Firebase.Storage;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 
 namespace EduTrailblaze.Services
@@ -14,11 +15,13 @@ namespace EduTrailblaze.Services
         private readonly IRepository<Certificate, int> _certificateRepository;
         private readonly ICourseService _courseService;
         private readonly UserManager<User> _userManager;
+        private readonly IWebHostEnvironment _env;
 
-        public UserCertificateService(IRepository<UserCertificate, int> userCertificateRepository, ICourseService courseService, IRepository<Certificate, int> certificateRepository, UserManager<User> userManager)
+        public UserCertificateService(IRepository<UserCertificate, int> userCertificateRepository, ICourseService courseService, IRepository<Certificate, int> certificateRepository, UserManager<User> userManager,IWebHostEnvironment env)
         {
             _userCertificateRepository = userCertificateRepository;
             _courseService = courseService;
+            _env = env;
             _certificateRepository = certificateRepository;
             _userManager = userManager;
         }
@@ -71,6 +74,11 @@ namespace EduTrailblaze.Services
         {
             try
             {
+                var templatePath = Path.Combine(_env.ContentRootPath, "Templates", "Certificate.html");
+                if (!File.Exists(templatePath))
+                {
+                    throw new Exception($"Template file not found: {templatePath}");
+                }
                 var course = await _courseService.GetCourse(userCertificate.CourseId);
                 if (course == null)
                 {
@@ -90,7 +98,8 @@ namespace EduTrailblaze.Services
                     throw new Exception("User not found");
                 }
 
-                var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "Templates", "Certificate.html");
+                //var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "Templates", "Certificate.html");
+                
                 var templateContent = await File.ReadAllTextAsync(templatePath);
 
                 var filledTemplate = templateContent

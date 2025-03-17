@@ -3,6 +3,7 @@ using EduTrailblaze.API.Extensions;
 using EduTrailblaze.Repositories;
 using Hangfire;
 using Hangfire.SqlServer;
+using Microsoft.Extensions.FileProviders;
 using Serilog;
 
 namespace EduTrailblaze.API
@@ -60,7 +61,11 @@ namespace EduTrailblaze.API
                 //{}
 
                 app.UseHangfireDashboard();
-                app.UseStaticFiles();
+                app.UseStaticFiles(new StaticFileOptions
+                {
+                    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Templates")),
+                    RequestPath = "/Templates"
+                });
                 app.MapControllers();
                 app.MapGet("/env", () => app.Environment.EnvironmentName);
                 app.MigrateDatabase<EduTrailblazeDbContext>().Run();
