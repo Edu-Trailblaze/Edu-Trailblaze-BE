@@ -313,14 +313,26 @@ namespace EduTrailblaze.Services
                 var orderDbSet = await _orderRepository.GetDbSet();
                 var enrollmentDbSet = await _enrollmentRepository.GetDbSet();
                 var reviewDbSet = await _reviewRepository.GetDbSet();
+                var courseRatings = reviewDbSet
+                    .GroupBy(r => r.CourseId)
+                    .Select(g => new
+                    {
+                        CourseId = g.Key,
+                        Rating = g.Average(r => (decimal?)r.Rating) ?? 0
+                    })
+                    .ToDictionary(x => x.CourseId, x => x.Rating);
+
                 var topPerformingCourses = courseDbSet
                     .Where(c => c.CreatedBy == instructorId)
                     .Select(c => new CourseDashboardResponse
                     {
                         Title = c.Title,
-                        NumberOfStudents = enrollmentDbSet.Where(e => e.CourseClass.CourseId == c.Id).Count(),
-                        Rating = reviewDbSet.Where(r => r.CourseId == c.Id).Select(r => (decimal?)r.Rating).DefaultIfEmpty(0).Average() ?? 0,
-                        Revenue = orderDbSet.Where(o => o.OrderStatus == "Completed" && o.OrderDetails.Any(od => od.CourseId == c.Id)).SelectMany(o => o.OrderDetails).Sum(od => od.Price)
+                        NumberOfStudents = enrollmentDbSet.Count(e => e.CourseClass.CourseId == c.Id),
+                        Rating = courseRatings.ContainsKey(c.Id) ? courseRatings[c.Id] : 0,
+                        Revenue = orderDbSet
+                            .Where(o => o.OrderStatus == "Completed" && o.OrderDetails.Any(od => od.CourseId == c.Id))
+                            .SelectMany(o => o.OrderDetails)
+                            .Sum(od => od.Price)
                     })
                     .OrderByDescending(c => c.NumberOfStudents)
                     .Take(top)
