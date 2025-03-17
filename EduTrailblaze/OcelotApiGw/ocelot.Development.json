@@ -1,0 +1,19 @@
+{
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:7165"
+  },
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/Cart/{username}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "edu-cart-service.azurewebsites.net",
+          "Port": 443
+        }
+      ],
+      "UpstreamPathTemplate": "/api/Cart/{username}",
+      "UpstreamHttpMethod": [ "GET"]
+    }
+  ]
+}

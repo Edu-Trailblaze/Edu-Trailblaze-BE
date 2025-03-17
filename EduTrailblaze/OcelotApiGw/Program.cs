@@ -1,32 +1,37 @@
-
-using Cart.Application;
-using Cart.Infrastructure;
 using Common.Logging;
+using Ocelot.Middleware;
+using OcelotApiGw.Extensions;
 using Serilog;
-
-namespace Cart.API
+namespace OcelotApiGw
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static  void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
             Log.Information($"Start {builder.Environment.ApplicationName} API");
-            try
-            {
-                builder.Host.UseSerilog(SeriLog.Configure);
-            builder.Services.AddControllers();
 
-            builder.Services.AddApplicationServices();
+            builder.Host.UseSerilog(SeriLog.Configure);
+
+            try { 
+            builder.Host.AddAppConfiguration();
             builder.Services.AddInfrastructor(builder.Configuration);
+            // Add services to the container.
+            builder.Services.AddControllers();
+            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.ConfigureOcelot(builder.Configuration);
+                var app = builder.Build();
 
-            var app = builder.Build();
+            // Configure the HTTP request pipeline.
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
 
-
-            app.UseSwagger();
-            app.UseSwaggerUI();
+            app.UseCors("CorsPolicy");
 
             app.UseHttpsRedirection();
 
@@ -34,8 +39,8 @@ namespace Cart.API
 
 
             app.MapControllers();
-
-            app.Run();
+           app.UseOcelot().Wait();
+                app.Run();
             }
             catch (Exception ex)
             {
