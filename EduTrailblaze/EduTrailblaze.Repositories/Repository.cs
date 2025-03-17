@@ -102,12 +102,13 @@ namespace EduTrailblaze.Repositories
                 throw new Exception($"Couldn't update entity: {ex.Message}");
             }
         }
-
+        
         public async Task DeleteAsync(T entity)
         {
             try
             {
                 _dbSet.Remove(entity);
+                
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -115,7 +116,19 @@ namespace EduTrailblaze.Repositories
                 throw new Exception($"Couldn't delete entity: {ex.Message}");
             }
         }
+        public async Task DeleteRangeAsync(List<T> entity)
+        {
+            try
+            {
+                _dbSet.RemoveRange(entity);
 
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Couldn't delete entity: {ex.Message}");
+            }
+        }
 
     }
 }

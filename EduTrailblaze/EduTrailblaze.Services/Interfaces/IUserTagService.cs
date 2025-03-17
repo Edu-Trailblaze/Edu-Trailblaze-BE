@@ -1,4 +1,5 @@
 ﻿using EduTrailblaze.Entities;
+using EduTrailblaze.Services.DTOs;
 
 namespace EduTrailblaze.Services.Interfaces
 {
@@ -6,7 +7,7 @@ namespace EduTrailblaze.Services.Interfaces
     {
         Task<UserTag?> GetUserTag(int userTagId);
         Task<IEnumerable<UserTag>> GetUserTags();
-        Task AddUserTag(UserTag userTag);
+        Task<bool> AddOrUpdateUserTag(AddOrUpdateTagRequest request);
         Task UpdateUserTag(UserTag userTag);
         Task DeleteUserTag(int userTagId);
     }

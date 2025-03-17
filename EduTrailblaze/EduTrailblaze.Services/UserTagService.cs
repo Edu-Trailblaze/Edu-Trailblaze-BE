@@ -1,16 +1,23 @@
 ﻿using EduTrailblaze.Entities;
 using EduTrailblaze.Repositories.Interfaces;
+using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Ocsp;
+using System.Threading.Channels;
 
 namespace EduTrailblaze.Services
 {
     public class UserTagService : IUserTagService
     {
         private readonly IRepository<UserTag, int> _userTagRepository;
+        private readonly UserManager<User> _userManager;
 
-        public UserTagService(IRepository<UserTag, int> userTagRepository)
+        public UserTagService(IRepository<UserTag, int> userTagRepository, UserManager<User> userManager)
         {
             _userTagRepository = userTagRepository;
+            _userManager = userManager;
         }
 
         public async Task<UserTag?> GetUserTag(int userTagId)
@@ -37,11 +44,44 @@ namespace EduTrailblaze.Services
             }
         }
 
-        public async Task AddUserTag(UserTag userTag)
+        public async Task<bool> AddOrUpdateUserTag(AddOrUpdateTagRequest request)
         {
             try
             {
-                await _userTagRepository.AddAsync(userTag);
+                var user = await _userManager.FindByIdAsync(request.UserId);
+
+                if (user == null)
+                {
+                    throw new ArgumentException("Invalid User ID");
+                }
+
+                var tagIds = request.TagId.ToList();
+                var existingUserTags = await _userTagRepository
+                    .FindByCondition(x => x.UserId == request.UserId, trackChanges: true)
+                    
+                    .ToListAsync();
+                var tagsToRemove = existingUserTags.Where(ut => !tagIds.Contains(ut.TagId)).ToList();
+                await _userTagRepository.DeleteRangeAsync(tagsToRemove);
+                foreach (var tagId in request.TagId)
+                {
+                    var existingTag = existingUserTags.FirstOrDefault(ut => ut.TagId == tagId);
+
+                    if (existingTag != null)
+                    {
+                       await _userTagRepository.UpdateAsync(existingTag);
+                    }
+                    else
+                    {
+                        var newTag = new UserTag
+                        {
+                            UserId = request.UserId,
+                            TagId = tagId
+
+                        };
+                      await _userTagRepository.AddAsync(newTag);
+                    }
+                }
+                return true;
             }
             catch (Exception ex)
             {
