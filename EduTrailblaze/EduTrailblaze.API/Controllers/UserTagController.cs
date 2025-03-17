@@ -1,4 +1,6 @@
-﻿using EduTrailblaze.Services.Interfaces;
+﻿using EduTrailblaze.Services;
+using EduTrailblaze.Services.DTOs;
+using EduTrailblaze.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EduTrailblaze.API.Controllers
@@ -39,6 +41,27 @@ namespace EduTrailblaze.API.Controllers
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+        [HttpPost("AddOrUpdateTags")]
+        public async Task<IActionResult> AddOrUpdateTags([FromBody] AddOrUpdateTagRequest request)
+        {
+            try
+            {
+                var result = await _userTagService.AddOrUpdateUserTag(request);
+
+                if (result)
+                {
+                    return Ok(new { message = "Tags added or updated successfully." });
+                }
+                else
+                {
+                    return StatusCode(500, new { message = "Error occurred while processing your request." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
             }
         }
     }

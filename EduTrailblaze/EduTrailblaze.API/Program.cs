@@ -60,7 +60,7 @@ namespace EduTrailblaze.API
                 //{}
 
                 app.UseHangfireDashboard();
-
+                app.UseStaticFiles();
                 app.MapControllers();
                 app.MapGet("/env", () => app.Environment.EnvironmentName);
                 app.MigrateDatabase<EduTrailblazeDbContext>().Run();

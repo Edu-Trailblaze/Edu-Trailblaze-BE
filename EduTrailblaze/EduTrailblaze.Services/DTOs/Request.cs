@@ -1379,9 +1379,20 @@ namespace EduTrailblaze.Services.DTOs
         //public string UserId { get; set; }
         public string FullName { get; set; }
         //public string ProfilePictureUrl { get; set; } = "https://firebasestorage.googleapis.com/v0/b/storage-8b808.appspot.com/o/OIP.jpeg?alt=media&token=60195a0a-2fd6-4c66-9e3a-0f7f80eb8473";
-        public string PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; }
         public IFormFile? ProfilePicture { get; set; }
     }
+
+    public class AddOrUpdateTagRequest
+    {
+        [Required]
+        public string UserId { get; set; }
+        [Required]
+        public List<int> TagId { get; set; }
+    } 
+
+
+
 
     public class UpdateUserProfileRequestValidator : AbstractValidator<UpdateUserProfileRequest>
     {
@@ -1396,7 +1407,8 @@ namespace EduTrailblaze.Services.DTOs
             // .Must(uri => Uri.IsWellFormedUriString(uri, UriKind.Absolute)).WithMessage("ProfilePictureUrl must be a valid URL");
             RuleFor(x => x.PhoneNumber)
                 .MaximumLength(20).WithMessage("PhoneNumber cannot be longer than 20 characters")
-                .Matches(@"^\+?[0-9]\d{1,14}$").WithMessage("PhoneNumber must start with an optional '+' followed by 1 to 15 digits, and cannot contain any other characters.");
+                .Matches(@"^\+?[0-9]\d{1,14}$").WithMessage("PhoneNumber must start with an optional '+' followed by 1 to 15 digits, and cannot contain any other characters.")
+                .When(x => !string.IsNullOrEmpty(x.PhoneNumber));
             RuleFor(x => x.ProfilePicture)
                 .Must(BeAValidImage).WithMessage("ProfilePicture must be a valid image file (jpg, jpeg, png, gif)");
         }

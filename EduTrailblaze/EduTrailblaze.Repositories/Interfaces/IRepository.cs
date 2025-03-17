@@ -11,6 +11,7 @@ namespace EduTrailblaze.Repositories.Interfaces
         Task AddAsync(T entity);
         Task UpdateAsync(T entity);
         Task DeleteAsync(T entity);
+        Task DeleteRangeAsync(List<T> entity);
     }
     public interface IRepositoryQueryBase<T, K>
        where T : EntityBase<K>
