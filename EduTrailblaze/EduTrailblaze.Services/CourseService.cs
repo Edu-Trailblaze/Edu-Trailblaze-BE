@@ -200,7 +200,7 @@ namespace EduTrailblaze.Services
                         await req.ImageURL.CopyToAsync(stream);
 
                     }
-                     imageURI = await _cloudinaryService.UploadImageAsync(new UploadImageRequest() { File = req.ImageURL });
+                    imageURI = await _cloudinaryService.UploadImageAsync(new UploadImageRequest() { File = req.ImageURL });
                 }
 
                 var introURI = course.IntroURL;
@@ -873,11 +873,11 @@ namespace EduTrailblaze.Services
             }
         }
 
-        public async Task<List<CourseCardResponse>> GetPersonalItemRecommendation(string? userId)
+        public async Task<List<CourseCardResponse>> GetPersonalItemRecommendation(string? userId, int numberOfCourses)
         {
             try
             {
-                var item = await PredictHybridRecommendationsV2(userId, 7, 10);
+                var item = await PredictHybridRecommendationsV2(userId, 7, numberOfCourses);
 
                 if (item == null || item.Count == 0)
                 {
@@ -1375,9 +1375,8 @@ namespace EduTrailblaze.Services
                 var orders = await _orderRepository.GetDbSet();
                 var orderDetails = await _orderDetailRepository.GetDbSet();
                 var courses = await _courseRepository.GetDbSet();
-                var userOrders = await orders
-                    .Where(o => o.UserId == userId)
-                    .ToListAsync();
+                var userOrders = orders
+                    .Where(o => o.UserId == userId);
                 var userCourseIds = await orderDetails
                     .Where(od => userOrders.Any(o => o.Id == od.OrderId))
                     .Select(od => od.CourseId)
