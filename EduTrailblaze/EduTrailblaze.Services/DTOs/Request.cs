@@ -1389,7 +1389,7 @@ namespace EduTrailblaze.Services.DTOs
         public string UserId { get; set; }
         [Required]
         public List<int> TagId { get; set; }
-    } 
+    }
 
 
 

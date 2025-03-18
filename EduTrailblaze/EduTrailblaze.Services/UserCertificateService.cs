@@ -14,16 +14,18 @@ namespace EduTrailblaze.Services
         private readonly IRepository<UserCertificate, int> _userCertificateRepository;
         private readonly IRepository<Certificate, int> _certificateRepository;
         private readonly ICourseService _courseService;
+        private readonly IPdfService _pdfService;
         private readonly UserManager<User> _userManager;
         private readonly IWebHostEnvironment _env;
 
-        public UserCertificateService(IRepository<UserCertificate, int> userCertificateRepository, ICourseService courseService, IRepository<Certificate, int> certificateRepository, UserManager<User> userManager,IWebHostEnvironment env)
+        public UserCertificateService(IRepository<UserCertificate, int> userCertificateRepository, ICourseService courseService, IRepository<Certificate, int> certificateRepository, UserManager<User> userManager,IWebHostEnvironment env, IPdfService pdfService)
         {
             _userCertificateRepository = userCertificateRepository;
             _courseService = courseService;
             _env = env;
             _certificateRepository = certificateRepository;
             _userManager = userManager;
+            _pdfService = pdfService;
         }
 
         public async Task<UserCertificate?> GetUserCertificate(int userCertificateId)
@@ -111,9 +113,10 @@ namespace EduTrailblaze.Services
                     //.Replace("[ABC123XYZ]", Guid.NewGuid().ToString())
                     .Replace("[Date]", DateTimeHelper.GetVietnamTime().ToString("MMMM dd, yyyy"));
 
-                var imageBytes = await FileConverter.ConvertHtmlToImage(filledTemplate);
+                //var imageBytes = await FileConverter.ConvertHtmlToImage(filledTemplate);
+                var imageBytes = await _pdfService.ConvertHtmlToPdfAsync(filledTemplate);
 
-                var fileName = Guid.NewGuid() + ".png";
+                var fileName = Guid.NewGuid() + ".pdf";
                 string certificateUrl = "";
                 using (var stream = new MemoryStream(imageBytes))
                 {

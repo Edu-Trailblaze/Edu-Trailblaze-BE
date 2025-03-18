@@ -15,27 +15,27 @@ namespace Cart.API
             try
             {
                 builder.Host.UseSerilog(SeriLog.Configure);
-            builder.Services.AddControllers();
+                builder.Services.AddControllers();
 
-            builder.Services.AddApplicationServices();
-            builder.Services.AddInfrastructor(builder.Configuration);
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+                builder.Services.AddApplicationServices();
+                builder.Services.AddInfrastructor(builder.Configuration);
+                builder.Services.AddEndpointsApiExplorer();
+                builder.Services.AddSwaggerGen();
 
-            var app = builder.Build();
-
-
-            app.UseSwagger();
-            app.UseSwaggerUI();
-
-            app.UseHttpsRedirection();
-
-            app.UseAuthorization();
+                var app = builder.Build();
 
 
-            app.MapControllers();
+                app.UseSwagger();
+                app.UseSwaggerUI();
 
-            app.Run();
+                app.UseHttpsRedirection();
+
+                app.UseAuthorization();
+
+
+                app.MapControllers();
+
+                app.Run();
             }
             catch (Exception ex)
             {

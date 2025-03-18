@@ -18,6 +18,6 @@ namespace OcelotApiGw.Controllers
             _logger = logger;
         }
 
-       
+
     }
 }
