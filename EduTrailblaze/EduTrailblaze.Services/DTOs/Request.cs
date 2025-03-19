@@ -2337,4 +2337,23 @@ namespace EduTrailblaze.Services.DTOs
                 .MaximumLength(450).WithMessage("InstructorId cannot be longer than 450 characters");
         }
     }
+
+    public class ApproveCourseRequest
+    {
+        public int CourseId { get; set; }
+        public string Status { get; set; }
+    }
+
+    public class ApproveCourseRequestValidator : AbstractValidator<ApproveCourseRequest>
+    {
+        public ApproveCourseRequestValidator()
+        {
+            RuleFor(x => x.CourseId)
+                .NotEmpty().WithMessage("CourseId is required");
+            RuleFor(x => x.Status)
+                .NotEmpty().WithMessage("Status is required")
+                .Must(x => new[] { "Approved", "Rejected" }.Contains(x))
+                .WithMessage("Status must be Approved or Rejected");
+        }
+    }
 }

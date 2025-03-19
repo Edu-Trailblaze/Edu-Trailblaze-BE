@@ -143,7 +143,7 @@
         public string UserId { get; set; }
         public int CourseId { get; set; }
         public decimal Rating { get; set; }
-    } 
+    }
     public class UserTagByUserIdResponse
     {
         public string UserId { get; set; }

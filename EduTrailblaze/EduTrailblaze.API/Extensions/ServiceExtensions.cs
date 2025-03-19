@@ -164,6 +164,7 @@ namespace EduTrailblaze.API.Extensions
             {
                 client.Timeout = TimeSpan.FromMinutes(60);
             });
+            services.AddScoped<IAdminDashboardService, AdminDashboardService>();
             services.AddScoped<IAnswerService, AnswerService>();
             services.AddScoped<ICartItemService, CartItemService>();
             services.AddScoped<ICartService, CartService>();

@@ -69,7 +69,7 @@ namespace EduTrailblaze.API.Controllers
         {
             try
             {
-               var result =  await _userTagService.GetUserTagByUserId(userId);
+                var result = await _userTagService.GetUserTagByUserId(userId);
                 return Ok(result);
             }
             catch (Exception ex)

@@ -28,8 +28,8 @@ namespace EduTrailblaze.Services
             {
                 throw new Exception("An error occurred while getting the userTag: " + ex.Message);
             }
-        } 
-      public async Task<UserTagByUserIdResponse?> GetUserTagByUserId(string userId)
+        }
+        public async Task<UserTagByUserIdResponse?> GetUserTagByUserId(string userId)
         {
             try
             {
