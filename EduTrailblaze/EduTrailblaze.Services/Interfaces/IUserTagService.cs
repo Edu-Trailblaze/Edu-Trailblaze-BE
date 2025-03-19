@@ -10,5 +10,6 @@ namespace EduTrailblaze.Services.Interfaces
         Task<bool> AddOrUpdateUserTag(AddOrUpdateTagRequest request);
         Task UpdateUserTag(UserTag userTag);
         Task DeleteUserTag(int userTagId);
+        Task<UserTagByUserIdResponse?> GetUserTagByUserId(string userId);
     }
 }

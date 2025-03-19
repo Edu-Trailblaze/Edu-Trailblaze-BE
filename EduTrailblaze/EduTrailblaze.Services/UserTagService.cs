@@ -30,6 +30,34 @@ namespace EduTrailblaze.Services
             {
                 throw new Exception("An error occurred while getting the userTag: " + ex.Message);
             }
+        } 
+      public async Task<UserTagByUserIdResponse?> GetUserTagByUserId(string userId)
+        {
+            try
+            {
+                var user = await _userManager.FindByIdAsync(userId);
+
+                if (user == null)
+                {
+                    throw new ArgumentException("Invalid User ID");
+                }
+
+                var userTags = await _userTagRepository
+                    .FindByCondition(x => x.UserId == userId, trackChanges: true)
+                    .ToListAsync();
+
+                var response = new UserTagByUserIdResponse
+                {
+                    UserId = userId,
+                    Tag = userTags.Select(x => x.TagId).ToList()
+                };
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the userTag: " + ex.Message);
+            }
         }
 
         public async Task<IEnumerable<UserTag>> GetUserTags()

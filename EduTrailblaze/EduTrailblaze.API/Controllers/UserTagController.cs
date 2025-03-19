@@ -64,5 +64,19 @@ namespace EduTrailblaze.API.Controllers
                 return StatusCode(500, new { message = ex.Message });
             }
         }
+
+        [HttpGet("GetUserTagByUserId/{userId}")]
+        public async Task<IActionResult> GetUserTagByUserId(string userId)
+        {
+            try
+            {
+               var result =  await _userTagService.GetUserTagByUserId(userId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }
