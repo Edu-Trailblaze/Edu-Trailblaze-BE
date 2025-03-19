@@ -18,7 +18,7 @@ namespace EduTrailblaze.Services
         private readonly UserManager<User> _userManager;
         private readonly IWebHostEnvironment _env;
 
-        public UserCertificateService(IRepository<UserCertificate, int> userCertificateRepository, ICourseService courseService, IRepository<Certificate, int> certificateRepository, UserManager<User> userManager,IWebHostEnvironment env, IPdfService pdfService)
+        public UserCertificateService(IRepository<UserCertificate, int> userCertificateRepository, ICourseService courseService, IRepository<Certificate, int> certificateRepository, UserManager<User> userManager, IWebHostEnvironment env, IPdfService pdfService)
         {
             _userCertificateRepository = userCertificateRepository;
             _courseService = courseService;
@@ -101,7 +101,7 @@ namespace EduTrailblaze.Services
                 }
 
                 //var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "Templates", "Certificate.html");
-                
+
                 var templateContent = await File.ReadAllTextAsync(templatePath);
 
                 var filledTemplate = templateContent

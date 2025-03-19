@@ -423,12 +423,12 @@ namespace EduTrailblaze.Services
 
                 if (request.MinRating != null)
                 {
-                    dbSet = dbSet.Where(c => c.Reviews.Any() && c.Reviews.Average(r => r.Rating) >= request.MinRating);
+                    dbSet = dbSet.Where(c => !c.Reviews.Any() || c.Reviews.Average(r => r.Rating) >= request.MinRating);
                 }
 
                 if (request.MaxRating != null)
                 {
-                    dbSet = dbSet.Where(c => c.Reviews.Any() && c.Reviews.Average(r => r.Rating) <= request.MaxRating);
+                    dbSet = dbSet.Where(c => !c.Reviews.Any() || c.Reviews.Average(r => r.Rating) <= request.MinRating);
                 }
 
                 if (request.MinDuration != null)

@@ -20,5 +20,7 @@ namespace EduTrailblaze.Services.Interfaces
         Task UpdateNotification(UpdateNotificationRequest notification);
 
         Task DeleteNotification(int notification);
+
+        Task NotifyRecentActitity(string title, string message, string userId);
     }
 }

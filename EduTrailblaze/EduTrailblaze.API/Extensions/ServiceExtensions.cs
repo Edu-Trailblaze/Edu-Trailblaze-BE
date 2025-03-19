@@ -312,6 +312,9 @@ namespace EduTrailblaze.API.Extensions
                             .AllowCredentials();
                         });
                 });
+
+            services.AddSignalR();
+
             return services;
         }
 

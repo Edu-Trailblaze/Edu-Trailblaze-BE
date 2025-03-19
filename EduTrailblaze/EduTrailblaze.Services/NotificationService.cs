@@ -1,17 +1,23 @@
 ﻿using EduTrailblaze.Entities;
 using EduTrailblaze.Repositories.Interfaces;
 using EduTrailblaze.Services.DTOs;
+using EduTrailblaze.Services.Hubs;
 using EduTrailblaze.Services.Interfaces;
+using Microsoft.AspNetCore.SignalR;
 
 namespace EduTrailblaze.Services
 {
     public class NotificationService : INotificationService
     {
         private readonly IRepository<Notification, int> _notificationRepository;
+        private readonly IRepository<UserProfile, string> _userProfileRepository;
+        private readonly IHubContext<NotificationHub> _hubContext;
 
-        public NotificationService(IRepository<Notification, int> notificationRepository)
+        public NotificationService(IRepository<Notification, int> notificationRepository, IHubContext<NotificationHub> hubContext, IRepository<UserProfile, string> userProfileRepository)
         {
             _notificationRepository = notificationRepository;
+            _hubContext = hubContext;
+            _userProfileRepository = userProfileRepository;
         }
 
         public async Task<Notification?> GetNotification(int notificationId)
@@ -131,6 +137,43 @@ namespace EduTrailblaze.Services
             catch (Exception ex)
             {
                 throw new Exception("An error occurred while deleting the notification: " + ex.Message);
+            }
+        }
+
+        public async Task NotifyRecentActitity(string title, string message, string userId)
+        {
+            try
+            {
+                var notification = new Notification
+                {
+                    Title = title,
+                    Message = message,
+                    UserNotifications = new List<UserNotification>
+                    {
+                        new UserNotification
+                        {
+                            UserId = userId,
+                        }
+                    }
+                };
+
+                await _notificationRepository.AddAsync(notification);
+
+                var user = await _userProfileRepository.GetByIdAsync(userId);
+
+                if (user != null)
+                {
+                    await _hubContext.Clients.User(user.Id).SendAsync("ReceiveNotification", new
+                    {
+                        Message = message,
+                        ImageUrl = user.ProfilePictureUrl,
+                        CreatedAt = notification.CreatedAt.ToString("yyyy-MM-ddTHH:mm:ssZ")
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while adding the notification: " + ex.Message);
             }
         }
     }

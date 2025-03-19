@@ -12,16 +12,22 @@ namespace EduTrailblaze.Services
         private readonly IRepository<UserProgress, int> _userProgressRepository;
         private readonly IRepository<Lecture, int> _lectureRepository;
         private readonly IRepository<Section, int> _sectionRepository;
+        private readonly IRepository<Course, int> _courseRepository;
+        private readonly IRepository<UserProfile, string> _userProfileRepository;
         private readonly IEnrollmentService _enrollmentService;
         private readonly IUserCertificateService _userCertificateService;
+        private readonly INotificationService _notificationService;
 
-        public UserProgressService(IRepository<UserProgress, int> userProgressRepository, IEnrollmentService enrollmentService, IRepository<Lecture, int> lectureRepository, IRepository<Section, int> sectionRepository, IUserCertificateService userCertificateService)
+        public UserProgressService(IRepository<UserProgress, int> userProgressRepository, IEnrollmentService enrollmentService, IRepository<Lecture, int> lectureRepository, IRepository<Section, int> sectionRepository, IUserCertificateService userCertificateService, INotificationService notificationService, IRepository<Course, int> courseRepository, IRepository<UserProfile, string> userProfileRepository)
         {
             _userProgressRepository = userProgressRepository;
             _enrollmentService = enrollmentService;
             _lectureRepository = lectureRepository;
             _sectionRepository = sectionRepository;
             _userCertificateService = userCertificateService;
+            _notificationService = notificationService;
+            _courseRepository = courseRepository;
+            _userProfileRepository = userProfileRepository;
         }
 
         public async Task<UserProgress?> GetUserProgress(int userProgressId)
@@ -259,13 +265,32 @@ namespace EduTrailblaze.Services
 
                     if (courseProgressPercentage >= 100 && enrollment.IsCompleted)
                     {
+                        var courseCertificatesRequest = new GetCourseCertificatesRequest
+                        {
+                            UserId = userProgressRequest.UserId,
+                            CourseId = courseId
+                        };
+
+                        var userCertificateList = await _userCertificateService.GetUserCertificatesByConditions(courseCertificatesRequest);
+
+                        if (userCertificateList.Any())
+                        {
+                            return;
+                        }
+
                         var userCertificate = new CreateUserCertificateRequest
                         {
                             UserId = userProgressRequest.UserId,
                             CourseId = courseId
                         };
 
-                        await Task.Run(async () => await _userCertificateService.AddUserCertificate(userCertificate));
+                        var course = await _courseRepository.GetByIdAsync(courseId);
+
+                        var userProfile = await _userProfileRepository.GetByIdAsync(userProgressRequest.UserId);
+
+                        await _notificationService.NotifyRecentActitity("Course Completed", $"{userProfile.Fullname} have completed the course {course.Title}.", userProgressRequest.UserId);
+
+                        await _userCertificateService.AddUserCertificate(userCertificate);
                     }
                 }
 

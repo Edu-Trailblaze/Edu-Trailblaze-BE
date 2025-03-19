@@ -34,12 +34,16 @@ namespace EduTrailblaze.Services.DTOs
                 .When(x => !string.IsNullOrEmpty(x.Title));
 
             RuleFor(x => x.MinRating)
-                .InclusiveBetween(0, 5).WithMessage("MinRating must be between 0 and 5")
-                .When(x => x.MinRating.HasValue);
+            .InclusiveBetween(0, 5).WithMessage("MinRating must be between 0 and 5")
+            .When(x => x.MinRating.HasValue);
 
             RuleFor(x => x.MaxRating)
                 .InclusiveBetween(0, 5).WithMessage("MaxRating must be between 0 and 5")
-                .GreaterThanOrEqualTo(x => x.MinRating).WithMessage("MaxRating must be greater than or equal to MinRating")
+                .When(x => x.MaxRating.HasValue);
+
+            RuleFor(x => x)
+                .Must(x => !x.MinRating.HasValue || !x.MaxRating.HasValue || x.MaxRating >= x.MinRating)
+                .WithMessage("MaxRating must be greater than or equal to MinRating")
                 .When(x => x.MaxRating.HasValue);
 
             RuleFor(x => x.MinPrice)

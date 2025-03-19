@@ -13,5 +13,7 @@ namespace EduTrailblaze.Services.Interfaces
         Task UpdateUserNotification(UserNotification userNotification);
 
         Task DeleteUserNotification(UserNotification userNotification);
+
+        Task MarkAsReadAsync(int notificationId);
     }
 }
