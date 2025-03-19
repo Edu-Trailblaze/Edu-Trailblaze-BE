@@ -107,6 +107,19 @@ namespace EduTrailblaze.API.Extensions
                             ValidAudience = configuration["JwtToken:Audience"],
                             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtToken:Key"]))
                         };
+                        options.Events = new JwtBearerEvents
+                        {
+                            OnMessageReceived = context =>
+                            {
+                                var accessToken = context.Request.Query["accessToken"];
+                                if (!string.IsNullOrEmpty(accessToken) &&
+                                    context.HttpContext.Request.Path.StartsWithSegments("/notifications-hub"))
+                                {
+                                    context.Token = accessToken;
+                                }
+                                return Task.CompletedTask;
+                            }
+                        };
                     })
                     .AddGoogle(options =>
                     {
