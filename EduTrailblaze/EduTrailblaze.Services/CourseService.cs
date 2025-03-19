@@ -423,12 +423,12 @@ namespace EduTrailblaze.Services
 
                 if (request.MinRating != null)
                 {
-                    dbSet = dbSet.Where(c => !c.Reviews.Any() || c.Reviews.Average(r => r.Rating) >= request.MinRating);
+                    dbSet = dbSet.Where(c => c.Reviews.Average(r => r.Rating) >= request.MinRating);
                 }
 
                 if (request.MaxRating != null)
                 {
-                    dbSet = dbSet.Where(c => !c.Reviews.Any() || c.Reviews.Average(r => r.Rating) <= request.MinRating);
+                    dbSet = dbSet.Where(c => c.Reviews.Average(r => r.Rating) <= request.MaxRating);
                 }
 
                 if (request.MinDuration != null)
@@ -669,7 +669,7 @@ namespace EduTrailblaze.Services
 
                 if (courses == null || courses.Count == 0)
                 {
-                    throw new Exception("No courses found.");
+                    return new List<CourseCardResponse>();
                 }
 
                 foreach (var course in courses)
