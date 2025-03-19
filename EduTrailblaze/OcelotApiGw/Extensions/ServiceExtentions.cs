@@ -6,7 +6,7 @@ namespace OcelotApiGw.Extensions
     {
         internal static IServiceCollection AddInfrastructor(this IServiceCollection services, IConfiguration configuration)
         {
-           
+
             return services;
         }
 
@@ -24,7 +24,7 @@ namespace OcelotApiGw.Extensions
                         .WithOrigins(origin)
                         .AllowAnyMethod()
                         .AllowAnyHeader());
-                        //.AllowCredentials());
+                //.AllowCredentials());
             });
         }
 

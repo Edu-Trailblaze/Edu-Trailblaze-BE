@@ -207,11 +207,11 @@ namespace EduTrailblaze.API.Controllers
         }
 
         [HttpGet("get-personal-item-recommendation")]
-        public async Task<IActionResult> GetPersonalItemRecommendation(string? userId)
+        public async Task<IActionResult> GetPersonalItemRecommendation(string? userId, int numberOfCourses)
         {
             try
             {
-                var res = await _courseService.GetPersonalItemRecommendation(userId);
+                var res = await _courseService.GetPersonalItemRecommendation(userId, numberOfCourses);
                 if (res == null) return NotFound();
                 return Ok(res);
             }

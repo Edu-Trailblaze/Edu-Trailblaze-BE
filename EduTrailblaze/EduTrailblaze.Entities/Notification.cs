@@ -13,10 +13,10 @@ namespace EduTrailblaze.Entities
         public string Message { get; set; }
 
         [Required]
-        public bool IsGlobal { get; set; }
+        public bool IsGlobal { get; set; } = false;
 
         [Required]
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
 
 
         // Navigation properties

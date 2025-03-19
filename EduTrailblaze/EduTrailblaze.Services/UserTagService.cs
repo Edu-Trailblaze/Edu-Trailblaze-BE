@@ -4,8 +4,6 @@ using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Ocsp;
-using System.Threading.Channels;
 
 namespace EduTrailblaze.Services
 {
@@ -86,7 +84,7 @@ namespace EduTrailblaze.Services
                 var tagIds = request.TagId.ToList();
                 var existingUserTags = await _userTagRepository
                     .FindByCondition(x => x.UserId == request.UserId, trackChanges: true)
-                    
+
                     .ToListAsync();
                 var tagsToRemove = existingUserTags.Where(ut => !tagIds.Contains(ut.TagId)).ToList();
                 await _userTagRepository.DeleteRangeAsync(tagsToRemove);
@@ -96,7 +94,7 @@ namespace EduTrailblaze.Services
 
                     if (existingTag != null)
                     {
-                       await _userTagRepository.UpdateAsync(existingTag);
+                        await _userTagRepository.UpdateAsync(existingTag);
                     }
                     else
                     {
@@ -106,7 +104,7 @@ namespace EduTrailblaze.Services
                             TagId = tagId
 
                         };
-                      await _userTagRepository.AddAsync(newTag);
+                        await _userTagRepository.AddAsync(newTag);
                     }
                 }
                 return true;

@@ -11,12 +11,18 @@ namespace EduTrailblaze.Services
     public class ReviewService : IReviewService
     {
         private readonly IRepository<Review, int> _reviewRepository;
+        private readonly IRepository<UserProfile, string> _userProfileRepository;
+        private readonly IRepository<Course, int> _courseRepository;
+        private readonly INotificationService _notificationService;
         private readonly IMapper _mapper;
 
-        public ReviewService(IRepository<Review, int> reviewRepository, IMapper mapper)
+        public ReviewService(IRepository<Review, int> reviewRepository, IMapper mapper, IRepository<UserProfile, string> userProfileRepository, IRepository<Course, int> courseRepository, INotificationService notificationService)
         {
             _reviewRepository = reviewRepository;
             _mapper = mapper;
+            _userProfileRepository = userProfileRepository;
+            _courseRepository = courseRepository;
+            _notificationService = notificationService;
         }
 
         public async Task<IQueryable<Review>> GetDbSetReview()
@@ -95,6 +101,10 @@ namespace EduTrailblaze.Services
         {
             try
             {
+                var student = await _userProfileRepository.GetByIdAsync(review.UserId) ?? throw new Exception("Student not found.");
+
+                var course = await _courseRepository.GetByIdAsync(review.CourseId) ?? throw new Exception("Course not found.");
+
                 var newReview = new Review
                 {
                     CourseId = review.CourseId,
@@ -103,6 +113,8 @@ namespace EduTrailblaze.Services
                     ReviewText = review.ReviewText
                 };
                 await _reviewRepository.AddAsync(newReview);
+
+                await _notificationService.NotifyRecentActitity("New Review", $"{student.Fullname ?? student.Id} left a {review.Rating}-star review on {course.Title}", course.CreatedBy);
             }
             catch (Exception ex)
             {

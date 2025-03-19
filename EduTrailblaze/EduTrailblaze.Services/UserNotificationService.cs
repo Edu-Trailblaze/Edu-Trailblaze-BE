@@ -72,5 +72,22 @@ namespace EduTrailblaze.Services
                 throw new Exception("An error occurred while deleting the userNotification: " + ex.Message);
             }
         }
+
+        public async Task MarkAsReadAsync(int notificationId)
+        {
+            try
+            {
+                var notification = await _userNotificationRepository.GetByIdAsync(notificationId);
+                if (notification != null)
+                {
+                    notification.IsRead = true;
+                    await _userNotificationRepository.UpdateAsync(notification);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while marking the notification as read: " + ex.Message);
+            }
+        }
     }
 }

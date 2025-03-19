@@ -11,7 +11,7 @@ namespace EduTrailblaze.Services
     {
         private readonly IRepository<UserProfile, string> _userProfileRepository;
         private readonly UserManager<User> _userManager;
-      
+
 
         public UserProfileService(IRepository<UserProfile, string> userProfileRepository, UserManager<User> userManager)
         {
@@ -138,7 +138,7 @@ namespace EduTrailblaze.Services
                         await _userManager.UpdateAsync(user);
                     }
                 }
-              
+
             }
             catch (Exception ex)
             {

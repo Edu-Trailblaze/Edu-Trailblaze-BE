@@ -116,7 +116,7 @@ namespace EduTrailblaze.Services
 
                     // Flatten the data and calculate the total revenue for the specified time period
                     totalRevenue = orderDbSet
-                        .Where(o => o.OrderDate >= startDate && o.OrderDetails.Any(od => od.Course.CreatedBy == request.InstructorId))
+                        .Where(o => o.OrderStatus == "Completed" && o.OrderDate >= startDate && o.OrderDetails.Any(od => od.Course.CreatedBy == request.InstructorId))
                         .SelectMany(o => o.OrderDetails)
                         .Where(od => od.Course.CreatedBy == request.InstructorId)
                         .Sum(od => od.Price);

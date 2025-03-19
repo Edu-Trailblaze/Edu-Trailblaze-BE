@@ -1,5 +1,4 @@
-﻿using EduTrailblaze.Services;
-using EduTrailblaze.Services.DTOs;
+﻿using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 

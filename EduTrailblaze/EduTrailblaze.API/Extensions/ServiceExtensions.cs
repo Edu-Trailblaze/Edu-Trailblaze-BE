@@ -107,6 +107,19 @@ namespace EduTrailblaze.API.Extensions
                             ValidAudience = configuration["JwtToken:Audience"],
                             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtToken:Key"]))
                         };
+                        options.Events = new JwtBearerEvents
+                        {
+                            OnMessageReceived = context =>
+                            {
+                                var accessToken = context.Request.Query["accessToken"];
+                                if (!string.IsNullOrEmpty(accessToken) &&
+                                    context.HttpContext.Request.Path.StartsWithSegments("/notifications-hub"))
+                                {
+                                    context.Token = accessToken;
+                                }
+                                return Task.CompletedTask;
+                            }
+                        };
                     })
                     .AddGoogle(options =>
                     {
@@ -201,6 +214,11 @@ namespace EduTrailblaze.API.Extensions
             services.AddScoped<ISendMail, SendMail>();
             services.AddScoped<IPayPalService, PayPalService>();
             services.AddScoped<IInstructorDashboardService, InstructorDashboardService>();
+            services.AddScoped<IPdfService, PdfService>();
+            services.AddHttpClient<IPdfService, PdfService>(client =>
+            {
+                client.Timeout = TimeSpan.FromMinutes(600);
+            });
 
             services.AddHttpClient<ICurrencyExchangeService, CurrencyExchangeService>();
 
@@ -307,6 +325,9 @@ namespace EduTrailblaze.API.Extensions
                             .AllowCredentials();
                         });
                 });
+
+            services.AddSignalR();
+
             return services;
         }
 

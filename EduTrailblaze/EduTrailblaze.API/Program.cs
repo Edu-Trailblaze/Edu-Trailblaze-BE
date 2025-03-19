@@ -1,6 +1,7 @@
 using Common.Logging;
 using EduTrailblaze.API.Extensions;
 using EduTrailblaze.Repositories;
+using EduTrailblaze.Services.Hubs;
 using Hangfire;
 using Hangfire.SqlServer;
 using Microsoft.Extensions.FileProviders;
@@ -68,6 +69,9 @@ namespace EduTrailblaze.API
                 });
                 app.MapControllers();
                 app.MapGet("/env", () => app.Environment.EnvironmentName);
+
+                app.MapHub<NotificationHub>("/notifications-hub");
+
                 app.MigrateDatabase<EduTrailblazeDbContext>().Run();
 
             }

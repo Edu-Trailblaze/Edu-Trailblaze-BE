@@ -12,11 +12,13 @@ namespace EduTrailblaze.Services
         private readonly IRepository<Order, int> _orderRepository;
         private readonly IRepository<CourseClass, int> _courseClassRepository;
         private readonly IRepository<UserProgress, int> _userProgressRepository;
+        private readonly IRepository<UserProfile, string> _userProfileRepository;
         private readonly IRepository<Lecture, int> _lectureRepository;
         private readonly ICourseService _courseService;
         private readonly IReviewService _reviewService;
+        private readonly INotificationService _notificationService;
 
-        public EnrollmentService(IRepository<Enrollment, int> enrollmentRepository, IRepository<Order, int> orderRepository, IRepository<CourseClass, int> courseClassRepository, ICourseService courseService, IReviewService reviewService, IRepository<UserProgress, int> userProgressRepository, IRepository<Lecture, int> lectureRepository)
+        public EnrollmentService(IRepository<Enrollment, int> enrollmentRepository, IRepository<Order, int> orderRepository, IRepository<CourseClass, int> courseClassRepository, ICourseService courseService, IReviewService reviewService, IRepository<UserProgress, int> userProgressRepository, IRepository<Lecture, int> lectureRepository, IRepository<UserProfile, string> userProfileRepository, INotificationService notificationService)
         {
             _enrollmentRepository = enrollmentRepository;
             _orderRepository = orderRepository;
@@ -25,6 +27,8 @@ namespace EduTrailblaze.Services
             _reviewService = reviewService;
             _userProgressRepository = userProgressRepository;
             _lectureRepository = lectureRepository;
+            _userProfileRepository = userProfileRepository;
+            _notificationService = notificationService;
         }
 
         public async Task<Enrollment?> GetEnrollment(int enrollmentId)
@@ -55,6 +59,18 @@ namespace EduTrailblaze.Services
         {
             try
             {
+                var student = await _userProfileRepository.GetByIdAsync(enrollment.StudentId);
+                if (student == null)
+                {
+                    throw new Exception("Student not found.");
+                }
+
+                var course = await _courseService.GetCourse(enrollment.CourseId);
+                if (course == null)
+                {
+                    throw new Exception("Course not found.");
+                }
+
                 var orderDbSet = await _orderRepository.GetDbSet();
                 var order = await orderDbSet
                     .Include(o => o.OrderDetails)
@@ -92,6 +108,8 @@ namespace EduTrailblaze.Services
                 };
 
                 await _enrollmentRepository.AddAsync(newEnrollment);
+
+                await _notificationService.NotifyRecentActitity("Enrollment", student.Fullname + " successfully enrolled in " + course.Title, course.CreatedBy);
             }
             catch (Exception ex)
             {
