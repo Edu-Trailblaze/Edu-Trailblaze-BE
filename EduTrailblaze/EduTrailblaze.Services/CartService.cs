@@ -337,7 +337,7 @@ namespace EduTrailblaze.Services
 
         // Combined cart
 
-        public async Task<List<CartItemDTO>> GetCart(string? userId)
+        public async Task<List<CartItemDTO>> GetCart(string userId)
         {
             try
             {

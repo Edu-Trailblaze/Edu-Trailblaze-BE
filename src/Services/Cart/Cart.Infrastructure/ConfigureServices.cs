@@ -25,18 +25,19 @@ namespace Cart.Infrastructure
                 KeepAlive = 180
 
             };
-            services.AddStackExchangeRedisCache(options =>
-            {
-                options.Configuration = $"{configuration["RedisConfig:Host"]}:{configuration["RedisConfig:Port"]}";
-                options.ConfigurationOptions = redisConfiguration;
-            });
-            //services.AddSingleton(redisConfiguration);
-            //services.AddSingleton<IConnectionMultiplexer>(sp =>
+            //services.AddStackExchangeRedisCache(options =>
             //{
-            //    var configuration = sp.GetRequiredService<ConfigurationOptions>();
-            //    return ConnectionMultiplexer.Connect(configuration);
+            //    options.Configuration = $"{configuration["RedisConfig:Host"]}:{configuration["RedisConfig:Port"]}";
+            //    options.ConfigurationOptions = redisConfiguration;
             //});
+            //services.AddSingleton(redisConfiguration);
+            services.AddSingleton<IConnectionMultiplexer>(sp =>
+            {
+             // var configuration = sp.GetRequiredService<ConfigurationOptions>();
+                return ConnectionMultiplexer.Connect(redisConfiguration);
+            });
             services.AddDistributedMemoryCache();
+            services.AddHttpContextAccessor();
             services.AddScoped<ISerializeService, SerializeService>();
             services.AddScoped<ICartRepository, CartRepository>();
             return services;

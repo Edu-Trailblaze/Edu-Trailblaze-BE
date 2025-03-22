@@ -1,14 +1,15 @@
-﻿using MediatR;
+﻿using Cart.Application.Common.Models;
+using MediatR;
 using Shared.SeedWork;
 
 namespace Cart.Application.Features.V1.Carts.Queries.GetCarts
 {
-    public class GetCartQuery : IRequest<ApiResult<Cart.Domain.Entities.Cart>>
+    public class GetCartQuery : IRequest<List<CartItemDTO>>
     {
-        public string UserName { get; private set; }
-        public GetCartQuery(string userName)
+        public string UserId { get; private set; } 
+        public GetCartQuery(string userId)
         {
-            UserName = userName ?? throw new ArgumentNullException(nameof(userName));
+            UserId = userId ?? throw new ArgumentNullException(nameof(userId));
         }
     }
 }

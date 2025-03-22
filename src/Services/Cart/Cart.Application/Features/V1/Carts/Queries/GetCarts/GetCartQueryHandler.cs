@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Cart.Application.Common.Interfaces;
+using Cart.Application.Common.Models;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Shared.SeedWork;
@@ -7,7 +8,7 @@ using Shared.SeedWork;
 
 namespace Cart.Application.Features.V1.Carts.Queries.GetCarts
 {
-    public class GetCartQueryHandler : IRequestHandler<GetCartQuery, ApiResult<Cart.Domain.Entities.Cart>>
+    public class GetCartQueryHandler : IRequestHandler<GetCartQuery, List<CartItemDTO>>
     {
         private readonly ICartRepository _cartRepository;
         private readonly IMapper _mapper;
@@ -19,11 +20,11 @@ namespace Cart.Application.Features.V1.Carts.Queries.GetCarts
             _cartRepository = cartRepository ?? throw new ArgumentNullException(nameof(cartRepository));
         }
         private const string MethodName = "GetCartQueryHandler";
-        public async Task<ApiResult<Domain.Entities.Cart>> Handle(GetCartQuery request, CancellationToken cancellationToken)
+        public async Task<List<CartItemDTO>> Handle(GetCartQuery request, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"Begin {MethodName}");
-            var orders = await _cartRepository.GetCartByUsername(request.UserName);
-            return new ApiSuccessResult<Domain.Entities.Cart>(orders);
+            var orders = await _cartRepository.GetCart(request.UserId);
+            return new List<CartItemDTO>(orders);
         }
 
 

@@ -1,4 +1,5 @@
 
+using Cart.API.Extensions;
 using Cart.Application;
 using Cart.Infrastructure;
 using Common.Logging;
@@ -18,7 +19,11 @@ namespace Cart.API
                 builder.Services.AddControllers();
 
                 builder.Services.AddApplicationServices();
+                builder.Services.AddConfigurationSettings(builder.Configuration);
                 builder.Services.AddInfrastructor(builder.Configuration);
+
+                //configure MassTransit
+                builder.Services.ConfigureMassTransit();
                 builder.Services.AddEndpointsApiExplorer();
                 builder.Services.AddSwaggerGen();
 
