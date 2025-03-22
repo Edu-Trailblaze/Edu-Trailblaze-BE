@@ -4,6 +4,7 @@ using EduTrailblaze.Repositories;
 using EduTrailblaze.Services.Hubs;
 using Hangfire;
 using Hangfire.SqlServer;
+using MassTransit;
 using Microsoft.Extensions.FileProviders;
 using Serilog;
 
@@ -31,7 +32,8 @@ namespace EduTrailblaze.API
                 builder.Host.UseSerilog(SeriLog.Configure);
                 builder.Host.AddAppConfiguration();
                 builder.Services.AddInfrastructor(builder.Configuration);
-
+                builder.Services.AddConfigurationSettings(builder.Configuration);
+                builder.Services.ConfigureMassTransit();
                 builder.Services.AddHangfire(configuration => configuration
                     .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
                     .UseSimpleAssemblyNameTypeSerializer()

@@ -31,6 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\BuildingBlocks\EventBus\EventBus.Messages\EventBus.Messages.csproj" />
     <ProjectReference Include="..\EduTrailblaze.Repositories\EduTrailblaze.Repositories.csproj">
       <Private>True</Private>
     </ProjectReference>

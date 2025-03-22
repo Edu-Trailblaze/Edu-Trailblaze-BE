@@ -10,24 +10,64 @@ using EduTrailblaze.Services.Options;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Hangfire;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Nest;
 using Polly;
 using SendGrid;
+using Shared.Configurations;
 using StackExchange.Redis;
 using System.Text;
 using System.Text.Json.Serialization;
+using Infrastructure.Extensions;
+using EventBus.Messages.Interfaces;
+using EduTrailblaze.Services.Consumer;
+using static Org.BouncyCastle.Math.EC.ECCurve;
+using EventBus.Messages.Events;
 
 namespace EduTrailblaze.API.Extensions
 {
     public static class ServiceExtensions
     {
+        public static IServiceCollection AddConfigurationSettings(this IServiceCollection services, IConfiguration configuration)
+        {
+            var eventBusSetting = configuration.GetSection(nameof(EventBusSetting)).Get<EventBusSetting>();
+            services.AddSingleton(eventBusSetting);
+            return services;
+        }
+
+        public static void ConfigureMassTransit(this IServiceCollection services)
+        {
+            var setting = services.GetOptions<EventBusSetting>("EventBusSetting");
+            if (setting == null || string.IsNullOrEmpty(setting.HostAddress))
+            {
+                throw new ArgumentNullException("EventBus is not configuration");
+            }
+
+            var mqConnection = new Uri(setting.HostAddress);
+            services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
+            services.AddMassTransit(x =>
+            {
+                x.AddConsumer<GetCourseConsumer>();
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    cfg.Host(mqConnection);
+                    cfg.ReceiveEndpoint("course-queue", e =>
+                    {
+                        e.ConfigureConsumer<GetCourseConsumer>(context);
+                    });
+                });
+               // x.AddRequestClient<GetCourseRequest>();
+            });
+            //services.AddMassTransitHostedService();
+        }
         public static IServiceCollection AddInfrastructor(this IServiceCollection services, IConfiguration configuration)
         {
             // Add services to the container.

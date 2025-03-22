@@ -64,6 +64,7 @@
             CalculatedPrice = price - CalculatedDiscount;
         }
     }
+    
     public class ReviewInformation
     {
         public decimal AverageRating { get; set; }

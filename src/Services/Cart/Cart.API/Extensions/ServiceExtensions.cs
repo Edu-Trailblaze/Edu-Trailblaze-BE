@@ -1,4 +1,5 @@
-﻿using EventBus.Messages.Interfaces;
+﻿using EventBus.Messages.Events;
+using EventBus.Messages.Interfaces;
 using Infrastructure.Extensions;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -31,7 +32,7 @@ namespace Cart.API.Extensions
                 {
                     cfg.Host(mqConnection);
                 });
-                x.AddRequestClient<ICartEvent>();
+                x.AddRequestClient<GetCourseRequest>(new Uri("queue:course-queue"));
             });
             //services.AddMassTransitHostedService();
         }

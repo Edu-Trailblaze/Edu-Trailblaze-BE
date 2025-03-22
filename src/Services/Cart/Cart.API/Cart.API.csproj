@@ -7,13 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MassTransit.RabbitMQ" Version="8.4.1-develop.2245" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\EduTrailblaze\EventBus.Messages\EventBus.Messages.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\Common.Logging\Common.Logging.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\EventBus\EventBus.Messages\EventBus.Messages.csproj" />
     <ProjectReference Include="..\Cart.Application\Cart.Application.csproj" />
     <ProjectReference Include="..\Cart.Infrastructure\Cart.Infrastructure.csproj" />
   </ItemGroup>
