@@ -15,5 +15,6 @@ namespace EduTrailblaze.Entities
 
         // Navigation property
         public virtual ICollection<CourseTag> CourseTags { get; set; }
+        public virtual ICollection<UserTag> UserTags { get; set; }
     }
 }

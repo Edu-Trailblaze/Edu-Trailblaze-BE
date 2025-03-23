@@ -15,6 +15,7 @@ namespace EduTrailblaze.Services
         private readonly string _googleAiUrl;
         private readonly string _googleAiAndDbUrl;
         private readonly string _whisperUrl;
+        private readonly string _courseDetectAI;
 
         public AIService(HttpClient httpClient, IConfiguration configuration)
         {
@@ -25,6 +26,7 @@ namespace EduTrailblaze.Services
             _googleAiUrl = configuration["LocalAI:Google"];
             _googleAiAndDbUrl = configuration["LocalAI:GoogleDb"];
             _whisperUrl = configuration["LocalAI:Whisper"];
+            _courseDetectAI = configuration["AI:CourseDetect"];
         }
 
         public async Task<string> GetResponseAsyncUsingLocalImageGenerationAI(GetResponseAsyncUsingLocalImageGenerationAIRequest requestBody)
@@ -153,6 +155,22 @@ namespace EduTrailblaze.Services
 
                 var result = await response.Content.ReadFromJsonAsync<WhisperChatResponse>();
                 return result ?? throw new Exception("No GenerateTranscriptUsingWhisper received");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error: {ex.Message}");
+            }
+        }
+
+        public async Task<CourseDetectionResponse> CourseDetectionAI(CourseDetectionRequest request)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync(_courseDetectAI, request);
+                response.EnsureSuccessStatusCode();
+
+                var result = await response.Content.ReadFromJsonAsync<CourseDetectionResponse>();
+                return result ?? throw new Exception("No GetResponseAsyncUsingGoogleAIAndDb received");
             }
             catch (Exception ex)
             {
