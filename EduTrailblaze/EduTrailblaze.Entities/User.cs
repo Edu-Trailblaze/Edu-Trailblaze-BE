@@ -15,6 +15,6 @@ namespace EduTrailblaze.Entities
         public virtual ICollection<UserNotification> UserNotifications { get; set; }
         public virtual ICollection<UserProgress> UserProgresses { get; set; }
         public virtual ICollection<UserCourseCoupon> UserCourseCoupons { get; set; }
-        public virtual ICollection<Tag> Tags { get; set; }
+        public virtual ICollection<UserTag> UserTags { get; set; }
     }
 }
