@@ -63,15 +63,4 @@ namespace EduTrailblaze.Services.DTOs
     {
         public string transcript { get; set; }
     }
-
-    public class CourseDetectionResponse
-    {
-        public string predicted_label { get; set; }
-    }
-
-    public class CourseDetectionRequest
-    {
-        public string title { get; set; }
-        public string description { get; set; }
-    }
 }

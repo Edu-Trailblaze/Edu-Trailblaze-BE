@@ -29,19 +29,5 @@ namespace EduTrailblaze.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-
-        [HttpPut("approve-course-by-ai")]
-        public async Task<IActionResult> ApproveCourseByAI(int courseId)
-        {
-            try
-            {
-                await _adminDashboardService.ApproveCourseByAI(courseId);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
     }
 }
