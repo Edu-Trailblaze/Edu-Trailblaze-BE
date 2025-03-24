@@ -59,25 +59,19 @@ namespace EduTrailblaze.Services
                     description = course.Description,
                 };
 
-                var aiResponse = await _aiService.CourseDetectionAI(courseDetectAIRequest);
+                var tags = await _aiService.CourseDetectionAIV2(courseDetectAIRequest);
 
-                if (aiResponse == null)
+                if (tags == null || !tags.Any())
                 {
-                    throw new Exception("AI response is null.");
+                    throw new Exception("AI response is null or empty.");
                 }
-
-                var tagName = aiResponse.predicted_label;
 
                 var tagDbSet = await _tagRepository.GetDbSet();
-                var tag = await tagDbSet.FirstOrDefaultAsync(t => t.Name == tagName);
-
-                if (tag == null)
-                {
-                    throw new Exception("Tag not found.");
-                }
                 var userTagDbSet = await _userTagRepository.GetDbSet();
 
-                var hasTag = await userTagDbSet.AnyAsync(ut => ut.UserId == course.CreatedBy && ut.TagId == tag.Id);
+                var hasTag = await userTagDbSet
+                    .Where(ut => ut.UserId == course.CreatedBy)
+                    .AnyAsync(ut => tags.AsQueryable().Contains(ut.Tag.Name));
 
                 if (!hasTag)
                 {
