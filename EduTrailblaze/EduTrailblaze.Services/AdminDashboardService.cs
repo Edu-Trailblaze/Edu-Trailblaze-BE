@@ -204,5 +204,57 @@ namespace EduTrailblaze.Services
                 throw new Exception("An error occurred while getting the pending course: " + ex.Message);
             }
         }
+
+        public async Task<CourseDataResponse> GetCourseData(CourseDataRequest request)
+        {
+            try
+            {
+                var query = await _orderRepository.GetDbSet();
+
+                query = query.Where(o => o.OrderStatus == "Completed");
+
+                if (request.CourseId.HasValue)
+                {
+                    query = query.Where(o => o.OrderDetails.Any(od => od.CourseId == request.CourseId.Value));
+                }
+
+                if (request.FromDate.HasValue)
+                {
+                    query = query.Where(o => o.OrderDate >= request.FromDate.Value.ToDateTime(TimeOnly.MinValue));
+                }
+
+                if (request.ToDate.HasValue)
+                {
+                    query = query.Where(o => o.OrderDate <= request.ToDate.Value.ToDateTime(TimeOnly.MaxValue));
+                }
+
+                int numberOfCoursesPurchased;
+                if (request.CourseId.HasValue)
+                {
+                    numberOfCoursesPurchased = await query
+                        .SelectMany(o => o.OrderDetails)
+                        .CountAsync(od => od.CourseId == request.CourseId.Value);
+                }
+                else
+                {
+                    numberOfCoursesPurchased = await query
+                        .SelectMany(o => o.OrderDetails)
+                        .CountAsync();
+                }
+
+                var totalRevenue = await query
+                    .SumAsync(o => o.OrderAmount);
+
+                return new CourseDataResponse
+                {
+                    NumberOfCoursesPurchased = numberOfCoursesPurchased,
+                    TotalRevenue = totalRevenue
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the course data: " + ex.Message);
+            }
+        }
     }
 }

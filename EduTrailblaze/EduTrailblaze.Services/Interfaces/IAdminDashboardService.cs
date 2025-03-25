@@ -17,5 +17,7 @@ namespace EduTrailblaze.Services.Interfaces
         Task<int> TotalCoursesBought();
 
         Task<PaginatedList<CourseDTO>> GetPendingCourses(Paging paging);
+
+        Task<CourseDataResponse> GetCourseData(CourseDataRequest request);
     }
 }

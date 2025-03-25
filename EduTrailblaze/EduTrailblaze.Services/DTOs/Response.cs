@@ -335,4 +335,10 @@
         public decimal CompletionPercentage { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
     }
+
+    public class CourseDataResponse
+    {
+        public int NumberOfCoursesPurchased { get; set; }
+        public decimal TotalRevenue { get; set; }
+    }
 }

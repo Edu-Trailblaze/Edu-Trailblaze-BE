@@ -2356,4 +2356,24 @@ namespace EduTrailblaze.Services.DTOs
                 .WithMessage("Status must be Approved or Rejected");
         }
     }
+
+    public class CourseDataRequest
+    {
+        public int? CourseId { get; set; }
+        public DateOnly? FromDate { get; set; }
+        public DateOnly? ToDate { get; set; }
+    }
+
+    public class CourseDataRequestValidator : AbstractValidator<CourseDataRequest>
+    {
+        public CourseDataRequestValidator()
+        {
+            RuleFor(x => x.FromDate)
+                .LessThanOrEqualTo(x => x.ToDate).WithMessage("FromDate must be less than or equal to ToDate")
+                .When(x => x.FromDate.HasValue && x.ToDate.HasValue);
+            RuleFor(x => x.ToDate)
+                .GreaterThanOrEqualTo(x => x.FromDate).WithMessage("ToDate must be greater than or equal to FromDate")
+                .When(x => x.FromDate.HasValue && x.ToDate.HasValue);
+        }
+    }
 }
