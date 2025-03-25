@@ -1,4 +1,5 @@
-﻿using Cart.Application.Features.V1.Carts.Commands.AddCarts;
+﻿using Cart.Application.Common.Models;
+using Cart.Application.Features.V1.Carts.Commands.AddCarts;
 using Cart.Application.Features.V1.Carts.Commands.AddCartsV2;
 using Cart.Application.Features.V1.Carts.Commands.DeleteCarts;
 using Cart.Application.Features.V1.Carts.Queries.GetCarts;
@@ -53,8 +54,9 @@ namespace Cart.API.Controllers
         {
             return Ok(await _mediator.Send(new DeleteCartQuery(username)));
         }
-        [HttpPost(Name = "add-item-to-cart-v2")]
-        [ProducesResponseType(typeof(Entity.Cart), (int)HttpStatusCode.OK)]
+        
+        [HttpPost("add-item-to-cart-v2")]
+        [ProducesResponseType(typeof(CartCourseInformation), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> AddToCartV2(string? userId, int courseId)
         {
             

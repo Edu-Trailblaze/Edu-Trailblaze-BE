@@ -12,6 +12,6 @@ namespace Cart.Application.Common.Interfaces
         Task<List<CartItemDTO>> GetCart(string? userId);
        Task<CartInformation> AddToCartV2(string? userId, int courseId);
         Task<CartInformation?> ViewCart(string? userId);
-
+        Task RemoveFromCart(string? userId, int courseId);
     }
 }

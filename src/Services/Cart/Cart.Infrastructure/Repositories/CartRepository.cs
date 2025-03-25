@@ -482,5 +482,10 @@ namespace Cart.Infrastructure.Repositories
             }
             return await ViewCart(userId);
         }
+
+        public Task RemoveFromCart(string? userId, int courseId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
