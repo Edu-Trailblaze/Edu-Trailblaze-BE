@@ -13,14 +13,14 @@ using System.Threading.Tasks;
 
 namespace EduTrailblaze.Services.Consumer
 {
-    public class GetCourseConsumer : IConsumer<GetCourseRequest>
+    public class GetCourseConsumer : IConsumer<EventBus.Messages.Events.GetCourseRequest>
     {
         private readonly ICourseService _courseService;
         public GetCourseConsumer(ICourseService courseService)
         {
             _courseService = courseService;
         }
-        public async Task Consume(ConsumeContext<GetCourseRequest> context)
+        public async Task Consume(ConsumeContext<EventBus.Messages.Events.GetCourseRequest> context)
         {
             Console.WriteLine($"Received request for CourseIds: {context.Message.CourseId}");
             var courses = await _courseService.GetCartCourseInformationAsync(context.Message.CourseId);

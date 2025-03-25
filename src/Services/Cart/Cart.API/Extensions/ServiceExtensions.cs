@@ -32,7 +32,7 @@ namespace Cart.API.Extensions
                 {
                     cfg.Host(mqConnection);
                 });
-                x.AddRequestClient<GetCourseRequest>(new Uri("queue:course-queue"));
+                x.AddRequestClient<GetCourseRequest>();
             });
             //services.AddMassTransitHostedService();
         }

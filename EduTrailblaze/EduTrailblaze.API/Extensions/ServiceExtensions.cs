@@ -55,14 +55,17 @@ namespace EduTrailblaze.API.Extensions
             services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
             services.AddMassTransit(x =>
             {
-                x.AddConsumer<GetCourseConsumer>();
+                x.AddConsumersFromNamespaceContaining<GetCourseConsumer>();
                 x.UsingRabbitMq((context, cfg) =>
                 {
                     cfg.Host(mqConnection);
-                    cfg.ReceiveEndpoint("course-queue", e =>
-                    {
-                        e.ConfigureConsumer<GetCourseConsumer>(context);
-                    });
+
+                    //cfg.ReceiveEndpoint("course-queue", e =>
+                    //{
+                    //    e.Bind<GetCourseRequest>();
+                    //    e.ConfigureConsumer<GetCourseConsumer>(context);
+                    //});
+                    cfg.ConfigureEndpoints(context);
                 });
                // x.AddRequestClient<GetCourseRequest>();
             });

@@ -6,6 +6,7 @@ using Contracts.Common.Interfaces;
 using EventBus.Messages.Events;
 using EventBus.Messages.Interfaces;
 using MassTransit;
+using MassTransit.Transports;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
@@ -24,10 +25,10 @@ namespace Cart.Infrastructure.Repositories
         private readonly ISerializeService _serializeService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger _logger;
-        private readonly IRequestClient<ICartEvent> _requestClient;
+        private readonly IRequestClient<EventBus.Messages.Events.GetCourseRequest> _requestClient;
         private readonly IPublishEndpoint _publishEndpoint;
 
-        public CartRepository(IDistributedCache distributedCache, ISerializeService serializeService, ILogger logger, IHttpContextAccessor httpContextAccessor, IConnectionMultiplexer connectionMultiplexer, IPublishEndpoint publishEndpoint, IRequestClient<ICartEvent> requestClient )
+        public CartRepository(IDistributedCache distributedCache, ISerializeService serializeService, ILogger logger, IHttpContextAccessor httpContextAccessor, IConnectionMultiplexer connectionMultiplexer, IPublishEndpoint publishEndpoint, IRequestClient<EventBus.Messages.Events.GetCourseRequest> requestClient )
         {
             _redisCacheService = distributedCache;
             _serializeService = serializeService;
@@ -521,9 +522,10 @@ namespace Cart.Infrastructure.Repositories
             decimal totalPrice = 0;
             foreach (var item in cartItems)
             {
-                var response = await _requestClient.GetResponse<EventBus.Messages.Events.CartCourseInformation>(new GetCourseRequest {  CourseId = item.ItemId });
+
+                var response = await _requestClient.GetResponse<EventBus.Messages.Events.CartCourseInformation>(new EventBus.Messages.Events.GetCourseRequest { CourseId = item.ItemId });
                 var course = response.Message;
-                //var course = await _courseService.GetCartCourseInformationAsync(item.ItemId);
+               
             }
                 return cartInformation;
         }
