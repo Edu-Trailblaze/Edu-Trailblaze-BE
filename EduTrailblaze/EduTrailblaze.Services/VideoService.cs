@@ -251,7 +251,7 @@ namespace EduTrailblaze.Services
                 await _lectureService.UpdateLectureDuration(newVideo.LectureId);
 
                 // Enqueue the background job for generating the transcript
-                //_backgroundJobClient.Enqueue(() => GenerateAndUpdateTranscript(newVideo.VideoId));
+                _backgroundJobClient.Enqueue(() => GenerateAndUpdateTranscript(newVideo.Id));
 
                 return _mapper.Map<VideoDTO>(newVideo);
             }

@@ -333,6 +333,7 @@
         public string CourseImage { get; set; }
         public string ApprovalStatus { get; set; }
         public decimal CompletionPercentage { get; set; }
+        public string Status { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
     }
 
