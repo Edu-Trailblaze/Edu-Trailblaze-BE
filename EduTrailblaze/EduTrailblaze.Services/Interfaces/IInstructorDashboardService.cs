@@ -12,5 +12,6 @@ namespace EduTrailblaze.Services.Interfaces
         Task<List<ChartData>> GetNearestTimeForEnrollments(InstructorDashboardRequest request);
         Task<decimal> GetCourseCompletionRate(string instructorId);
         Task<List<CourseDashboardResponse>> GetTopPerformingCourses(string instructorId, int top);
+        Task<string> ApproveCourseByAI(int courseId);
     }
 }

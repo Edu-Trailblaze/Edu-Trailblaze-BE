@@ -30,19 +30,19 @@ namespace EduTrailblaze.API.Controllers
             }
         }
 
-        [HttpPut("approve-course-by-ai")]
-        public async Task<IActionResult> ApproveCourseByAI(int courseId)
-        {
-            try
-            {
-                await _adminDashboardService.ApproveCourseByAI(courseId);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
+        //[HttpPut("approve-course-by-ai")]
+        //public async Task<IActionResult> ApproveCourseByAI(int courseId)
+        //{
+        //    try
+        //    {
+        //        await _adminDashboardService.ApproveCourseByAI(courseId);
+        //        return Ok();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        //    }
+        //}
 
         [HttpGet("number-of-instructors")]
         public async Task<IActionResult> NumberOfInstructors()
@@ -93,6 +93,20 @@ namespace EduTrailblaze.API.Controllers
             {
                 var totalCoursesBought = await _adminDashboardService.TotalCoursesBought();
                 return Ok(totalCoursesBought);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet("pending-courses")]
+        public async Task<IActionResult> GetPendingCourses([FromQuery] Paging paging)
+        {
+            try
+            {
+                var pendingCourses = await _adminDashboardService.GetPendingCourses(paging);
+                return Ok(pendingCourses);
             }
             catch (Exception ex)
             {

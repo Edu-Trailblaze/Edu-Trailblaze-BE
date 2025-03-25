@@ -3,6 +3,7 @@ using EduTrailblaze.Repositories.Interfaces;
 using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Helper;
 using EduTrailblaze.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace EduTrailblaze.Services
 {
@@ -12,13 +13,21 @@ namespace EduTrailblaze.Services
         private readonly IRepository<Enrollment, int> _enrollmentRepository;
         private readonly IRepository<Review, int> _reviewRepository;
         private readonly IRepository<Order, int> _orderRepository;
+        private readonly IRepository<Tag, int> _tagRepository;
+        private readonly IRepository<UserTag, int> _userTagRepository;
+        private readonly IAIService _aiService;
+        private readonly ICourseService _courseService;
 
-        public InstructorDashboardService(IRepository<Course, int> courseRepository, IRepository<Enrollment, int> enrollmentRepository, IRepository<Review, int> reviewRepository, IRepository<Order, int> orderRepository)
+        public InstructorDashboardService(IRepository<Course, int> courseRepository, IRepository<Enrollment, int> enrollmentRepository, IRepository<Review, int> reviewRepository, IRepository<Order, int> orderRepository, IRepository<Tag, int> tagRepository, IRepository<UserTag, int> userTagRepository, IAIService aiService, ICourseService courseService)
         {
             _courseRepository = courseRepository;
             _enrollmentRepository = enrollmentRepository;
             _reviewRepository = reviewRepository;
             _orderRepository = orderRepository;
+            _tagRepository = tagRepository;
+            _userTagRepository = userTagRepository;
+            _aiService = aiService;
+            _courseService = courseService;
         }
 
         public async Task<DataDashboard> GetTotalCourses(InstructorDashboardRequest request)
@@ -342,6 +351,71 @@ namespace EduTrailblaze.Services
             catch (Exception ex)
             {
                 throw new Exception("An error occurred while getting top performing courses: " + ex.Message);
+            }
+        }
+
+        public async Task<string> ApproveCourseByAI(int courseId)
+        {
+            try
+            {
+                var course = await _courseRepository.GetByIdAsync(courseId);
+
+                if (course == null)
+                {
+                    throw new Exception("Course not found.");
+                }
+
+                var courseCompletionPercentageRequest = new GetCourseCompletionPercentage
+                {
+                    CourseId = courseId
+                };
+
+                var courseCompletionPercentage = await _courseService.GetCourseCompletionPercentage(courseCompletionPercentageRequest);
+
+                if (courseCompletionPercentage == null || courseCompletionPercentage.Count == 0)
+                {
+                    throw new Exception("Course completion percentage is null or empty.");
+                }
+
+                if (courseCompletionPercentage[0].CompletionPercentage != 100)
+                {
+                    throw new Exception("Course completion percentage is not 100%.");
+                }
+
+                var courseDetectAIRequest = new CourseDetectionRequest
+                {
+                    title = course.Title,
+                    description = course.Description,
+                };
+
+                var tags = await _aiService.CourseDetectionAIV2(courseDetectAIRequest);
+
+                if (tags == null || !tags.Any())
+                {
+                    throw new Exception("AI response is null or empty.");
+                }
+
+                var tagDbSet = await _tagRepository.GetDbSet();
+                var userTagDbSet = await _userTagRepository.GetDbSet();
+
+                var hasTag = await userTagDbSet
+                    .Where(ut => ut.UserId == course.CreatedBy)
+                    .AnyAsync(ut => tags.AsQueryable().Contains(ut.Tag.Name));
+
+                if (!hasTag)
+                {
+                    course.ApprovalStatus = "Rejected";
+                    course.IsInstructorSpecialtyCourse = false;
+                }
+                course.ApprovalStatus = "Pending";
+                course.IsInstructorSpecialtyCourse = true;
+                await _courseRepository.UpdateAsync(course);
+
+                return hasTag ? "Approved" : "Rejected";
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while approving the course by AI: " + ex.Message);
             }
         }
     }

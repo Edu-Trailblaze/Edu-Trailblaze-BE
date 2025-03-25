@@ -4,26 +4,23 @@ using EduTrailblaze.Services.Interfaces;
 using EduTrailblaze.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using AutoMapper;
 
 namespace EduTrailblaze.Services
 {
     public class AdminDashboardService : IAdminDashboardService
     {
         private readonly ICourseService _courseService;
-        private readonly IAIService _aiService;
-        private readonly IRepository<Tag, int> _tagRepository;
-        private readonly IRepository<UserTag, int> _userTagRepository;
         private readonly IRepository<Order, int> _orderRepository;
         private readonly UserManager<User> _userManager;
+        private readonly IMapper _mapper;
 
-        public AdminDashboardService(ICourseService courseService, IAIService aiService, IRepository<Tag, int> tagRepository, IRepository<UserTag, int> userTagRepository, UserManager<User> userManager, IRepository<Order, int> orderRepository)
+        public AdminDashboardService(ICourseService courseService, UserManager<User> userManager, IRepository<Order, int> orderRepository, IMapper mapper)
         {
             _courseService = courseService;
-            _aiService = aiService;
-            _tagRepository = tagRepository;
-            _userTagRepository = userTagRepository;
             _userManager = userManager;
             _orderRepository = orderRepository;
+            _mapper = mapper;
         }
 
         public async Task ApproveCourse(ApproveCourseRequest request)
@@ -37,6 +34,11 @@ namespace EduTrailblaze.Services
                     throw new Exception("Course not found.");
                 }
 
+                if (course.ApprovalStatus != "Pending")
+                {
+                    throw new Exception("Course is not pending approval.");
+                }
+
                 course.ApprovalStatus = request.Status;
                 course.IsPublished = request.Status == "Approved";
                 await _courseService.UpdateCourse(course);
@@ -47,55 +49,55 @@ namespace EduTrailblaze.Services
             }
         }
 
-        public async Task ApproveCourseByAI(int courseId)
-        {
-            try
-            {
-                var course = await _courseService.GetCourse(courseId);
+        //public async Task ApproveCourseByAI(int courseId)
+        //{
+        //    try
+        //    {
+        //        var course = await _courseService.GetCourse(courseId);
 
-                if (course == null)
-                {
-                    throw new Exception("Course not found.");
-                }
+        //        if (course == null)
+        //        {
+        //            throw new Exception("Course not found.");
+        //        }
 
-                var courseDetectAIRequest = new CourseDetectionRequest
-                {
-                    title = course.Title,
-                    description = course.Description,
-                };
+        //        var courseDetectAIRequest = new CourseDetectionRequest
+        //        {
+        //            title = course.Title,
+        //            description = course.Description,
+        //        };
 
-                var tags = await _aiService.CourseDetectionAIV2(courseDetectAIRequest);
+        //        var tags = await _aiService.CourseDetectionAIV2(courseDetectAIRequest);
 
-                if (tags == null || !tags.Any())
-                {
-                    throw new Exception("AI response is null or empty.");
-                }
+        //        if (tags == null || !tags.Any())
+        //        {
+        //            throw new Exception("AI response is null or empty.");
+        //        }
 
-                var tagDbSet = await _tagRepository.GetDbSet();
-                var userTagDbSet = await _userTagRepository.GetDbSet();
+        //        var tagDbSet = await _tagRepository.GetDbSet();
+        //        var userTagDbSet = await _userTagRepository.GetDbSet();
 
-                var hasTag = await userTagDbSet
-                    .Where(ut => ut.UserId == course.CreatedBy)
-                    .AnyAsync(ut => tags.AsQueryable().Contains(ut.Tag.Name));
+        //        var hasTag = await userTagDbSet
+        //            .Where(ut => ut.UserId == course.CreatedBy)
+        //            .AnyAsync(ut => tags.AsQueryable().Contains(ut.Tag.Name));
 
-                if (!hasTag)
-                {
-                    course.IsPublished = false;
-                    course.ApprovalStatus = "Rejected";
-                }
-                else
-                {
-                    course.IsPublished = true;
-                    course.ApprovalStatus = "Approved";
-                }
+        //        if (!hasTag)
+        //        {
+        //            course.IsPublished = false;
+        //            course.ApprovalStatus = "Rejected";
+        //        }
+        //        else
+        //        {
+        //            course.IsPublished = true;
+        //            course.ApprovalStatus = "Approved";
+        //        }
 
-                await _courseService.UpdateCourse(course);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("An error occurred while approving the course by AI: " + ex.Message);
-            }
-        }
+        //        await _courseService.UpdateCourse(course);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception("An error occurred while approving the course by AI: " + ex.Message);
+        //    }
+        //}
 
         public async Task<int> NumberOfStudents()
         {
@@ -153,6 +155,53 @@ namespace EduTrailblaze.Services
             catch (Exception ex)
             {
                 throw new Exception("An error occurred while getting the total courses bought: " + ex.Message);
+            }
+        }
+
+        public async Task<PaginatedList<CourseDTO>> GetPendingCourses(Paging paging)
+        {
+            try
+            {
+                var courses = await _courseService.GetCourses();
+                var pendingCourses = courses.Where(c => c.ApprovalStatus == "Pending").ToList();
+
+                var pendingCourseDTOs = _mapper.Map<List<Course>, List<CourseDTO>>(pendingCourses);
+
+                if (!paging.PageSize.HasValue || paging.PageSize <= 0)
+                {
+                    paging.PageSize = 10;
+                }
+
+                if (!paging.PageIndex.HasValue || paging.PageIndex <= 0)
+                {
+                    paging.PageIndex = 1;
+                }
+
+                var totalCount = pendingCourseDTOs.Count;
+                var skip = (paging.PageIndex.Value - 1) * paging.PageSize.Value;
+                var take = paging.PageSize.Value;
+
+                var validSortOptions = new[] { "title", "description", "oldest" };
+                if (string.IsNullOrEmpty(paging.Sort) || !validSortOptions.Contains(paging.Sort))
+                {
+                    paging.Sort = "oldest";
+                }
+
+                pendingCourseDTOs = paging.Sort switch
+                {
+                    "title" => pendingCourseDTOs.OrderByDescending(p => p.Title).ToList(),
+                    "description" => pendingCourseDTOs.OrderByDescending(p => p.Description).ToList(),
+                    "oldest" => pendingCourseDTOs.OrderByDescending(p => p.CreatedAt).ToList(),
+                    _ => pendingCourseDTOs
+                };
+
+                var paginatedPendingCourses = pendingCourseDTOs.Skip(skip).Take(take).ToList();
+
+                return new PaginatedList<CourseDTO>(paginatedPendingCourses, totalCount, paging.PageIndex.Value, paging.PageSize.Value);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the pending course: " + ex.Message);
             }
         }
     }

@@ -61,5 +61,7 @@ namespace EduTrailblaze.Services.Interfaces
         Task<PaginatedList<CourseCompletionPercentageResponse>> GetPagingCourseCompletionPercentage(GetCourseCompletionPercentage request, Paging paging);
 
         Task CheckAndUpdateCourseContent(int courseId);
+
+        Task<List<CourseCompletionPercentageResponse>> GetCourseCompletionPercentage(GetCourseCompletionPercentage request);
     }
 }

@@ -6,7 +6,7 @@ namespace EduTrailblaze.Services.Interfaces
     {
         Task ApproveCourse(ApproveCourseRequest request);
 
-        Task ApproveCourseByAI(int courseId);
+        //Task ApproveCourseByAI(int courseId);
 
         Task<int> NumberOfInstructors();
 
@@ -15,5 +15,7 @@ namespace EduTrailblaze.Services.Interfaces
         Task<decimal> TotalRevenue();
 
         Task<int> TotalCoursesBought();
+
+        Task<PaginatedList<CourseDTO>> GetPendingCourses(Paging paging);
     }
 }

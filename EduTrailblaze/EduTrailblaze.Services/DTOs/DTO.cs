@@ -36,6 +36,8 @@
         public bool IsDeleted { get; set; } = false;
 
         public string ApprovalStatus { get; set; }
+
+        public bool? IsInstructorSpecialtyCourse { get; set; }
     }
 
     public class CartItemDTO

@@ -126,5 +126,19 @@ namespace EduTrailblaze.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPost("approve-course-by-ai")]
+        public async Task<IActionResult> ApproveCourseByAI(int courseId)
+        {
+            try
+            {
+                var result = await _instructorDashboardService.ApproveCourseByAI(courseId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
