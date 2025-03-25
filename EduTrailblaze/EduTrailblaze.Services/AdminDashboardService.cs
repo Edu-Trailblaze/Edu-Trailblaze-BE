@@ -3,6 +3,7 @@ using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Interfaces;
 using EduTrailblaze.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace EduTrailblaze.Services
 {
@@ -12,13 +13,17 @@ namespace EduTrailblaze.Services
         private readonly IAIService _aiService;
         private readonly IRepository<Tag, int> _tagRepository;
         private readonly IRepository<UserTag, int> _userTagRepository;
+        private readonly IRepository<Order, int> _orderRepository;
+        private readonly UserManager<User> _userManager;
 
-        public AdminDashboardService(ICourseService courseService, IAIService aiService, IRepository<Tag, int> tagRepository, IRepository<UserTag, int> userTagRepository)
+        public AdminDashboardService(ICourseService courseService, IAIService aiService, IRepository<Tag, int> tagRepository, IRepository<UserTag, int> userTagRepository, UserManager<User> userManager, IRepository<Order, int> orderRepository)
         {
             _courseService = courseService;
             _aiService = aiService;
             _tagRepository = tagRepository;
             _userTagRepository = userTagRepository;
+            _userManager = userManager;
+            _orderRepository = orderRepository;
         }
 
         public async Task ApproveCourse(ApproveCourseRequest request)
@@ -89,6 +94,65 @@ namespace EduTrailblaze.Services
             catch (Exception ex)
             {
                 throw new Exception("An error occurred while approving the course by AI: " + ex.Message);
+            }
+        }
+
+        public async Task<int> NumberOfStudents()
+        {
+            try
+            {
+                var users = await _userManager.Users.ToListAsync();
+                return users.Count;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the number of students in the system: " + ex.Message);
+            }
+        }
+
+        public async Task<int> NumberOfInstructors()
+        {
+            try
+            {
+                var users = await _userManager.GetUsersInRoleAsync("Instructor");
+                return users.Count;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the number of instructors in the system: " + ex.Message);
+            }
+        }
+
+        public async Task<decimal> TotalRevenue()
+        {
+            try
+            {
+                var orderDbSet = await _orderRepository.GetDbSet();
+                var price = await orderDbSet
+                    .Where(o => o.OrderStatus == "Completed")
+                    .SumAsync(o => o.OrderAmount);
+                return price;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the total revenue: " + ex.Message);
+            }
+        }
+
+        public async Task<int> TotalCoursesBought()
+        {
+            try
+            {
+                var orderDbSet = await _orderRepository.GetDbSet();
+                var courses = await orderDbSet
+                    .Where(o => o.OrderStatus == "Completed")
+                    .Select(o => o.OrderDetails)
+                    .ToListAsync();
+                return courses.Count;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the total courses bought: " + ex.Message);
             }
         }
     }
