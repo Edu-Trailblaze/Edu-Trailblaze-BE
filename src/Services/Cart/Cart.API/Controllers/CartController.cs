@@ -24,15 +24,15 @@ namespace Cart.API.Controllers
             
         }
 
-        [HttpGet("get-cart-by-userId", Name = "GetCart")]
+        [HttpGet("get-cart-by-userId/{userId}", Name = "GetCart")]
         [ProducesResponseType(typeof(Entity.Cart), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<Entity.Cart>> GetCart([Required] string userId)
+        public async Task<ActionResult<Entity.Cart>> GetCart(string? userId)
         {
             var query = new GetCartQuery(userId);
             var cart = await _mediator.Send(query);
             return Ok(cart);
         }
-        [HttpGet("view-cart")]
+        [HttpGet("view-cart/{userId}")]
         [ProducesResponseType(typeof(Entity.Cart), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> ViewCart(string? userId)
         {
