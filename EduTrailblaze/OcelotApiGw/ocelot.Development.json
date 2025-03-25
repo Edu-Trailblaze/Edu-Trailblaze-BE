@@ -4,7 +4,10 @@
   },
   "Routes": [
     {
-      "DownstreamPathTemplate": "/api/Cart/{username}",
+      "DownstreamPathTemplate": "/api/Cart/get-cart-by-userId",
+      "DownstreamQueryStringParameters": {
+        "userId": "{username}"
+      },
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -13,7 +16,7 @@
         }
       ],
       "UpstreamPathTemplate": "/api/Cart/{username}",
-      "UpstreamHttpMethod": [ "GET"]
+      "UpstreamHttpMethod": [ "GET" ]
     }
   ]
 }
