@@ -12,6 +12,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using System.Net.Http;
+using CartItemInformations = EventBus.Messages.Events.CartItemInformation;
 using Entity = Cart.Domain.Entities;
 using ILogger = Serilog.ILogger;
 
@@ -25,10 +26,14 @@ namespace Cart.Infrastructure.Repositories
         private readonly ISerializeService _serializeService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger _logger;
-        private readonly IRequestClient<EventBus.Messages.Events.GetCourseRequest> _requestClient;
+        private readonly IRequestClient<EventBus.Messages.Events.GetCourseRequest> _requestCourseClient;
+        private readonly IRequestClient<EventBus.Messages.Events.GetInstructorRequest> _requestInstructorClient;
+        private readonly IRequestClient<EventBus.Messages.Events.GetDiscountRequest> _requestDiscountClient;
+        private readonly IRequestClient<EventBus.Messages.Events.GetCouponRequest> _requestCounponClient;
+        private readonly IRequestClient<EventBus.Messages.Events.GetReviewRequest> _requestReviewClient;
         private readonly IPublishEndpoint _publishEndpoint;
 
-        public CartRepository(IDistributedCache distributedCache, ISerializeService serializeService, ILogger logger, IHttpContextAccessor httpContextAccessor, IConnectionMultiplexer connectionMultiplexer, IPublishEndpoint publishEndpoint, IRequestClient<EventBus.Messages.Events.GetCourseRequest> requestClient )
+        public CartRepository(IDistributedCache distributedCache, ISerializeService serializeService, ILogger logger, IHttpContextAccessor httpContextAccessor, IConnectionMultiplexer connectionMultiplexer, IPublishEndpoint publishEndpoint, IRequestClient<EventBus.Messages.Events.GetCourseRequest> requestCourseClient, IRequestClient<EventBus.Messages.Events.GetInstructorRequest> requestInstructorClient, IRequestClient<EventBus.Messages.Events.GetDiscountRequest> requestDiscountClient, IRequestClient<GetCouponRequest> requestCounponClient, IRequestClient<EventBus.Messages.Events.GetReviewRequest> requestReviewClient)
         {
             _redisCacheService = distributedCache;
             _serializeService = serializeService;
@@ -36,7 +41,11 @@ namespace Cart.Infrastructure.Repositories
             _database = connectionMultiplexer.GetDatabase();
             _httpContextAccessor = httpContextAccessor;
             _publishEndpoint = publishEndpoint;
-            _requestClient = requestClient; 
+            _requestCourseClient = requestCourseClient;
+            _requestDiscountClient = requestDiscountClient;
+            _requestInstructorClient = requestInstructorClient;
+            _requestCounponClient = requestCounponClient;
+            _requestReviewClient = requestReviewClient;
         }
         public async Task AddCartItemToRedis(string userId, CartItemDTO cartItem)
         {
@@ -517,17 +526,57 @@ namespace Cart.Infrastructure.Repositories
             var cartItems = await GetCart(userId);
             var cartInformation = new CartInformation
             {
-                CartItems = new List<CartItemInformation>()
+                CartItems = new List<Cart.Application.Common.Models.CartItemInformation>()
             };
             decimal totalPrice = 0;
             foreach (var item in cartItems)
             {
 
-                var response = await _requestClient.GetResponse<EventBus.Messages.Events.CartCourseInformation>(new EventBus.Messages.Events.GetCourseRequest { CourseId = item.ItemId });
-                var course = response.Message;
-               
+                var responseGetCourse = await _requestCourseClient.GetResponse<EventBus.Messages.Events.CartCourseInformation>(new EventBus.Messages.Events.GetCourseRequest { CourseId = item.ItemId });
+                var coursePrice = responseGetCourse.Message.Price;
+
+                var responseGetInstructor = await _requestInstructorClient.GetResponse<EventBus.Messages.Events.GetInstructorResponse>(
+      new EventBus.Messages.Events.GetInstructorRequest { CourseId = item.ItemId }
+  );
+                var instructors = responseGetInstructor.Message.Instructors;
+
+
+                var responseGetDiscount = await _requestDiscountClient.GetResponse<EventBus.Messages.Events.GetDiscountResponse>(
+     new EventBus.Messages.Events.GetDiscountRequest { CourseId = item.ItemId });
+                var discount = responseGetDiscount.Message.Discount;
+
+
+                if (discount.DiscountType != "None")
+                {
+                    discount.CalculateDiscountAndPrice(coursePrice);
+                    coursePrice = discount.CalculatedPrice;
+                }
+                var responseGetCoupon = await _requestCounponClient.GetResponse<EventBus.Messages.Events.GetCouponResponse>(
+     new EventBus.Messages.Events.GetCouponRequest { CourseId = item.ItemId, UserId = userId });
+                var coupon = responseGetCoupon.Message.Coupon;
+                if (coupon.DiscountType != "None")
+                {
+        coupon.CalculateDiscountAndPrice(coursePrice);
+                    coursePrice = coupon.CalculatedPrice;
+                }
+                var responseGetAvarageReview = await _requestReviewClient.GetResponse<EventBus.Messages.Events.GetReviewResponse>(
+    new EventBus.Messages.Events.GetReviewRequest { CourseId = item.ItemId });
+                var averageRatingandNumofRate = responseGetAvarageReview.Message.Review;
+                totalPrice += coursePrice;
+                cartInformation.CartItems.Add(
+                      new Cart.Application.Common.Models.CartItemInformation
+                      {
+                          CartCourseInformation = responseGetCourse.Message,
+                          InstructorInformation = instructors,
+                          CouponInformation = coupon,
+                          DiscountInformation = discount,
+                          CourseReviewInformation = averageRatingandNumofRate,
+                          TotalCoursePrice = coursePrice
+                      }
+                  );
             }
-                return cartInformation;
+            cartInformation.TotalPrice = totalPrice;
+            return cartInformation;
         }
     }
 }

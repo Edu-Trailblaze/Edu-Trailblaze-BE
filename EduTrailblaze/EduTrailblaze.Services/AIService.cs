@@ -148,6 +148,7 @@ namespace EduTrailblaze.Services
                 using var fileStream = request.file.OpenReadStream();
                 using var streamContent = new StreamContent(fileStream);
                 streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(request.file.ContentType);
+
                 content.Add(streamContent, "file", request.file.FileName);
 
                 var response = await _httpClient.PostAsync(_whisperUrl, content);

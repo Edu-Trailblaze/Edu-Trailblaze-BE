@@ -33,8 +33,12 @@ namespace Cart.API.Extensions
                     cfg.Host(mqConnection);
                 });
                 x.AddRequestClient<GetCourseRequest>();
+                x.AddRequestClient<GetReviewRequest>();
+                x.AddRequestClient<GetCouponRequest>();
+                        x.AddRequestClient<GetInstructorRequest>();
+                x.AddRequestClient<GetDiscountRequest>();
             });
-            //services.AddMassTransitHostedService();
+           
         }
     }
 }
