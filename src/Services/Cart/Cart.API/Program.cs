@@ -2,6 +2,7 @@
 using Cart.API.Extensions;
 using Cart.Application;
 using Cart.Infrastructure;
+using Cart.Infrastructure.AutoMapper;
 using Common.Logging;
 using Microsoft.AspNetCore.Hosting;
 using Serilog;
@@ -25,7 +26,10 @@ namespace Cart.API
 
                 //configure MassTransit
                 builder.Services.ConfigureMassTransit();
-                builder.Services.AddAutoMapper(typeof(Program));                builder.Services.AddEndpointsApiExplorer();
+                builder.Services.AddAutoMapper(cfg =>
+                {
+                    cfg.AddProfile<MappingProfile>();
+                }); builder.Services.AddEndpointsApiExplorer();
                 builder.Services.AddSwaggerGen();
 
                 var app = builder.Build();

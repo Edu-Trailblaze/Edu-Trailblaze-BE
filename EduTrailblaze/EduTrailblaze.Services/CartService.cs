@@ -515,7 +515,6 @@ namespace EduTrailblaze.Services
                 {
                     throw new Exception("Course already exists in the cart.");
                 }
-
                 await SaveCartToCookie(courseId, userId);
                 if (userId != null)
                 {

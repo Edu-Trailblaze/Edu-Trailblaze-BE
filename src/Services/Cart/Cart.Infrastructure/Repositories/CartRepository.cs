@@ -1,4 +1,5 @@
-﻿using Cart.Application.Common.Interfaces;
+﻿using AutoMapper;
+using Cart.Application.Common.Interfaces;
 using Cart.Application.Common.Models;
 using Cart.Domain.Entities;
 using Cart.Infrastructure.Helper;
@@ -32,8 +33,9 @@ namespace Cart.Infrastructure.Repositories
         private readonly IRequestClient<EventBus.Messages.Events.GetCouponRequest> _requestCounponClient;
         private readonly IRequestClient<EventBus.Messages.Events.GetReviewRequest> _requestReviewClient;
         private readonly IPublishEndpoint _publishEndpoint;
+        private readonly IMapper _mapper;
 
-        public CartRepository(IDistributedCache distributedCache, ISerializeService serializeService, ILogger logger, IHttpContextAccessor httpContextAccessor, IConnectionMultiplexer connectionMultiplexer, IPublishEndpoint publishEndpoint, IRequestClient<EventBus.Messages.Events.GetCourseRequest> requestCourseClient, IRequestClient<EventBus.Messages.Events.GetInstructorRequest> requestInstructorClient, IRequestClient<EventBus.Messages.Events.GetDiscountRequest> requestDiscountClient, IRequestClient<GetCouponRequest> requestCounponClient, IRequestClient<EventBus.Messages.Events.GetReviewRequest> requestReviewClient)
+        public CartRepository(IDistributedCache distributedCache, ISerializeService serializeService, ILogger logger, IHttpContextAccessor httpContextAccessor, IConnectionMultiplexer connectionMultiplexer, IPublishEndpoint publishEndpoint, IRequestClient<EventBus.Messages.Events.GetCourseRequest> requestCourseClient, IRequestClient<EventBus.Messages.Events.GetInstructorRequest> requestInstructorClient, IRequestClient<EventBus.Messages.Events.GetDiscountRequest> requestDiscountClient, IRequestClient<GetCouponRequest> requestCounponClient, IRequestClient<EventBus.Messages.Events.GetReviewRequest> requestReviewClient, IMapper mapper)
         {
             _redisCacheService = distributedCache;
             _serializeService = serializeService;
@@ -46,10 +48,11 @@ namespace Cart.Infrastructure.Repositories
             _requestInstructorClient = requestInstructorClient;
             _requestCounponClient = requestCounponClient;
             _requestReviewClient = requestReviewClient;
+            _mapper = mapper;
         }
         public async Task AddCartItemToRedis(string userId, CartItemDTO cartItem)
         {
-            var cartKey = $"Cart:{userId}"; // Khóa giỏ hàng
+            var cartKey = $"cart:{userId}"; // Khóa giỏ hàng
             var cartItemsKey = $"CartItems:{userId}"; // Khóa CartItems của người dùng
 
             // Lưu thông tin cart nếu chưa có trong Redis
@@ -143,19 +146,19 @@ namespace Cart.Infrastructure.Repositories
             // Lưu Giỏ Hàng vào Redis
             await _database.HashSetAsync(redisCartKey, cartHashEntries);
         }
-        public async Task SaveCartItemToRedis(int cartId, int courseId, CartItem cartItem)
-        {
-            var redisCartItemKey = $"cart_item:{cartId}:{courseId}";
-            var cartItemHash = new Dictionary<string, string>
-        {
-            { "CartId", cartId.ToString() },
-            { "CourseId", courseId.ToString() }
-        };
-            var cartItemHashEntries = cartItemHash.Select(kvp => new HashEntry(kvp.Key, kvp.Value)).ToArray();
+        //public async Task SaveCartItemToRedis(int cartId, int courseId, CartItem cartItem)
+        //{
+        //    var redisCartItemKey = $"cart_item:{cartId}:{courseId}";
+        //    var cartItemHash = new Dictionary<string, string>
+        //{
+        //    { "CartId", cartId.ToString() },
+        //    { "CourseId", courseId.ToString() }
+        //};
+        //    var cartItemHashEntries = cartItemHash.Select(kvp => new HashEntry(kvp.Key, kvp.Value)).ToArray();
 
-            // Lưu mặt hàng vào Redis
-            await _database.HashSetAsync(redisCartItemKey, cartItemHashEntries);
-        }
+        //    // Lưu mặt hàng vào Redis
+        //    await _database.HashSetAsync(redisCartItemKey, cartItemHashEntries);
+        //}
         public async Task SaveCartItemIdsToRedis(string userId, List<int> cartItemIds)
         {
             var redisCartKey = $"cart:{userId}:items"; // Key chứa danh sách CartItemIds
@@ -329,135 +332,7 @@ namespace Cart.Infrastructure.Repositories
                 throw new Exception("An error occurred while viewing the cart: " + ex.Message);
             }
         }
-        //public async Task<CartInformation> AddToCartV2(string? userId, int courseId)
-        //{
-        //    var cartKey = userId != null ? $"cart:{userId}:items" : null;
-        //    var httpContext = _httpContextAccessor.HttpContext;
-
-        //    try
-        //    {
-        //        // 1. Kiểm tra khóa học đã mua
-        //        //var hasBoughtCourse = await _orderRepository.GetDbSet()
-        //        //    .Include(o => o.OrderDetails)
-        //        //    .AnyAsync(o => o.UserId == userId && o.OrderStatus == "Completed"
-        //        //        && o.OrderDetails.Any(od => od.CourseId == courseId));
-
-        //        //if (hasBoughtCourse)
-        //        //{
-        //        //    throw new Exception("Course has already been bought.");
-        //        //}
-
-        //        // 2. Kiểm tra trong Redis (nếu đã login)
-        //        if (userId != null)
-        //        {
-        //            // Validate key type trước khi thao tác
-        //            await ValidateKeyType(cartKey, RedisType.Set);
-
-        //            var existsInRedis = await _database.SetContainsAsync(cartKey, courseId);
-        //            if (existsInRedis)
-        //            {
-        //                throw new Exception("Course already exists in the cart.");
-        //            }
-        //        }
-
-        //        // 3. Kiểm tra trong cookie (cho user chưa login)
-        //        var cookieItems = GetCookieCart(userId);
-        //        if (cookieItems.Any(ci => ci.ItemId == courseId))
-        //        {
-        //            throw new Exception("Course already exists in the cart.");
-        //        }
-
-        //        // 4. Thêm vào hệ thống
-        //        if (userId != null)
-        //        {
-        //            // Atomic transaction với Redis
-        //            var tran = _database.CreateTransaction();
-
-        //            // Thêm vào Redis Set
-        //            tran.SetAddAsync(cartKey, courseId);
-
-        //            // Cập nhật metadata
-        //            tran.HashSetAsync($"cart:{userId}:meta", new[] {
-        //        new HashEntry("lastModified", DateTime.UtcNow.Ticks),
-        //        new HashEntry("version", Guid.NewGuid().ToString())
-        //    });
-
-        //            if (!await tran.ExecuteAsync())
-        //            {
-        //                throw new Exception("Failed to add item to Redis cart");
-        //            }
-        //        }
-        //        else
-        //        {
-        //            // Xử lý cookie với optimistic concurrency
-        //            await UpdateCookieCart(courseId, httpContext);
-        //        }
-
-        //        // 5. Merge carts nếu cần
-        //        if (userId != null && httpContext.Request.Cookies.TryGetValue("EdTechCart", out var cookieValue))
-        //        {
-        //            await MergeCookieToRedis(userId, cookieValue);
-        //        }
-
-        //        return await ViewCart(userId);
-        //    }
-            //catch (RedisConnectionException ex)
-            //{
-            //    _logger.LogError(ex, "Redis connection error");
-
-            //    // Fallback to cookie storage
-            //    if (userId == null)
-            //    {
-            //        await UpdateCookieCart(courseId, httpContext);
-            //        return await ViewCart(null);
-            //    }
-            //    throw new CartException("System is busy, please try again later", CartStatus.TemporaryUnavailable);
-            //}
-            
-        //    catch (Exception ex)
-        //    {
-              
-        //        throw new Exception("Failed to add item to cart", ex);
-        //    }
-        //}
-
-
-        //public async Task SaveCartToCookie(int courseId, string? userId)
-        //{
-        //    try
-        //    {
-        //        Dictionary<int, CartItemDTO> cartItems = new Dictionary<int, CartItemDTO>();
-        //        CartItemDTO item = null;
-
-        //        var savedCart = _httpContextAccessor.HttpContext?.Request.Cookies[$"Cart_{userId}"] ?? string.Empty;
-
-        //        if (!string.IsNullOrEmpty(savedCart))
-        //        {
-        //            cartItems = CartUtil.GetCartFromCookie(savedCart);
-        //        }
-
-        //        // Check if the item exists in the cart, add or update accordingly
-        //        if (cartItems.TryGetValue(courseId, out item))
-        //        {
-        //            //throw new Exception("Course already exists in the cart.");
-        //            return;
-        //        }
-
-        //        item = new CartItemDTO
-        //        {
-        //            ItemId = courseId,
-        //        };
-        //        cartItems[courseId] = item;
-
-        //        // Convert the updated cart to string and save it back to the cookie
-        //        var strItemsInCart = CartUtil.ConvertCartToString(cartItems.Values.ToList());
-        //        CartUtil.SaveCartToCookie(_httpContextAccessor.HttpContext.Request, _httpContextAccessor.HttpContext.Response, strItemsInCart, userId);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception("An error occurred while saving the cart to cookie: " + ex.Message);
-        //    }
-        //}
+        
 
         public async Task<Entity.Cart> CreateSystemCart(string userId)
         {
@@ -533,6 +408,8 @@ namespace Cart.Infrastructure.Repositories
             {
 
                 var responseGetCourse = await _requestCourseClient.GetResponse<EventBus.Messages.Events.CartCourseInformation>(new EventBus.Messages.Events.GetCourseRequest { CourseId = item.ItemId });
+
+                var courseInformation = responseGetCourse.Message; 
                 var coursePrice = responseGetCourse.Message.Price;
 
                 var responseGetInstructor = await _requestInstructorClient.GetResponse<EventBus.Messages.Events.GetInstructorResponse>(
@@ -563,20 +440,47 @@ namespace Cart.Infrastructure.Repositories
     new EventBus.Messages.Events.GetReviewRequest { CourseId = item.ItemId });
                 var averageRatingandNumofRate = responseGetAvarageReview.Message.Review;
                 totalPrice += coursePrice;
+                #region auto mapper
+                var cartCourseModel = _mapper.Map<Cart.Application.Common.Models.CartCourseInformation>(courseInformation);
+                var discountModel = _mapper.Map<Cart.Application.Common.Models.DiscountInformation>(discount);
+                var couponModel = _mapper.Map<Cart.Application.Common.Models.CouponInformation>(coupon); 
+                var instructorModel = _mapper.Map<List<Cart.Application.Common.Models.InstructorInformation>>(instructors);
+                var averageRatingandNumofRateModel = _mapper.Map<Cart.Application.Common.Models.ReviewInformation>(averageRatingandNumofRate);
+                #endregion
                 cartInformation.CartItems.Add(
                       new Cart.Application.Common.Models.CartItemInformation
                       {
-                          CartCourseInformation = responseGetCourse.Message,
-                          InstructorInformation = instructors,
-                          CouponInformation = coupon,
-                          DiscountInformation = discount,
-                          CourseReviewInformation = averageRatingandNumofRate,
+                          CartCourseInformation = cartCourseModel,
+                          InstructorInformation = instructorModel,
+                          CouponInformation = couponModel,
+                          DiscountInformation = discountModel,
+                          CourseReviewInformation = averageRatingandNumofRateModel,
                           TotalCoursePrice = coursePrice
                       }
                   );
             }
             cartInformation.TotalPrice = totalPrice;
             return cartInformation;
+        }
+        public async Task AddItemToSystemCart(int courseId, string userId)
+        {
+            var cart = await GetSystemCart(userId);
+            // add cart to redis by this template cart:{userId}:items
+            await _database.SetAddAsync($"cart:{userId}:items", courseId);
+        }
+        public async Task<CartInformation> AddToCartV2(string? userId, int courseId)
+        {
+            //1. get order from orderservice and check if it is already paid
+            //2. check if course is already in cart
+            var cart = await GetCart(userId);
+
+            //3. save cart to cookie
+            //4. addItem to cart redis
+            if (userId != null)
+            {
+                await AddItemToSystemCart(courseId, userId);
+            }
+            return await ViewCart(userId);
         }
     }
 }
