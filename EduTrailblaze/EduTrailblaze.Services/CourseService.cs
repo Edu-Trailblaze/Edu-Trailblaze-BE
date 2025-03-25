@@ -1542,6 +1542,7 @@ namespace EduTrailblaze.Services
                         CourseName = course.Title,
                         CourseImage = course.ImageURL,
                         CompletionPercentage = completionPercentage,
+                        Status = course.ApprovalStatus,
                         CreatedAt = course.CreatedAt
                     });
                 }
@@ -1635,15 +1636,15 @@ namespace EduTrailblaze.Services
                 {
                     foreach (var lecture in section.Lectures)
                     {
-                        if (lecture.LectureType == "Reading")
+                        if (lecture.LectureType == "Reading" && lecture.DocUrl != null)
                         {
                             hasDoc = true;
                         }
-                        if (lecture.LectureType == "Quiz")
+                        if (lecture.LectureType == "Quiz" && lecture.Quizzes.Count > 0)
                         {
                             hasQuiz = true;
                         }
-                        if (lecture.LectureType == "Video")
+                        if (lecture.LectureType == "Video" && lecture.Videos.Count > 0)
                         {
                             hasVideo = true;
                         }
