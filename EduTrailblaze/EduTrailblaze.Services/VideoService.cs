@@ -256,7 +256,7 @@ namespace EduTrailblaze.Services
                 _backgroundJobClient.Enqueue(() => GenerateAndUpdateTranscript(newVideo.Id));
 
                 var videoDbSet = await _videoRepository.GetDbSet();
-                //take course id of newVideo
+
                 var courseId = (await videoDbSet.FirstOrDefaultAsync(v => v.Id == newVideo.Id)).Lecture.Section.CourseId;
 
                 await _courseService.CheckAndUpdateCourseContent(courseId);
@@ -276,19 +276,26 @@ namespace EduTrailblaze.Services
 
         public async Task GenerateAndUpdateTranscript(int videoId)
         {
-            var video = await _videoRepository.GetByIdAsync(videoId);
-            if (video == null)
+            try
             {
-                throw new Exception("Video not found.");
+
+                var video = await _videoRepository.GetByIdAsync(videoId);
+                if (video == null)
+                {
+                    throw new Exception("Video not found.");
+                }
+
+                // Generate the transcript
+                var transcript = await _aIService.GenerateTranscriptUsingWhisper(new WhisperChatRequest { file = new FormFile(new MemoryStream(), 0, 0, null, video.VideoUrl) });
+
+                // Update the video with the generated transcript
+                video.Transcript = transcript.transcript;
+                video.UpdatedAt = DateTimeHelper.GetVietnamTime();
+                await _videoRepository.UpdateAsync(video);
             }
-
-            // Generate the transcript
-            var transcript = await _aIService.GenerateTranscriptUsingWhisper(new WhisperChatRequest { file = new FormFile(new MemoryStream(), 0, 0, null, video.VideoUrl) });
-
-            // Update the video with the generated transcript
-            video.Transcript = transcript.transcript;
-            video.UpdatedAt = DateTimeHelper.GetVietnamTime();
-            await _videoRepository.UpdateAsync(video);
+            catch (Exception)
+            {
+            }
         }
 
         public async Task<List<VideoDTO>?> GetVideosByConditions(GetVideosRequest request)
