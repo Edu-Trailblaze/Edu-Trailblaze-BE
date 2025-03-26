@@ -99,6 +99,10 @@ namespace EduTrailblaze.Repositories
             }
             catch (Exception ex)
             {
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine("Inner Exception: " + ex.InnerException.Message);
+                }
                 throw new Exception($"Couldn't update entity: {ex.Message}");
             }
         }

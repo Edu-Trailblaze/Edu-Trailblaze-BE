@@ -361,7 +361,7 @@ namespace EduTrailblaze.Services
                
                 var courseDbSet = await _courseRepository.GetDbSet();
                 
-                var course = await courseDbSet.FirstOrDefaultAsync(x => x.Id == courseId);
+                var course = await courseDbSet.Include(x=> x.CourseTags).ThenInclude(ct => ct.Tag).FirstOrDefaultAsync(x => x.Id == courseId);
 
                 if (course == null)
                 {
@@ -432,11 +432,15 @@ namespace EduTrailblaze.Services
                         var tagId = tagDbSet.FirstOrDefault(tg => tg.Name == tag)?.Id;
                         if (tagId.HasValue)
                         {
-                            course.CourseTags.Add(new CourseTag
+                            
+                                if (!course.CourseTags.Any(ct => ct.TagId == tagId.Value))
                             {
-                                CourseId = course.Id,
-                                TagId = tagId.Value
-                            });
+                                course.CourseTags.Add(new CourseTag
+                                {
+                                    CourseId = course.Id,
+                                    TagId = tagId.Value
+                                });
+                            }
                         }
                     }
                 }
@@ -446,6 +450,10 @@ namespace EduTrailblaze.Services
             }
             catch (Exception ex)
             {
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine("Inner Exception: " + ex.InnerException.Message);
+                }
                 throw new Exception("An error occurred while approving the course by AI: " + ex.Message);
             }
         }
