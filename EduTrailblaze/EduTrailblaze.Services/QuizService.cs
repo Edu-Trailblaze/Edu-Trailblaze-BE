@@ -13,14 +13,16 @@ namespace EduTrailblaze.Services
         private readonly IRepository<Quiz, int> _quizRepository;
         private readonly IRepository<Question, int> _questionRepository;
         private readonly IRepository<Lecture, int> _lectureRepository;
+        private readonly ICourseService _courseService;
         private readonly IMapper _mapper;
 
-        public QuizService(IRepository<Quiz, int> quizRepository, IRepository<Question, int> questionRepository, IMapper mapper, IRepository<Lecture, int> lectureRepository)
+        public QuizService(IRepository<Quiz, int> quizRepository, IRepository<Question, int> questionRepository, IMapper mapper, IRepository<Lecture, int> lectureRepository, ICourseService courseService)
         {
             _quizRepository = quizRepository;
             _questionRepository = questionRepository;
             _mapper = mapper;
             _lectureRepository = lectureRepository;
+            _courseService = courseService;
         }
 
         public async Task<Quiz?> GetQuiz(int quizId)
@@ -119,6 +121,8 @@ namespace EduTrailblaze.Services
 
                     await _questionRepository.AddAsync(question);
                 }
+
+                await _courseService.CheckAndUpdateCourseContent(lecture.Section.CourseId);
             }
             catch (Exception ex)
             {

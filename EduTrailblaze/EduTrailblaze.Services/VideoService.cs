@@ -14,6 +14,7 @@ namespace EduTrailblaze.Services
     {
         private readonly IRepository<Video, int> _videoRepository;
         private readonly IClamAVService _clamAVService;
+        private readonly ICourseService _courseService;
         //private readonly IWindowsDefenderService _windowsDefenderService;
         private readonly ILectureService _lectureService;
         private readonly ICloudinaryService _cloudinaryService;
@@ -21,7 +22,7 @@ namespace EduTrailblaze.Services
         private readonly IAIService _aIService;
         private readonly IMapper _mapper;
 
-        public VideoService(IRepository<Video, int> videoRepository, IClamAVService clamAVService, IAIService aIService, IBackgroundJobClient backgroundJobClient, ICloudinaryService cloudinaryService, IMapper mapper, ILectureService lectureService)
+        public VideoService(IRepository<Video, int> videoRepository, IClamAVService clamAVService, IAIService aIService, IBackgroundJobClient backgroundJobClient, ICloudinaryService cloudinaryService, IMapper mapper, ILectureService lectureService, ICourseService courseService)
         {
             _videoRepository = videoRepository;
             _cloudinaryService = cloudinaryService;
@@ -31,6 +32,7 @@ namespace EduTrailblaze.Services
             _backgroundJobClient = backgroundJobClient;
             _lectureService = lectureService;
             _mapper = mapper;
+            _courseService = courseService;
         }
 
         public async Task<Video?> GetVideo(int videoId)
@@ -252,6 +254,8 @@ namespace EduTrailblaze.Services
 
                 // Enqueue the background job for generating the transcript
                 _backgroundJobClient.Enqueue(() => GenerateAndUpdateTranscript(newVideo.Id));
+
+                await _courseService.CheckAndUpdateCourseContent(newVideo.Lecture.Section.CourseId);
 
                 return _mapper.Map<VideoDTO>(newVideo);
             }

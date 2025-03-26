@@ -382,6 +382,11 @@ namespace EduTrailblaze.Services
                     throw new Exception("Course completion percentage is not 100%.");
                 }
 
+                if (courseCompletionPercentage[0].Status == "Pending" || courseCompletionPercentage[0].Status == "Approved")
+                {
+                    throw new Exception("Course is already approved or pending.");
+                }
+
                 var courseDetectAIRequest = new CourseDetectionRequest
                 {
                     title = course.Title,
@@ -407,8 +412,16 @@ namespace EduTrailblaze.Services
                     course.ApprovalStatus = "Rejected";
                     course.IsInstructorSpecialtyCourse = false;
                 }
-                course.ApprovalStatus = "Pending";
-                course.IsInstructorSpecialtyCourse = true;
+                else
+                {
+                    course.ApprovalStatus = "Pending";
+                    course.IsInstructorSpecialtyCourse = true;
+                    course.CourseTags = tags.Select(t => new CourseTag
+                    {
+                        CourseId = course.Id,
+                        TagId = tagDbSet.FirstOrDefault(tg => tg.Name == t).Id
+                    }).ToList();
+                }
                 await _courseRepository.UpdateAsync(course);
 
                 return hasTag ? "Approved" : "Rejected";
