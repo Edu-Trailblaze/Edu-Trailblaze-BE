@@ -1008,7 +1008,7 @@ namespace EduTrailblaze.Services
 
                 var orders = await orderDbSet
                     .Include(o => o.OrderDetails)
-                    .Where(o => o.OrderDetails.Any(od => od.CourseId == courseId))
+                    .Where(o => o.OrderStatus == "Completed" && o.OrderDetails.Any(od => od.CourseId == courseId))
                     .ToListAsync();
 
                 Dictionary<int, int> courseFrequency = new Dictionary<int, int>();
@@ -1215,7 +1215,7 @@ namespace EduTrailblaze.Services
                 var startDate = DateTimeHelper.GetVietnamTime().AddDays(-days);
                 var endDate = DateTimeHelper.GetVietnamTime();
                 var trendingCourses = await orders
-                    .Where(o => o.OrderDate >= startDate && o.OrderDate <= endDate)
+                    .Where(o => o.OrderDate >= startDate && o.OrderDate <= endDate && o.OrderStatus == "Completed")
                     .Join(orderDetails, o => o.Id, od => od.OrderId, (o, od) => od)
                     .GroupBy(od => od.CourseId)
                     .OrderByDescending(g => g.Count())
@@ -1376,7 +1376,7 @@ namespace EduTrailblaze.Services
                 var orderDetails = await _orderDetailRepository.GetDbSet();
                 var courses = await _courseRepository.GetDbSet();
                 var userOrders = orders
-                    .Where(o => o.UserId == userId);
+                    .Where(o => o.UserId == userId && o.OrderStatus == "Completed");
                 var userCourseIds = await orderDetails
                     .Where(od => userOrders.Any(o => o.Id == od.OrderId))
                     .Select(od => od.CourseId)
@@ -1487,7 +1487,7 @@ namespace EduTrailblaze.Services
         public async Task<bool> HasStudentBoughtCourse(string studentId, int courseId)
         {
             var hasBought = await (await _orderRepository.GetDbSet())
-                .Where(o => o.UserId == studentId)
+                .Where(o => o.UserId == studentId && o.OrderStatus == "Completed")
                 .SelectMany(o => o.OrderDetails)
                 .AnyAsync(od => od.CourseId == courseId);
 
