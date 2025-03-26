@@ -35,7 +35,7 @@ namespace Cart.API.Extensions
                 x.AddRequestClient<GetCourseRequest>();
                 x.AddRequestClient<GetReviewRequest>();
                 x.AddRequestClient<GetCouponRequest>();
-                        x.AddRequestClient<GetInstructorRequest>();
+                x.AddRequestClient<GetInstructorRequest>();
                 x.AddRequestClient<GetDiscountRequest>();
             });
            

@@ -4,10 +4,7 @@
   },
   "Routes": [
     {
-      "DownstreamPathTemplate": "/api/Cart/get-cart-by-userId",
-      "DownstreamQueryStringParameters": {
-        "userId": "{username}"
-      },
+      "DownstreamPathTemplate": "/api/Cart/get-cart-by-userId/{userId}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -15,8 +12,34 @@
           "Port": 443
         }
       ],
-      "UpstreamPathTemplate": "/api/Cart/{username}",
+
+      "UpstreamPathTemplate": "/api/Cart/{userId}",
       "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Cart/view-cart/{userId}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "edu-cart-service.azurewebsites.net",
+          "Port": 443
+        }
+      ],
+      "UpstreamPathTemplate": "/api/Cart/view-cart/{userId}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      
+      "DownstreamPathTemplate": "/api/Cart/add-item-to-cart-v2",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "edu-cart-service.azurewebsites.net",
+          "Port": 443
+        }
+      ],
+      "UpstreamPathTemplate": "/api/Cart/add-item-to-cart-v2",
+      "UpstreamHttpMethod": [ "POST" ]
     }
   ]
 }
