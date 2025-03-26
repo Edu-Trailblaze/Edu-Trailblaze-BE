@@ -235,5 +235,19 @@ namespace EduTrailblaze.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        [HttpGet("check-and-update-course-content")]
+        public async Task<IActionResult> CheckAndUpdateCourseContent(int courseId)
+        {
+            try
+            {
+                await _courseService.CheckAndUpdateCourseContent(courseId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }

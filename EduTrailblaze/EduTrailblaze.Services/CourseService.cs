@@ -1620,6 +1620,10 @@ namespace EduTrailblaze.Services
                 var courseWithLectures = await dbSet
                     .Include(c => c.Sections)
                         .ThenInclude(s => s.Lectures)
+                            .ThenInclude(s => s.Videos)
+                    .Include(c => c.Sections)
+                        .ThenInclude(s => s.Lectures)
+                            .ThenInclude(s => s.Quizzes)
                     .FirstOrDefaultAsync(c => c.Id == courseId);
 
                 if (courseWithLectures == null)
