@@ -179,14 +179,14 @@ namespace EduTrailblaze.Services
             }
         }
 
-        public async Task<string[]> CourseDetectionAIV2(CourseDetectionRequest request)
+        public async Task<List<string>> CourseDetectionAIV2(CourseDetectionRequest request)
         {
             try
             {
                 var response = await _httpClient.PostAsJsonAsync(_courseDetectAI, request);
                 response.EnsureSuccessStatusCode();
 
-                var result = await response.Content.ReadFromJsonAsync<string[]>();
+                var result = await response.Content.ReadFromJsonAsync<List<string>>();
                 return result ?? throw new Exception("No response received from CourseDetectionAI");
             }
             catch (Exception ex)

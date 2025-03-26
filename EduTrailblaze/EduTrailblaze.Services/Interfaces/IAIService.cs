@@ -11,6 +11,6 @@ namespace EduTrailblaze.Services.Interfaces
         Task<GoogleChatResponse> GetResponseAsyncUsingGoogleAIAndDb(GoogleChatRequest request);
         Task<WhisperChatResponse> GenerateTranscriptUsingWhisper(WhisperChatRequest request);
         Task<CourseDetectionResponse> CourseDetectionAI(CourseDetectionRequest request);
-        Task<string[]> CourseDetectionAIV2(CourseDetectionRequest request);
+        Task<List<string>> CourseDetectionAIV2(CourseDetectionRequest request);
     }
 }
