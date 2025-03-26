@@ -416,11 +416,21 @@ namespace EduTrailblaze.Services
                 {
                     course.ApprovalStatus = "Pending";
                     course.IsInstructorSpecialtyCourse = true;
-                    course.CourseTags = tags.Select(t => new CourseTag
+                    var existingTagNames = course.CourseTags.Select(ct => ct.Tag.Name).ToList();
+                    var newTags = tags.Where(t => !existingTagNames.Contains(t)).ToList();
+
+                    foreach (var tag in newTags)
                     {
-                        CourseId = course.Id,
-                        TagId = tagDbSet.FirstOrDefault(tg => tg.Name == t).Id
-                    }).ToList();
+                        var tagId = tagDbSet.FirstOrDefault(tg => tg.Name == tag)?.Id;
+                        if (tagId != null)
+                        {
+                            course.CourseTags.Add(new CourseTag
+                            {
+                                CourseId = course.Id,
+                                TagId = tagId.Value
+                            });
+                        }
+                    }
                 }
                 await _courseRepository.UpdateAsync(course);
 
