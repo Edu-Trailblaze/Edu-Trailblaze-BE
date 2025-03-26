@@ -133,7 +133,7 @@ namespace EduTrailblaze.API.Controllers
             try
             {
                 var result = await _instructorDashboardService.ApproveCourseByAI(courseId);
-                return Ok(result);
+                return Ok(new { message = result });
             }
             catch (Exception ex)
             {
