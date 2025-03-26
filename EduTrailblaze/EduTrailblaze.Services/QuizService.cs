@@ -122,7 +122,13 @@ namespace EduTrailblaze.Services
                     await _questionRepository.AddAsync(question);
                 }
 
-                await _courseService.CheckAndUpdateCourseContent(lecture.Section.CourseId);
+                var lectureDbSet = await _lectureRepository.GetDbSet();
+
+                var coureId = (await lectureDbSet.Include(l => l.Section)
+                    .ThenInclude(s => s.Course)
+                    .FirstOrDefaultAsync(l => l.Id == request.LectureId)).Section.Course.Id;
+
+                await _courseService.CheckAndUpdateCourseContent(coureId);
             }
             catch (Exception ex)
             {
