@@ -358,7 +358,10 @@ namespace EduTrailblaze.Services
         {
             try
             {
-                var course = await _courseRepository.GetByIdAsync(courseId);
+               
+                var courseDbSet = await _courseRepository.GetDbSet();
+                
+                var course = await courseDbSet.FirstOrDefaultAsync(x => x.Id == courseId);
 
                 if (course == null)
                 {
@@ -416,13 +419,18 @@ namespace EduTrailblaze.Services
                 {
                     course.ApprovalStatus = "Pending";
                     course.IsInstructorSpecialtyCourse = true;
-                    var existingTagNames = course.CourseTags.Select(ct => ct.Tag.Name).ToList();
-                    var newTags = tags.Where(t => !existingTagNames.Contains(t)).ToList();
+                    course.CourseTags ??= new List<CourseTag>();
+
+                    var existingTagNames = new HashSet<string>(course.CourseTags.Select(ct => ct.Tag.Name));
+
+                    
+                    var newTags = tags.Where(t => !existingTagNames.Contains(t));
 
                     foreach (var tag in newTags)
                     {
+                        // Tìm kiếm tag theo tên trong tagDbSet
                         var tagId = tagDbSet.FirstOrDefault(tg => tg.Name == tag)?.Id;
-                        if (tagId != null)
+                        if (tagId.HasValue)
                         {
                             course.CourseTags.Add(new CourseTag
                             {
