@@ -169,6 +169,9 @@ namespace EduTrailblaze.Services
 
                 await Task.WhenAll(updateLectureDurationTask, updateNumberOfLecturesTask, checkAndUpdateCourseContentTask);
 
+                var sec = await _sectionService.GetSection(lecture.SectionId);
+                if (sec != null) await _courseService.CheckAndUpdateCourseContent(sec.CourseId);
+
                 return _mapper.Map<LectureDTO>(lectureEntity);
             }
             catch (Exception ex)
