@@ -1,4 +1,5 @@
-﻿using EduTrailblaze.Services.DTOs;
+﻿using EduTrailblaze.Entities;
+using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -243,6 +244,19 @@ namespace EduTrailblaze.API.Controllers
             {
                 await _courseService.CheckAndUpdateCourseContent(courseId);
                 return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+        [HttpGet("get-top-5-best-selling-courses")]
+        public async Task<IActionResult> GetTop5BestSellingCourses()
+        {
+            try
+            {
+                var result = await _courseService.GetTop5BestSellingCourses();
+                return Ok(result);
             }
             catch (Exception ex)
             {

@@ -1668,5 +1668,43 @@ namespace EduTrailblaze.Services
                 throw new Exception("An error occurred while checking and updating the course content: " + ex.Message);
             }
         }
+
+        public async Task<List<Top5BestSellingCoursesResponse>> GetTop5BestSellingCourses()
+        {
+            try
+            {
+                var orderDetailsDbSet = await _orderDetailRepository.GetDbSet();
+               var top5BestSellingCourseraw = orderDetailsDbSet.Include(c => c.Course)
+                    .Where(od => od.Order.OrderStatus == "Completed")
+                    .GroupBy(od => od.Course)
+                    .Select(g => new
+                    {
+                        CourseId = g.Key.Id,
+                        Title = g.Key.Title,
+                        ImageURL = g.Key.ImageURL,
+                        Description = g.Key.Description,
+                        TotalSales = g.Sum(x => x.Price),
+                    })
+                    .OrderByDescending(x => x.TotalSales)
+                    .Take(5)
+                    .ToList();
+                var result = top5BestSellingCourseraw
+                    .Select((x, index) => new Top5BestSellingCoursesResponse
+                    {
+                        Rank = index + 1,
+                        Id = x.CourseId,
+                        TotalSales = x.TotalSales,
+                        Description = x.Description,
+                        Title = x.Title,
+                        ImageURL = x.ImageURL,
+                    })
+                    .ToList();
+                return result;
+            } 
+            catch (Exception ex) 
+            {
+                throw new Exception("An error occurred while get top 5 best selling course: " + ex.Message);
+            }
+        }
     }
 }

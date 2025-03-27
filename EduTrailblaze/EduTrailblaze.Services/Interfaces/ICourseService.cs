@@ -7,7 +7,7 @@ namespace EduTrailblaze.Services.Interfaces
     public interface ICourseService
     {
         Task<Course?> GetCourse(int courseId);
-
+        Task<List<Top5BestSellingCoursesResponse>> GetTop5BestSellingCourses();
         Task<IEnumerable<Course>> GetCourses();
 
         Task AddCourse(Course course);

@@ -37,7 +37,16 @@
         //public DateTime StartDate { get; set; }
         //public DateTime EndDate { get; set; }
     }
+    public class Top5BestSellingCoursesResponse
+    {
+        public int Rank { get; set; }
+        public decimal TotalSales { get; set; }
+        public int Id { get; set; }
+        public string? Title { get; set; }
+        public string? ImageURL { get; set; }
+        public string? Description { get; set; }
 
+    }
     public class CouponInformationResponse
     {
         public string CouponCode { get; set; }
