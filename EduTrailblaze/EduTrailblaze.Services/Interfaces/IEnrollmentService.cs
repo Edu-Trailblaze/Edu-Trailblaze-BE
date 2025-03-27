@@ -1,12 +1,14 @@
 ﻿using EduTrailblaze.Entities;
 using EduTrailblaze.Services.DTOs;
+using EduTrailblaze.Services.Models;
+using Nest;
 
 namespace EduTrailblaze.Services.Interfaces
 {
     public interface IEnrollmentService
     {
         Task<Enrollment?> GetEnrollment(int enrollmentId);
-
+        Task<ApiResponse> TotalEnrollmentByMonth(int month, int year);
         Task<IEnumerable<Enrollment>> GetEnrollments();
         Task<List<TopStudentResponse>> GetTop5StudentsWithMostEnrollments();
         Task EnrollCourse(CreateEnrollRequest enrollment);

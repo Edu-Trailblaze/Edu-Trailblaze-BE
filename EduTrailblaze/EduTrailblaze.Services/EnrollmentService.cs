@@ -2,6 +2,8 @@
 using EduTrailblaze.Repositories.Interfaces;
 using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Interfaces;
+using EduTrailblaze.Services.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -503,6 +505,30 @@ namespace EduTrailblaze.Services
             .ToList();
 
             return result;
+        }
+
+        public async Task<ApiResponse> TotalEnrollmentByMonth(int month, int year)
+        {
+            try
+            {
+                var enrollmentDbset = await _enrollmentRepository.GetDbSet();
+                var totalEnrollment = await enrollmentDbset
+                    .Where(e => e.CreatedAt.Month == month && e.CreatedAt.Year == year)
+                    .CountAsync();
+                return new ApiResponse
+                {
+                    StatusCode = StatusCodes.Status200OK,
+                    Data = totalEnrollment
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError,
+                    Message = ex.Message
+                };
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using EduTrailblaze.Services.DTOs;
+﻿using EduTrailblaze.Services;
+using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Nest;
@@ -61,7 +62,19 @@ namespace EduTrailblaze.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-
+        [HttpGet("total-enrollment-by-month")]
+        public async Task<IActionResult> TotalRevenueByMonth(int month, int year)
+        {
+            try
+            {
+                var orders = await _enrollmentService.TotalEnrollmentByMonth(month, year);
+                return Ok(orders);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
         [HttpPost]
         public async Task<IActionResult> AddEnrollment([FromBody] CreateEnrollRequest enrollRequest)
         {
