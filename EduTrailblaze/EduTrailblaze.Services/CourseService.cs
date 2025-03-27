@@ -1067,7 +1067,7 @@ namespace EduTrailblaze.Services
                     {
                         UserId = r.UserId,
                         CourseId = r.Id,
-                        Rating = r.Rating
+                        Rating = (float) r.Rating
                     })
                     .ToList();
 
@@ -1095,7 +1095,19 @@ namespace EduTrailblaze.Services
                 // Prepare hybrid recommendations
                 var recommendations = new List<CourseRecommendation>();
                 var courseDbSet = await _courseRepository.GetDbSet();
-                var courses = await courseDbSet.Where(p => p.IsPublished).ToListAsync();
+                //var courses = await courseDbSet.Where(p => p.IsPublished).ToListAsync();
+
+                var courses = await GetCoursesByConditions(new GetCoursesRequest
+                {
+                    IsPublished = true,
+                    StudentId = userId
+                });
+
+                if (courses == null || courses.Count == 0)
+                {
+                    return new List<CourseRecommendation>();
+                }
+
                 var courseVectors = await GetCourseFeatureVectors(courses);
 
                 foreach (var course in courses)
@@ -1171,7 +1183,19 @@ namespace EduTrailblaze.Services
                 // Prepare hybrid recommendations
                 var recommendations = new List<CourseRecommendation>();
                 var courseDbSet = await _courseRepository.GetDbSet();
-                var courses = await courseDbSet.Where(p => p.IsPublished).ToListAsync();
+                //var courses = await courseDbSet.Where(p => p.IsPublished).ToListAsync();
+
+                var courses = await GetCoursesByConditions(new GetCoursesRequest
+                {
+                    IsPublished = true,
+                    StudentId = userId
+                });
+
+                if (courses == null || courses.Count == 0)
+                {
+                    return new List<CourseRecommendation>();
+                }
+
                 var filteredCourses = courses
                     .Where(p => !courseIdsInLatestOrder.Contains(p.Id))
                     .ToList();
@@ -1398,7 +1422,7 @@ namespace EduTrailblaze.Services
             }
         }
 
-        private async Task<Dictionary<int, float[]>> GetCourseFeatureVectors(IEnumerable<Course> courses)
+        private async Task<Dictionary<int, float[]>> GetCourseFeatureVectors(IEnumerable<CourseDTO> courses)
         {
             try
             {
