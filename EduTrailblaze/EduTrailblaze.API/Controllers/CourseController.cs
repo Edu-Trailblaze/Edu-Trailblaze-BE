@@ -263,5 +263,18 @@ namespace EduTrailblaze.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+        [HttpGet("get-student-count-by-tag")]
+        public async Task<IActionResult> GetStudentCountByTagAsync()
+        {
+            try
+            {
+                var result = await _courseService.GetStudentCountByTagAsync();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }

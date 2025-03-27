@@ -22,6 +22,7 @@ namespace EduTrailblaze.Services
         private readonly IRepository<CourseTag, int> _courseTagRepository;
         private readonly IRepository<Order, int> _orderRepository;
         private readonly IRepository<OrderDetail, int> _orderDetailRepository;
+        private readonly IRepository<CourseClass, int> _courseClassRepository;
         private readonly ICourseClassService _courseClassService;
         private readonly IReviewService _reviewService;
         private readonly UserManager<User> _userManager;
@@ -32,7 +33,7 @@ namespace EduTrailblaze.Services
         private readonly ICloudinaryService _cloudinaryService;
         private readonly ICertificateService _certificateService;
 
-        public CourseService(IRepository<Course, int> courseRepository, IReviewService reviewService, IElasticsearchService elasticsearchService, IMapper mapper, IDiscountService discountService, IRepository<CourseInstructor, int> courseInstructorRepository, IRepository<Enrollment, int> enrollment, UserManager<User> userManager, IRepository<CourseLanguage, int> courseLanguageRepository, IRepository<CourseTag, int> courseTagRepository, ICourseClassService courseClassService, IRepository<UserProfile, string> userProfileRepository, IRepository<Coupon, int> couponRepository, IRepository<Order, int> orderRepository, IRepository<OrderDetail, int> orderDetailRepository, ICloudinaryService cloudinaryService, ICertificateService certificateService)
+        public CourseService(IRepository<Course, int> courseRepository, IReviewService reviewService, IElasticsearchService elasticsearchService, IMapper mapper, IDiscountService discountService, IRepository<CourseInstructor, int> courseInstructorRepository, IRepository<Enrollment, int> enrollment, UserManager<User> userManager, IRepository<CourseLanguage, int> courseLanguageRepository, IRepository<CourseTag, int> courseTagRepository, ICourseClassService courseClassService, IRepository<UserProfile, string> userProfileRepository, IRepository<Coupon, int> couponRepository, IRepository<Order, int> orderRepository, IRepository<OrderDetail, int> orderDetailRepository, ICloudinaryService cloudinaryService, ICertificateService certificateService, IRepository<CourseClass, int> courseClassRepository)
         {
             _courseRepository = courseRepository;
             _reviewService = reviewService;
@@ -51,6 +52,7 @@ namespace EduTrailblaze.Services
             _orderRepository = orderRepository;
             _cloudinaryService = cloudinaryService;
             _certificateService = certificateService;
+            _courseClassRepository = courseClassRepository;
         }
 
         public async Task<Course?> GetCourse(int courseId)
@@ -1705,6 +1707,28 @@ namespace EduTrailblaze.Services
             {
                 throw new Exception("An error occurred while get top 5 best selling course: " + ex.Message);
             }
+        }
+
+        public async Task<List<TagEnrollmentCountResponse>> GetStudentCountByTagAsync()
+        {
+            var enrollmentDbSet = await _enrollmentRepository.GetDbSet();
+            var courseClassDbSet = await _courseClassRepository.GetDbSet();
+            var courseTagDbSet = await _courseTagRepository.GetDbSet();
+            var courseDbSet = await _courseRepository.GetDbSet();
+            var result = await enrollmentDbSet
+            .Join(courseClassDbSet, e => e.CourseClassId, cc => cc.Id, (e, cc) => new { e, cc })
+            .Join(courseDbSet, combined => combined.cc.CourseId, c => c.Id, (combined, c) => new { combined.e, c })
+            .Join(courseTagDbSet, combined => combined.c.Id, ct => ct.CourseId, (combined, ct) => new { combined.e, ct })
+            .GroupBy(combined => combined.ct.Tag.Name)
+            .Select(group => new TagEnrollmentCountResponse
+            {
+                TagName = group.Key,
+                StudentCount = group.Count()
+            })
+            .OrderByDescending(result => result.StudentCount)
+            .ToListAsync();
+
+            return result;
         }
     }
 }

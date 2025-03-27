@@ -83,7 +83,11 @@
     {
         public int TotalEnrollments { get; set; }
     }
-
+    public class TagEnrollmentCountResponse
+    {
+        public string TagName { get; set; }
+        public int StudentCount { get; set; }
+    }
     public class CourseCardResponse
     {
         public CoursesResponse Course { get; set; }

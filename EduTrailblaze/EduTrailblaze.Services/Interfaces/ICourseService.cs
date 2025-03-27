@@ -9,7 +9,7 @@ namespace EduTrailblaze.Services.Interfaces
         Task<Course?> GetCourse(int courseId);
         Task<List<Top5BestSellingCoursesResponse>> GetTop5BestSellingCourses();
         Task<IEnumerable<Course>> GetCourses();
-
+        Task<List<TagEnrollmentCountResponse>> GetStudentCountByTagAsync();
         Task AddCourse(Course course);
 
         Task UpdateCourse(Course course);
