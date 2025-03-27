@@ -1,6 +1,7 @@
 ﻿using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Nest;
 
 namespace EduTrailblaze.API.Controllers
 {
@@ -41,6 +42,19 @@ namespace EduTrailblaze.API.Controllers
                 }
 
                 return Ok(news);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+        [HttpGet("top-5-students-with-most-enrollments")]
+        public async Task<IActionResult> Top5StudentsWithMostEnrollments()
+        {
+            try
+            {
+               var result = await _enrollmentService.GetTop5StudentsWithMostEnrollments();
+                return Ok(result);
             }
             catch (Exception ex)
             {

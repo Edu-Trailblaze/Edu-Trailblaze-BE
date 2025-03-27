@@ -2,6 +2,7 @@
 using EduTrailblaze.Repositories.Interfaces;
 using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace EduTrailblaze.Services
@@ -17,8 +18,9 @@ namespace EduTrailblaze.Services
         private readonly ICourseService _courseService;
         private readonly IReviewService _reviewService;
         private readonly INotificationService _notificationService;
+        private readonly UserManager<User> _userManager;
 
-        public EnrollmentService(IRepository<Enrollment, int> enrollmentRepository, IRepository<Order, int> orderRepository, IRepository<CourseClass, int> courseClassRepository, ICourseService courseService, IReviewService reviewService, IRepository<UserProgress, int> userProgressRepository, IRepository<Lecture, int> lectureRepository, IRepository<UserProfile, string> userProfileRepository, INotificationService notificationService)
+        public EnrollmentService(IRepository<Enrollment, int> enrollmentRepository, IRepository<Order, int> orderRepository, IRepository<CourseClass, int> courseClassRepository, ICourseService courseService, IReviewService reviewService, IRepository<UserProgress, int> userProgressRepository, IRepository<Lecture, int> lectureRepository, IRepository<UserProfile, string> userProfileRepository, INotificationService notificationService, UserManager<User> userManager)
         {
             _enrollmentRepository = enrollmentRepository;
             _orderRepository = orderRepository;
@@ -29,6 +31,7 @@ namespace EduTrailblaze.Services
             _lectureRepository = lectureRepository;
             _userProfileRepository = userProfileRepository;
             _notificationService = notificationService;
+            _userManager = userManager;
         }
 
         public async Task<Enrollment?> GetEnrollment(int enrollmentId)
@@ -447,6 +450,59 @@ namespace EduTrailblaze.Services
             {
                 throw new Exception("An error occurred while getting the student's course progress: " + ex.Message);
             }
+        }
+
+        public async Task<List<TopStudentResponse>> GetTop5StudentsWithMostEnrollments()
+        {
+            var enrollmentDbset = await _enrollmentRepository.GetDbSet();
+            var users = _userManager.Users;
+            var userProfiles = await _userProfileRepository.GetDbSet();
+            var rawData = enrollmentDbset
+                .Join(users,
+                    enrollment => enrollment.StudentId,
+                    user => user.Id,
+                    (enrollment, user) => new { enrollment, user })
+                .Join(
+                    userProfiles,
+                    x => x.user.Id,
+                    profile => profile.Id, // Vì UserProfile.Id là FK đến User.Id
+                    (x, profile) => new { x.enrollment, x.user, profile }
+                )
+                .GroupBy(x => new
+                {
+                    x.user.Id,
+                    x.user.UserName,
+                    x.user.Email,
+                    FullName = x.profile.Fullname,
+                    x.user.PhoneNumber
+                })
+
+             .Select(g => new
+             {
+                 StudentId = g.Key.Id,
+                 UserName = g.Key.UserName,
+                 Email = g.Key.Email,
+                 FullName = g.Key.FullName,
+                 PhoneNumber = g.Key.PhoneNumber,
+                 TotalEnrollments = g.Count()
+             })
+             .OrderByDescending(x => x.TotalEnrollments)
+             .Take(5)
+             .ToList();
+
+            var result = rawData
+            .Select((x, index) => new TopStudentResponse
+            {
+                Rank = index + 1,
+                UserName = x.UserName,
+                Email = x.Email,
+                FullName = x.FullName,
+                PhoneNumber = x.PhoneNumber,
+                TotalEnrollments = x.TotalEnrollments
+            })
+            .ToList();
+
+            return result;
         }
     }
 }

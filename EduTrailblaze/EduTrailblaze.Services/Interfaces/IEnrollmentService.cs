@@ -8,7 +8,7 @@ namespace EduTrailblaze.Services.Interfaces
         Task<Enrollment?> GetEnrollment(int enrollmentId);
 
         Task<IEnumerable<Enrollment>> GetEnrollments();
-
+        Task<List<TopStudentResponse>> GetTop5StudentsWithMostEnrollments();
         Task EnrollCourse(CreateEnrollRequest enrollment);
 
         Task UpdateEnrollment(Enrollment enrollment);

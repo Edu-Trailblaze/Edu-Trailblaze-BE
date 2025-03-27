@@ -37,6 +37,15 @@
         //public DateTime StartDate { get; set; }
         //public DateTime EndDate { get; set; }
     }
+    public class TopStudentResponse
+    {
+        public int Rank { get; set; }
+        public string? UserName { get; set; }
+        public string? Email { get; set; }
+        public string? FullName { get; set; }
+        public string? PhoneNumber { get; set; }
+        public int TotalEnrollments { get; set; }
+    }
     public class Top5BestSellingCoursesResponse
     {
         public int Rank { get; set; }

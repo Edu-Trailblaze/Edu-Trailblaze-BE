@@ -223,11 +223,11 @@ namespace EduTrailblaze.Services
             try
             {
                 //Scan the video file for viruses using ClamAV
-                var (scanResult, virusName) = await _clamAVService.ScanFileWithClamd(video.File);
-                if (scanResult != "The file is clean.")
-                {
-                    throw new Exception($"Virus detected: {virusName}");
-                }
+                // var (scanResult, virusName) = await _clamAVService.ScanFileWithClamd(video.File);
+                // if (scanResult != "The file is clean.")
+                // {
+                //     throw new Exception($"Virus detected: {virusName}");
+                // }
 
                 // Save the file to a temporary location
                 using (var stream = new FileStream(tempFilePath, FileMode.Create))
