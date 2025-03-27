@@ -462,10 +462,14 @@ namespace EduTrailblaze.Services
                     dbSet = dbSet.Where(c => !boughtCourseQuery.Contains(c.Id));
                 }
 
-
                 if (request.IsFree == true)
                 {
                     dbSet = dbSet.Where(c => c.Price == 0);
+                }
+
+                if (request.ApprovalStatus != null)
+                {
+                    dbSet = dbSet.Where(c => c.ApprovalStatus == request.ApprovalStatus);
                 }
 
                 var items = await dbSet.ToListAsync();
