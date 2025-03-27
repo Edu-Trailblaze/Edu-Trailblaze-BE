@@ -1,5 +1,6 @@
 ﻿using EduTrailblaze.Entities;
 using EduTrailblaze.Services.DTOs;
+using EduTrailblaze.Services.Models;
 
 namespace EduTrailblaze.Services.Interfaces
 {
@@ -8,7 +9,7 @@ namespace EduTrailblaze.Services.Interfaces
         Task<Order?> GetOrder(int orderId);
 
         Task<IEnumerable<Order>> GetOrders();
-
+        Task<ApiResponse> TotalRevenueByMonth(int month, int year);
         Task AddOrder(Order order);
 
         Task UpdateOrder(Order order);

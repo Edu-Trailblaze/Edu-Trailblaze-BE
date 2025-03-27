@@ -3,9 +3,12 @@ using EduTrailblaze.Entities;
 using EduTrailblaze.Repositories.Interfaces;
 using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Interfaces;
+using EduTrailblaze.Services.Models;
 using Hangfire;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EduTrailblaze.Services
 {
@@ -386,6 +389,25 @@ namespace EduTrailblaze.Services
             catch (Exception ex)
             {
                 throw new Exception("An error occurred while getting the orders: " + ex.Message);
+            }
+        }
+
+        public async Task<ApiResponse> TotalRevenueByMonth(int month, int year)
+        {
+            try
+            {
+                var orderDbSet = await _orderRepository.GetDbSet();
+                var orders = await orderDbSet
+               .Where(o => o.OrderStatus == "Completed" &&
+                           o.OrderDate.Year == year &&
+                           o.OrderDate.Month == month)
+               .ToListAsync();
+                decimal totalRevenue = orders.Sum(o => o.OrderAmount);
+                return new ApiResponse { StatusCode = StatusCodes.Status200OK, Data = totalRevenue };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse { StatusCode = StatusCodes.Status500InternalServerError, Data = ex.Message };
             }
         }
     }

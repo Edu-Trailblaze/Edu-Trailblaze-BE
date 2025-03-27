@@ -128,7 +128,7 @@ namespace EduTrailblaze.API.Controllers
             }
             return StatusCode(result.StatusCode, result);
 
-        }
+        } 
 
         [HttpGet]
         [Route("reset-password")]

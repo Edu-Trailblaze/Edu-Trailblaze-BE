@@ -1,5 +1,6 @@
 ﻿using EduTrailblaze.Services.DTOs;
 using EduTrailblaze.Services.Interfaces;
+using EduTrailblaze.Services.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EduTrailblaze.API.Controllers
@@ -67,6 +68,19 @@ namespace EduTrailblaze.API.Controllers
             try
             {
                 var orders = await _orderService.GetPagingOrders(request, paging);
+                return Ok(orders);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        [HttpGet("total-revenue-by-month")]
+        public async Task<IActionResult> TotalRevenueByMonth( int month, int year)
+        {
+            try
+            {
+                var orders = await _orderService.TotalRevenueByMonth(month,year);
                 return Ok(orders);
             }
             catch (Exception ex)
