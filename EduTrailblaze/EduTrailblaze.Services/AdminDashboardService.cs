@@ -5,6 +5,7 @@ using EduTrailblaze.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using AutoMapper;
+using EduTrailblaze.Services.Helper;
 
 namespace EduTrailblaze.Services
 {
@@ -12,15 +13,17 @@ namespace EduTrailblaze.Services
     {
         private readonly ICourseService _courseService;
         private readonly IRepository<Order, int> _orderRepository;
+        private readonly IRepository<Enrollment, int> _enrollmentRepository;
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
 
-        public AdminDashboardService(ICourseService courseService, UserManager<User> userManager, IRepository<Order, int> orderRepository, IMapper mapper)
+        public AdminDashboardService(ICourseService courseService, UserManager<User> userManager, IRepository<Order, int> orderRepository, IMapper mapper, IRepository<Enrollment, int> enrollmentRepository)
         {
             _courseService = courseService;
             _userManager = userManager;
             _orderRepository = orderRepository;
             _mapper = mapper;
+            _enrollmentRepository = enrollmentRepository;
         }
 
         public async Task ApproveCourse(ApproveCourseRequest request)
@@ -254,6 +257,162 @@ namespace EduTrailblaze.Services
             catch (Exception ex)
             {
                 throw new Exception("An error occurred while getting the course data: " + ex.Message);
+            }
+        }
+
+        public async Task<List<ChartData>> GetNearestTimeForEnrollments(AdminDashboardRequest request)
+        {
+            try
+            {
+                List<ChartData> chartData = new List<ChartData>();
+                var currentDate = DateTimeHelper.GetVietnamTime();
+
+                if (request.Time == "week")
+                {
+                    var startOfWeek = currentDate.AddDays(-(int)currentDate.DayOfWeek);
+                    var endOfWeek = startOfWeek.AddDays(7).AddSeconds(-1);
+
+                    for (int i = 0; i < 5; i++)
+                    {
+                        var weekStartDate = startOfWeek.AddDays(-7 * i);
+                        var weekEndDate = i == 0 ? currentDate : endOfWeek.AddDays(-7 * i);
+
+                        var enrollmentDbSet = await _enrollmentRepository.GetDbSet();
+                        var enrollments = enrollmentDbSet
+                            .Where(e => e.CreatedAt >= weekStartDate && e.CreatedAt <= weekEndDate)
+                            .Count();
+
+                        chartData.Add(new ChartData
+                        {
+                            FromDate = weekStartDate,
+                            ToDate = weekEndDate,
+                            Data = enrollments
+                        });
+                    }
+                }
+                else if (request.Time == "month")
+                {
+                    var startOfMonth = new DateTime(currentDate.Year, currentDate.Month, 1);
+                    var endOfMonth = startOfMonth.AddMonths(1).AddSeconds(-1);
+                    for (int i = 0; i < 5; i++)
+                    {
+                        var monthStartDate = startOfMonth.AddMonths(-1 * i);
+                        var monthEndDate = i == 0 ? currentDate : endOfMonth.AddMonths(-1 * i);
+                        var enrollmentDbSet = await _enrollmentRepository.GetDbSet();
+                        var enrollments = enrollmentDbSet
+                            .Where(e => e.CreatedAt >= monthStartDate && e.CreatedAt <= monthEndDate)
+                            .Count();
+                        chartData.Add(new ChartData
+                        {
+                            FromDate = monthStartDate,
+                            ToDate = monthEndDate,
+                            Data = enrollments
+                        });
+                    }
+                }
+                else if (request.Time == "year")
+                {
+                    var startOfYear = new DateTime(currentDate.Year, 1, 1);
+                    var endOfYear = startOfYear.AddYears(1).AddSeconds(-1);
+                    for (int i = 0; i < 5; i++)
+                    {
+                        var yearStartDate = startOfYear.AddYears(-1 * i);
+                        var yearEndDate = i == 0 ? currentDate : endOfYear.AddYears(-1 * i);
+                        var enrollmentDbSet = await _enrollmentRepository.GetDbSet();
+                        var enrollments = enrollmentDbSet
+                            .Where(e => e.CreatedAt >= yearStartDate && e.CreatedAt <= yearEndDate)
+                            .Count();
+                        chartData.Add(new ChartData
+                        {
+                            FromDate = yearStartDate,
+                            ToDate = yearEndDate,
+                            Data = enrollments
+                        });
+                    }
+                }
+
+                return chartData;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting nearest time for enrollments: " + ex.Message);
+            }
+        }
+
+        public async Task<List<ChartData>> GetNearestTimeForRevenue(AdminDashboardRequest request)
+        {
+            try
+            {
+                List<ChartData> chartData = new List<ChartData>();
+                var currentDate = DateTimeHelper.GetVietnamTime();
+                if (request.Time == "week")
+                {
+                    var startOfWeek = currentDate.AddDays(-(int)currentDate.DayOfWeek);
+                    var endOfWeek = startOfWeek.AddDays(7).AddSeconds(-1);
+                    for (int i = 0; i < 5; i++)
+                    {
+                        var weekStartDate = startOfWeek.AddDays(-7 * i);
+                        var weekEndDate = i == 0 ? currentDate : endOfWeek.AddDays(-7 * i);
+                        var orderDbSet = await _orderRepository.GetDbSet();
+                        var totalRevenue = orderDbSet
+                            .Where(o => o.OrderDate >= weekStartDate && o.OrderDate <= weekEndDate && o.OrderStatus == "Completed")
+                            .SelectMany(o => o.OrderDetails)
+                            .Sum(od => od.Price);
+                        chartData.Add(new ChartData
+                        {
+                            FromDate = weekStartDate,
+                            ToDate = weekEndDate,
+                            Data = totalRevenue
+                        });
+                    }
+                }
+                else if (request.Time == "month")
+                {
+                    var startOfMonth = new DateTime(currentDate.Year, currentDate.Month, 1);
+                    var endOfMonth = startOfMonth.AddMonths(1).AddSeconds(-1);
+                    for (int i = 0; i < 5; i++)
+                    {
+                        var monthStartDate = startOfMonth.AddMonths(-1 * i);
+                        var monthEndDate = i == 0 ? currentDate : endOfMonth.AddMonths(-1 * i);
+                        var orderDbSet = await _orderRepository.GetDbSet();
+                        var totalRevenue = orderDbSet
+                            .Where(o => o.OrderDate >= monthStartDate && o.OrderDate <= monthEndDate && o.OrderStatus == "Completed")
+                            .SelectMany(o => o.OrderDetails)
+                            .Sum(od => od.Price);
+                        chartData.Add(new ChartData
+                        {
+                            FromDate = monthStartDate,
+                            ToDate = monthEndDate,
+                            Data = totalRevenue
+                        });
+                    }
+                }
+                else if (request.Time == "year")
+                {
+                    var startOfYear = new DateTime(currentDate.Year, 1, 1);
+                    var endOfYear = startOfYear.AddYears(1).AddSeconds(-1);
+                    for (int i = 0; i < 5; i++)
+                    {
+                        var yearStartDate = startOfYear.AddYears(-1 * i);
+                        var yearEndDate = i == 0 ? currentDate : endOfYear.AddYears(-1 * i);
+                        var orderDbSet = await _orderRepository.GetDbSet();
+                        var totalRevenue = orderDbSet
+                            .Where(o => o.OrderDate >= yearStartDate && o.OrderDate <= yearEndDate && o.OrderStatus == "Completed")
+                            .SelectMany(o => o.OrderDetails)
+                            .Sum(od => od.Price);
+                        chartData.Add(new ChartData
+                        {
+                            FromDate = yearStartDate,
+                            ToDate = yearEndDate,
+                            Data = totalRevenue
+                        });
+                    }
+                }
+                return chartData;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting nearest time for revenue: " + ex.Message);
             }
         }
     }

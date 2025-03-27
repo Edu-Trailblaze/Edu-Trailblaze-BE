@@ -220,13 +220,13 @@ namespace EduTrailblaze.Services
                 }
 
                 // check if the instructor has permission to update the course
-                var courseInstructorDbSet = await _courseInstructorRepository.GetDbSet();
-                var isCourseInstructor = await courseInstructorDbSet.AnyAsync(ci => ci.CourseId == req.CourseId && ci.InstructorId == instructor.Id);
+                //var courseInstructorDbSet = await _courseInstructorRepository.GetDbSet();
+                //var isCourseInstructor = await courseInstructorDbSet.AnyAsync(ci => ci.CourseId == req.CourseId && ci.InstructorId == instructor.Id);
 
-                if (!isCourseInstructor)
-                {
-                    throw new Exception("Instructor does not have permission to update the course.");
-                }
+                //if (!isCourseInstructor)
+                //{
+                //    throw new Exception("Instructor does not have permission to update the course.");
+                //}
 
                 course.Title = req.Title;
                 course.ImageURL = imageURI;
@@ -1659,7 +1659,6 @@ namespace EduTrailblaze.Services
                 course.HasDoc = hasDoc;
                 course.HasQuiz = hasQuiz;
                 course.HasVideo = hasVideo;
-                course.HasAtLeastLecture = totalLectures;
 
                 await _courseRepository.UpdateAsync(course);
             }

@@ -19,5 +19,9 @@ namespace EduTrailblaze.Services.Interfaces
         Task<PaginatedList<CourseDTO>> GetPendingCourses(Paging paging);
 
         Task<CourseDataResponse> GetCourseData(CourseDataRequest request);
+
+        Task<List<ChartData>> GetNearestTimeForEnrollments(AdminDashboardRequest request);
+
+        Task<List<ChartData>> GetNearestTimeForRevenue(AdminDashboardRequest request);
     }
 }

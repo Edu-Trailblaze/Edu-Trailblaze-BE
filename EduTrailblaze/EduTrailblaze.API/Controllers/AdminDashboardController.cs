@@ -127,5 +127,33 @@ namespace EduTrailblaze.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        [HttpGet("get-nearest-time-for-revenue")]
+        public async Task<IActionResult> GetNearestTimeForRevenue([FromQuery] AdminDashboardRequest request)
+        {
+            try
+            {
+                var result = await _adminDashboardService.GetNearestTimeForRevenue(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("get-nearest-time-for-enrollments")]
+        public async Task<IActionResult> GetNearestTimeForEnrollments([FromQuery] AdminDashboardRequest request)
+        {
+            try
+            {
+                var result = await _adminDashboardService.GetNearestTimeForEnrollments(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

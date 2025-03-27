@@ -22,6 +22,7 @@ namespace EduTrailblaze.Services.DTOs
         public string? StudentId { get; set; } = null;
         public string? DifficultyLevel { get; set; } = null;
         public bool? IsPublished { get; set; } = null;
+        public string? ApprovalStatus { get; set; } = null; // Draft, Pending, Approved, Rejected
         public bool? IsDeleted { get; set; } = null;
     }
 
@@ -81,6 +82,11 @@ namespace EduTrailblaze.Services.DTOs
             RuleFor(x => x.StudentId)
                 .MaximumLength(50).WithMessage("StudentId cannot be longer than 50 characters")
                 .When(x => !string.IsNullOrEmpty(x.StudentId));
+
+            RuleFor(x => x.ApprovalStatus)
+            .Must(status => new[] { "Draft", "Pending", "Approved", "Rejected" }.Contains(status))
+            .WithMessage("ApprovalStatus must be Draft, Pending, Approved, or Rejected")
+            .When(x => !string.IsNullOrEmpty(x.ApprovalStatus));
         }
     }
 
@@ -2118,6 +2124,22 @@ namespace EduTrailblaze.Services.DTOs
         {
             RuleFor(x => x.InstructorId)
                 .NotEmpty().WithMessage("InstructorId is required");
+            RuleFor(x => x.Time)
+                .NotEmpty().WithMessage("Time is required")
+                .Must(x => new[] { "week", "month", "year" }.Contains(x))
+                .WithMessage("Time must be week, month, or year");
+        }
+    }
+    
+    public class AdminDashboardRequest
+    {
+        public string Time { get; set; } = "month"; // "week", "month", "year"
+    }
+
+    public class AdminDashboardRequestValidator : AbstractValidator<AdminDashboardRequest>
+    {
+        public AdminDashboardRequestValidator()
+        {
             RuleFor(x => x.Time)
                 .NotEmpty().WithMessage("Time is required")
                 .Must(x => new[] { "week", "month", "year" }.Contains(x))
