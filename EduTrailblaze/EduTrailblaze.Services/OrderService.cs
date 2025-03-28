@@ -204,6 +204,8 @@ namespace EduTrailblaze.Services
                     payment.PaymentStatus = "Success";
                     await _paymentService.UpdatePayment(payment);
 
+                    await _cartService.ClearCart(order.UserId);
+
                     return paymentUrl;
                 }
 
