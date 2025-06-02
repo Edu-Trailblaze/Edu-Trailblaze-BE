@@ -4,9 +4,11 @@
 
 ![ASP.NET Core](https://img.shields.io/badge/ASP.NET_Core-5C2D91?style=for-the-badge&logo=dot-net&logoColor=white)
 ![SQL Server](https://img.shields.io/badge/SQL_Server-CC2927?style=for-the-badge&logo=microsoft-sql-server&logoColor=white)
-![Identity](https://img.shields.io/badge/Identity-0078D4?style=for-the-badge&logo=asp.net&logoColor=white)\
+![Identity](https://img.shields.io/badge/Identity-0078D4?style=for-the-badge&logo=asp.net&logoColor=white)
 ![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
 ![Elasticsearch](https://img.shields.io/badge/Elasticsearch-005571?style=for-the-badge&logo=elasticsearch&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
+![Hangfire](https://img.shields.io/badge/Hangfire-FF5722?style=for-the-badge&logo=hangfire&logoColor=white)
 
 Welcome to the **Edu Trailblaze** repository! This project is an **online course website** designed to cater to three main roles: **Student**, **Instructor**, and **Admin**.
 
